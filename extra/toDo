@@ -1,0 +1,20 @@
+Wed May 24 15:32:02 CEST 2006
+==============================
+where: ppca(), bpca()
+what: R2 calculation faulty
+
+Fri May 26 09:39:39 CEST 2006
+==============================
+where: xval.R
+what: cvsegments for method "random" should not leave empty rows or columns
+
+Mon May 29 10:20:06 CEST 2006
+==============================
+where: bpca(), missingProblem.R
+what: bpca delivers very poor predictions for missing values? 
+
+Di Mai 30 13:57:09 CEST 2006
+============================
+where: nipalsPCA.rd
+what: Include complexity of the method in section details.
+(O(n??))

@@ -1,0 +1,27 @@
+importFrom(stats, screeplot)
+
+
+exportClasses(
+              pcaRes
+              )
+
+exportMethods(
+              slplot,
+              summary,
+              print,
+              completeObs
+              )
+
+export(
+       pca,
+       plotPcs,
+       ppca,
+       bpca,
+       nipalsPca,
+       svdPca,
+       prep,
+       Q2,
+       svdImpute,
+       checkData,
+       kEstimate
+       )

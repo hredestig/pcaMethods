@@ -1,0 +1,19 @@
+Package: pcaMethods
+Version: 1.0.2
+Date: 2006-07-26
+Author: Wolfram Stacklies, Henning Redestig
+Maintainer: Wolfram Stacklies <stacklies@mpimp-golm.mpg.de> 
+Title: A collection of PCA methods.
+Depends: R, MASS, ellipse, pls
+Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA and
+  the conventional SVD PCA.
+  BPCA, PPCA and NipalsPCA may be used to perform PCA on incomplete data 
+  as well as for accurate missing value estimation.
+  A set of methods for printing and plotting the results is also provided.
+  All methods make use of the same data structure (pcaRes) to provide
+  a unique interface to the PCA results.
+License: GPL version 2 (or later)
+biocViews: Statistics
+Collate: classes.R generic.R pca.R BPCA_dostep.R bpca.R ppca.R BPCA_initmodel.R 
+ orth.R repmat.R xval.R svdImpute.R checkData.R kEstimate.R
+SaveImage: no

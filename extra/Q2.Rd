@@ -1,0 +1,75 @@
+\encoding{latin1}
+\name{Q2}
+\alias{Q2}
+\title{Perform internal cross-validation for PCA}
+\description{Internal cross-validation can be used for estimating the
+  level of structure in a data set and to optimise the choice of number
+  of principal components.}
+\usage{Q2(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10,
+method=c("interleaved", "random"))}
+\arguments{
+\item{object}{A \code{pcaRes} object (result from previous PCA
+analysis.)}
+\item{originalData}{The matrix used to obtain the pcaRes object}
+\item{nPcs}{The amount of principal components to estimate Q2 for.}
+\item{fold}{The amount of groups to divide the data in (for method
+"missing") and the amount of groups to divide rows and columns in for
+method "interleaved".}
+\item{nruncv}{The amount of times to repeat the whole cross-validation}
+\item{method}{One of interleaved or random. Interleaved removes blocks
+of rows / columns, random selects random entries}
+}
+\details{
+This method calculates \eqn{Q^2} for a PCA model. This is the predictory
+version of \eqn{R^2} and can be interpreted as the ratio of
+variance in a left out data chunk that can be estimated by the PCA
+model. Poor (low) \eqn{Q^2} means that the PCA model only describes noise
+and that the model is unrelated to the true data structure. The
+definition of \eqn{Q^2} is:
+
+\deqn{Q^2 = 1 - \frac{\sum_{i}^{k}\sum_{j}^{n}(x -
+\hat{x})^2}{\sum_{i}^{k}\sum_{j}^{n}x^2}}{Q^2 = 1 - sum_i^k sum_j^n (x -
+\hat{x})^2 / \sum_i^k \sum_j^n(x^2)}
+
+for the matrix \eqn{x} which has \eqn{n} rows and \eqn{k}
+columns. For a given amount of PC's x is estimated as \eqn{\hat{x} =
+TP'} (T are scores and P are loadings). Though this defines the
+leave-one-out cross-validation this is 
+not what is performed if fold is less than the amount of rows and/or
+columns.
+
+For the method "random" a random set of values in the matrix are set to
+NA and scores and loadings are estimated without them.
+
+For the method "interleaved" rows are first left out to estimate the
+scores and columns are left out to estimate loadings. This method also
+works for PCA algorithms that can not handle missing values. Note that
+for this method it is only possible to obtain estimate for the amount of
+columns left in the matrix after leaving some columns - 1.\cr
+BPCA and PPCA should not be used in mode \texttt{interleaved} as therefore
+two independent runs, one with rows the other with columns removed are
+needed. However, the algorithms may converge to scores / loadings with different
+signs, dependant on the initially chosen random numbers.
+This will lead to an unrealistic high error. So far, there is no easy solution
+to this.
+}
+
+\value{
+  A matrix with \eqn{Q^2} estimates.
+}
+\references{
+  Wold, H. (1966) Estimation of principal components and related models by
+  iterative least squares. In Multivariate Analysis (Ed.,
+  P.R. Krishnaiah), Academic Press, NY, 391-420.
+}
+\author{Wolfram Stacklies, Henning Redestig}
+\seealso{\code{\link{pca}}}
+\examples{
+data(iris)
+pcIr <- pca(iris[,1:4], scale="UV", method="svd")
+#can only get Q2 estimats for the two first PC's
+q2 <- Q2(pcIr, iris[,1:4], nruncv=2)
+#Typically Q2 increases only very slowly after the optimal amount of PC's
+boxplot(q2~row(q2), xlab="Amount of PC's", ylab=expression(Q^2))
+}
+\keyword{multivariate}
