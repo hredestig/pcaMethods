@@ -5,7 +5,7 @@
 
 \description{A common way of representing PCA result for two component}
 \usage{slplot(object, pcs=c(1,2), scoresLoadings=c(TRUE, TRUE),
-sl="def", ll="def", hotelling=0.95, rug=TRUE,...)}
+sl="def", ll="def", hotelling=0.95, rug=TRUE, sub=NULL,...)}
 \arguments{
   \item{object}{a pcaRes object}
   \item{pcs}{which two pcs to plot}
@@ -14,6 +14,8 @@ sl="def", ll="def", hotelling=0.95, rug=TRUE,...)}
   \item{ll}{labels to plot in the loadings plot}
   \item{hotelling}{confidence interval for ellipse}
   \item{rug}{logical, rug x axis or not}
+  \item{sub}{Subtitle, defaults to annotate with
+    amount of explained variance.}
   \item{...}{Further arguments to plot functions}
 }
 

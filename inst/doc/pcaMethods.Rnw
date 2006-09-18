@@ -208,9 +208,9 @@ plot(resBPCA@loadings[,2], resSVDI@loadings[,2], xlab="BPCA", ylab="classic PCA"
 
 \newpage
 \section{Cross validation}
-Two methods for cross validation are coming with the package.
-The first called \texttt{Q2} is for internal cross
-validation that allows to estimate the level of structure in a data set and to optimise the choice of number of principal components.
+\texttt{Q2} is the goodness measure used for internal cross
+validation. This allows to estimate the level of structure in a data
+set and to optimise the choice of number of principal components.
 Cross validation is performed by either removing random elements of
 the data matrix, then estimating these using the PCA algorithm of
 choice and then calculating $Q^2$ accordingly. At the moment,
@@ -219,6 +219,7 @@ missing values (i.e. not SVD). Missing value independent
 cross-validation is scheduled for implementation in later versions.
 $Q^2$ is defined as following for the mean centered data (and possibly
 scaled) matrix $X$.
+
 $$\mathrm{SSX}=\sum (x_{i,k})^2$$
 $$\mathrm{PRESS}=\sum (x_{i,k} - \hat{x}_{i,k})^2$$
 $$Q^2=1 - \mathrm{PRESS}/\mathrm{SSX}$$
@@ -306,15 +307,15 @@ plotPcs(resPPCA, pc=1:3, scoresLoadings=c(TRUE, FALSE))
 \begin{thebibliography}{2006}
 \bibitem{troyanskaya01} Troyanskaya O. and Cantor M. and Sherlock G. and Brown
 P. and Hastie T. and Tibshirani R. and Botstein D. and Altman RB.
-{\sl{\LaTeX} - Missing value estimation methods for DNA microarrays.}
+{\sl Missing value estimation methods for DNA microarrays.}
 Bioinformatics. 2001 Jun;17(6):520-5.
 \bibitem{feten05} G. Feten and T. Almoy and A.H. Aastveit
-{\sl{\LaTeX} - Prediction of Missing Values in Microarray and Use of
+{\sl Prediction of Missing Values in Microarray and Use of
 Mixed Models to Evaluate the Predictors.}, Stat. Appl. Genet. Mol. Biol.
 2005;4(1):Article10
 \bibitem{oba03} Oba S. and Sato MA. and Takemasa I. and Monden M. and
-Matsubara K. and Ishii S. {\sl{\LaTeX} - A Bayesian missing value estimation method for gene expression profile data.} Bioinformatics. 2003 Nov 1;19(16):2088-96.
-\bibitem{wold66} Wold H. {\sl{\LaTeX} - Estimation of principal components and
+Matsubara K. and Ishii S. {\sl A Bayesian missing value estimation method for gene expression profile data.} Bioinformatics. 2003 Nov 1;19(16):2088-96.
+\bibitem{wold66} Wold H. {Estimation of principal components and
 related models by iterative least squares.} In Multivariate Analysis (Ed. P.R.
 Krishnaiah), Academic Press, NY, 391-420.
 \end{thebibliography}

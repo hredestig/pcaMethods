@@ -39,7 +39,7 @@
   number of data dimensions and number of principal components.
 }
 \usage{
-  ppca(Matrix, nPcs, center = TRUE, seed = NA, ...)
+  ppca(Matrix, nPcs=2, center = TRUE, seed = NA, ...)
 }
 \arguments{
   \item{Matrix}{\code{matrix} -- Data containing the variables in
