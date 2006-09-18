@@ -54,14 +54,14 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute"), 
 }
 
 plotPcs <- function(object, pc=1:object@nPcs, scoresLoadings=c(TRUE, FALSE),...) {
-  if(length(dev.list()) == 0) 
-    x11(width=16, height=10)
+
+  ## number of plot areas needed
   ba <- (length(pc)*(length(pc) - 1)) / 2
-  mf <- c(floor(sqrt(ba)),ceiling(sqrt(ba)))
+  mf <- c(floor(sqrt(ba)), ceiling(sqrt(ba)))
   if(mf[1] * mf[2] < ba)
     mf[1] <- mf[1] + 1
-  par(mfrow=mf,cex=0.9, mar=c(4,4,3,1))
-  
+  mat <- matrix(c(1:ba, rep(0, mf[1]*mf[2] - ba)), ncol=mf[1], nrow=mf[2], byrow=TRUE)
+  layout(mat)
 
   perm <- function(object) {
     res <- NULL
@@ -77,7 +77,7 @@ plotPcs <- function(object, pc=1:object@nPcs, scoresLoadings=c(TRUE, FALSE),...)
   pp <- t(apply(perm(pc), 1, sort))
 
   for(i in 1:nrow(pp))
-    slplot(object, pcs=pp[i,], scoresLoadings=scoresLoadings, rug=FALSE,...)
+    slplot(object, pcs=pp[i,], scoresLoadings=scoresLoadings, rug=FALSE, sub="",...)
 }
 
 setMethod("print", "pcaRes",
@@ -130,19 +130,22 @@ setMethod("screeplot", "pcaRes",
 
 setMethod("slplot", "pcaRes",
           function(object, pcs=c(1,2), scoresLoadings=c(TRUE, TRUE), sl=rownames(object@scores),
-                   ll=rownames(object@loadings), hotelling=0.95, rug=TRUE,...) {
+                   ll=rownames(object@loadings), hotelling=0.95, rug=TRUE,sub=NULL,...) {
             if(length(pcs) > 2)
               plotPcs(object, pcs, scoresLoadings=scoresLoadings,...)
 
             else {
+              if(is.null(sub))
+                sub <- paste(sprintf("%.2f", object@R2cum[pcs] * 100),
+                             "% of the variance explained", sep="")
+
               if(sum(scoresLoadings) == 2) 
                 layout(matrix(c(1,2), 1, 2, TRUE), respect=matrix(c(1,1), 1, 2))
               if (length(pcs) == 1 || object@nPcs == 1) {
                 pcs <- 1
                 if(scoresLoadings[1]) {
                   barplot(object@scores[,pcs], main="Scores",
-                          sub=paste(sprintf("%.2f", object@R2cum[pcs] * 100),
-                            "% of the variance explained", sep=""), las=3, names.arg=sl,
+                          sub=sub, las=3, names.arg=sl,
                           ylab=paste("PC", pcs), ...)
                 }
                 if(scoresLoadings[2])
@@ -152,8 +155,7 @@ setMethod("slplot", "pcaRes",
               if(scoresLoadings[1]) {
                 if (!is.null(sl)) {
                   plot(object@scores[,pcs], type="n", main="Scores",
-                       sub=paste(sprintf("%.2f",object@R2cum[max(pcs)] * 100),
-                         "% of the variance explained", sep=""), ylab=paste("PC", pcs[2]),
+                       sub=sub, ylab=paste("PC", pcs[2]),
                        xlab=paste("PC", pcs[1]),...)
                   text(object@scores[,pcs], sl,...)
                   if(rug)
@@ -161,8 +163,7 @@ setMethod("slplot", "pcaRes",
                 }
                 else {
                   plot(object@scores[,pcs], main="Scores",
-                       sub=paste(sprintf("%.2f",object@R2cum[max(pcs)] * 100),
-                         "% of the variance explained", sep=""),ylab=paste("PC", pcs[2]),
+                       sub=sub,ylab=paste("PC", pcs[2]),
                        xlab=paste("PC", pcs[1]),...)
                 }
                 abline(h=0, v=0)

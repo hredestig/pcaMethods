@@ -54,15 +54,15 @@
 	used for re-estimation.
 }
 \usage{
-        bpca(Matrix, nPcs = NaN, maxSteps = 100, verbose = interactive(), ...)
+        bpca(Matrix, nPcs = 2, maxSteps = 100, verbose = interactive(), ...)
 }
 \arguments{
 	\item{Matrix}{\code{matrix} -- Data containing the variables in
 	columns and observations in rows. The data may contain missing values,
 	denoted as \code{NA}.}
 	\item{nPcs}{\code{numeric} -- Number of components used for re-estimation.
-	Choosing few components may decrease the estimation precision. The default
-	is \code{ncol(Matrix) - 1}. }
+	Choosing few components may decrease the estimation
+	precision.}
 	\item{maxSteps}{\code{numeric} -- Maximum number of estimation steps.
 	Default is 100. }
 	\item{verbose}{\code{boolean} -- BPCA prints the number of steps and the

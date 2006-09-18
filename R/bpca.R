@@ -67,85 +67,81 @@
 ##
 ###########################################################################################
 
-bpca <- function(Matrix, nPcs = NaN, maxSteps = 100, verbose = interactive(), ... ) {
+bpca <- function(Matrix, nPcs=2, maxSteps=100, verbose=interactive(), ... ) {
 
-    ## If the data is a data frame, convert it into a matrix
-    Matrix <- as.matrix(Matrix)
-    ## And now check if everything is right...
-    if ( !checkData(Matrix, verbose = verbose) ) {
-        stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
+  ## If the data is a data frame, convert it into a matrix
+  Matrix <- as.matrix(Matrix)
+  ## And now check if everything is right...
+  if ( !checkData(Matrix, verbose = verbose) ) {
+    stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
+  }
+
+  if (nPcs > ncol(Matrix) - 1) {
+    stop("more components than matrix columns selected, exiting\n")
+  }
+
+  mat <- Matrix
+
+  M <- BPCA_initmodel(mat, nPcs)
+  tauold <- 1000
+
+  for( step in 1:maxSteps ) {
+    M <- BPCA_dostep(M, mat)
+    if( step %% 10 == 0 ) {
+      tau <- M$tau
+      dtau <- abs(log10(tau) - log10(tauold))
+      if ( verbose ) {
+        cat("Step Number           : ", step, '\n')
+        cat("Increase in precision : ", dtau, '\n')
+        cat("----------", '\n')
+      }
+      if (dtau < 1e-4) {
+        break
+      }
+      tauold <- tau
     }
+  }
+  
+  ## Calculate R2cum
+  R2cum <- NULL
+  centered <- scale(M$yest, center = TRUE, scale = FALSE)
+  for (i in 1:nPcs) {
+    difference <- centered - ( M$scores[,1:i, drop=FALSE] %*% t(M$PA[,1:i, drop=FALSE]) )
+    R2cum <- cbind( R2cum, 1 - ( sum(difference^2) / sum(centered^2) ) )
+  }
 
-    if (!is.nan(nPcs)) {
-        if (nPcs > ncol(Matrix) - 1) {
-            stop("more components than matrix columns selected, exiting\n")
-        }
+  ## Calculate R2
+  R2 <- vector(length=length(R2cum), mode="numeric")
+  R2[1] <- R2cum[1]
+  if (nPcs > 1) {
+    for (i in 2:nPcs) {
+      R2[i] <- R2cum[i] - R2cum[i - 1]
     }
+  }
 
-    mat <- Matrix
+  ####################################################################
+  ## Store the values in the pcaRes class, for compatibilty with
+  ## other methods provided in the package
+  ####################################################################
 
-    if (is.nan(nPcs)) { nPcs <- length(id_col) - 1 }
+  result <- new("pcaRes")
 
-    M <- BPCA_initmodel(mat, nPcs)
-    tauold <- 1000
+  result@completeObs <- M$yest
+  result@center <- apply(M$yest, 2, mean)
+  result@centered <- FALSE
+  result@scaled <- "none"
+  result@scores <- M$scores 
+  result@loadings <- M$PA
+  result@R2cum <- c(R2cum)
+  result@R2 <- R2
+  result@sDev <- apply(M$scores, 2, sd)
+  result@nObs <- nrow(Matrix)
+  result@nVar <- ncol(Matrix)
+  ## result@subset <- NULL 
+  ## result@varLimit <- NULL
+  result@nPcs <- nPcs
+  result@method <- "bpca"
+  result@missing <- sum(is.na(Matrix))
 
-    for( step in 1:maxSteps ) {
-        M <- BPCA_dostep(M, mat)
-        if( step %% 10 == 0 ) {
-            tau <- M$tau
-            dtau <- abs(log10(tau) - log10(tauold))
-            if ( verbose ) {
-                cat("Step Number           : ", step, '\n')
-                cat("Increase in precision : ", dtau, '\n')
-                cat("----------", '\n')
-            }
-            if (dtau < 1e-4) {
-                break
-            }
-            tauold <- tau
-        }
-    }
-    
-    ## Calculate R2cum
-    R2cum <- NULL
-    centered <- scale(M$yest, center = TRUE, scale = FALSE)
-    for (i in 1:nPcs) {
-        difference <- centered - ( M$scores[,1:i, drop=FALSE] %*% t(M$PA[,1:i, drop=FALSE]) )
-        R2cum <- cbind( R2cum, 1 - ( sum(difference^2) / sum(centered^2) ) )
-    }
-
-    ## Calculate R2
-    R2 <- vector(length=length(R2cum), mode="numeric")
-    R2[1] <- R2cum[1]
-    if (nPcs > 1) {
-        for (i in 2:nPcs) {
-            R2[i] <- R2cum[i] - R2cum[i - 1]
-        }
-    }
-
-    ####################################################################
-    ## Store the values in the pcaRes class, for compatibilty with
-    ## other methods provided in the package
-    ####################################################################
-
-    result             <- new("pcaRes")
-
-    result@completeObs    <- M$yest
-    result@center        <- apply(M$yest, 2, mean)
-    result@centered        <- FALSE
-    result@scaled        <- "none"
-    result@scores         <- M$scores 
-    result@loadings     <- M$PA
-    result@R2cum        <- c(R2cum)
-    result@R2        <- R2
-    result@sDev        <- apply(M$scores, 2, sd)
-    result@nObs         <- nrow(Matrix)
-    result@nVar         <- ncol(Matrix)
-##    result@subset        <- NULL 
-##    result@varLimit        <- NULL
-    result@nPcs        <- nPcs
-    result@method        <- "bpca"
-    result@missing        <- sum(is.na(Matrix))
-
-    return(result)
+  return(result)
 }

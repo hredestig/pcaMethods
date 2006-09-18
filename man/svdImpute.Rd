@@ -30,7 +30,7 @@ Missing values are denoted as \code{NA}
   small data sets, but complexity may rise if the data sets become very large.
 }
 \usage{
-svdImpute(Matrix, nPcs, threshold = 0.01, maxSteps = 100, center = TRUE,
+svdImpute(Matrix, nPcs=2, threshold = 0.01, maxSteps = 100, center = TRUE,
 verbose = interactive(), ...)
 }
 \arguments{
