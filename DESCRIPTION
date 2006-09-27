@@ -1,5 +1,5 @@
 Package: pcaMethods
-Version: 1.0.3
+Version: 1.0.4
 Date: 2006-07-26
 Author: Wolfram Stacklies, Henning Redestig
 Maintainer: Wolfram Stacklies <stacklies@mpimp-golm.mpg.de> 
@@ -11,7 +11,8 @@ Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA and
   as well as for accurate missing value estimation.
   A set of methods for printing and plotting the results is also provided.
   All methods make use of the same data structure (pcaRes) to provide
-  a unique interface to the PCA results.
+  a unique interface to the PCA results. Developed at the Max-Planck
+  Institute for Molecular Plant Physiology, Golm, Germany.
 License: GPL version 2 (or later)
 biocViews: Statistics
 Collate: classes.R generic.R pca.R BPCA_dostep.R bpca.R ppca.R BPCA_initmodel.R 

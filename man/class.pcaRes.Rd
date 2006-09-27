@@ -5,6 +5,7 @@
 \alias{print,pcaRes-method}
 \alias{summary,pcaRes-method}
 \alias{slplot,pcaRes-method}
+\alias{completeObs,pcaRes-method}
 
 \title{Class for representing a PCA result}
 
