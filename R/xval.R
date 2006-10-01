@@ -13,7 +13,7 @@ Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10) {
   ssx <- sum(originalData^2)
   
   if(object@method %in% c("svd"))
-    stop("Chosen PCA method can not handle missing values")
+    stop("Chosen PCA method can not handle missing values!")
   result <- matrix(NA, nPcs, ncol=nruncv)
   for(nr in 1:nruncv) {
     ## Error here, no complete rows and no complete columns may be deleted

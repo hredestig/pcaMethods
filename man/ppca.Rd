@@ -27,16 +27,20 @@
   In general few components are sufficient for reasonable estimation
   accuracy. See also the package documentation for further discussion
   on what kind of data PCA-based missing value estimation is advisable.\cr
-  Please not that results obtained with \code{Q2} cross validation may
-  not reflect the method's actual accuracy because the signs of scores
-  and loadings may be different for independent runs. This is because
-  for initial setup of the transformation matrix random numbers are used.\cr
 
   Requires \code{MASS}
 }
 \details{
   \bold{Complexity:} Runtime is linear in the number of data,
-  number of data dimensions and number of principal components.
+  number of data dimensions and number of principal components.\cr
+
+  \bold{Convergence:} The algorithms seems not to converge to proper results
+  in rare cases when unfavourable initial random numbers were chosen. 
+  To avoid this you can set the seed (parameter seed) of the
+  random number generator. \cr
+  If used for missing value estimation, results may be checked by simply
+  running the algorithm several times with changing seed, if the estimated
+  values show little variance the algorithm converged well.
 }
 \usage{
   ppca(Matrix, nPcs=2, center = TRUE, seed = NA, ...)

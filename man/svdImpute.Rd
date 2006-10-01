@@ -3,7 +3,7 @@
 \alias{svdImpute}
 \title{SVDimpute algorithm}
 \description{
-This implements the SVDimpute algorithm as proposed by Troyanskaya et.~al, 2001.
+This implements the SVDimpute algorithm as proposed by Troyanskaya et. al, 2001.
 The idea behind the algorithm is to estimate the missing values as a
 linear combination of the \code{k} most significant eigengenes.
 
