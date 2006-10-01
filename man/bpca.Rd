@@ -28,9 +28,6 @@
 	In general few components are sufficient for reasonable estimation
 	accuracy. See also the package documentation for further discussion
 	on what kind of data PCA-based missing value estimation is advisable.\cr
-	Please not that results obtained with \code{Q2} cross validation may
-	not reflect the method's actual accuracy because the signs of scores
-	and loadings may be different for independent runs.\cr
 
 	Requires \code{MASS}.
 }
