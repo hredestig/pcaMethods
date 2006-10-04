@@ -7,25 +7,29 @@
   algorithm which is an iterative approach for estimating the principal
   components extracting them one at a time. NIPALS can handle a small
   amount of missing values.}
-\usage{nipalsPca(object, nPcs=2, varLimit=1, maxSteps=5000, limit=1e-6, verbose=interactive(),...)}
+\usage{nipalsPca(Matrix, nPcs=2, center=TRUE, completeObs=TRUE, varLimit=1, maxSteps=5000, 
+  threshold=1e-6, verbose=interactive(),...)}
 \arguments{
-  \item{object}{Numerical matrix samples in rows and variables as
+  \item{Matrix}{Numerical matrix samples in rows and variables as
     columns.}
+  \item{nPcs}{Number of components that should be extracted.}
+  \item{center}{Mean center the data column wise if set TRUE}
+  \item{completeObs}{Return the estimated complete observations. This is
+    the input Matrix with NA values replaced by the estimated values.}
+  \item{varLimit}{Optionally the ratio of variance that should be
+    explained. \code{nPcs} is ignored if varLimit < 1}
   \item{maxSteps}{Defines how many iterations can be done before the
     algorithm should abort (happens almost exclusively when there were
     some wrong in the input data).}
-  \item{limit}{The limit condition for judging if the algorithm has
+  \item{threshold}{The limit condition for judging if the algorithm has
     converged or not, specifically if a new iteration is done if
     \eqn{(T_{old} - T)^T(T_{old} - T) > \code{limit}}.}
-  \item{nPcs}{Number of components that should be extracted.}
-  \item{varLimit}{Optionally the ratio of variance that should be
-    explained. \code{nPcs} is ignored if varLimit < 1}
   \item{verbose}{Show simple progress information.}
   \item{...}{Only used for passing through arguments.}
 }
 \details{
-  This method is incredibly slow and should not be used on larger
-  matrices. The power in missing value imputation is also quite
+  This method is quite slow what may lead to very long computation times
+  when used on larger matrices. The power in missing value imputation is also quite
   disputable.
 }
 

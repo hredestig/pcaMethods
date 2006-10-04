@@ -95,19 +95,29 @@ This allows to improve the estimation accuracy.\\
 PPCA is tolerant to amounts of missing values between 10\% to 15\%.
 If more data is missing the algorithm is likely not to converge to
 a reasonable solution.
-
 The method was implemented after the draft
 ``\texttt{EM Algorithms for PCA and Sensible PCA}''
 written by Sam Roweis and after the Matlab \texttt{ppca} script implemented
 by \emph{Jakob Verbeek}\footnote{\url{http://lear.inrialpes.fr/~verbeek/}}.
-
-Please check also the PPCA help file.
 
 \subsection*{Bayesian PCA (bpca)}
 Similar to probabilistic PCA, Bayesian PCA uses an EM approach together
 with a Bayesian model to calculate the likelihood for a reconstructed value.\\
 The algorithm seems to be tolerant to relatively high amounts of missing data
 (> 10\%).
+Scores and loadings obtained with Bayesian PCA generally differ
+from those obtained with conventional PCA.
+This is because BPCA was developed especially for missing value estimation.
+The algorithm does not force orthogonality between factor loadings,
+as a result factor loadings are not necessarily orthogonal.
+However, the BPCA authors found that including an orthogonality criterion made the
+predictions worse.\cr
+The authors also state that the difference between ``real'' and predicted
+Eigenvalues becomes larger when the number of observations is smaller,
+because it reflects the lack of information to accurately determine
+true factor loadings from the limited and noisy data.
+As a result, weights of factors to predict missing values are not the same as
+with conventional PCA, buth the missing value estimation is improved.
 
 BPCA was proposed by Oba et.~al \cite{oba03}.
 The method available in this package is a port of the \texttt{bpca} Matlab
@@ -178,15 +188,16 @@ For the sample data all methods show similar eigenvalues.
 One can also see
 that most of the variance is already captured by the first eigenvector,
 thus estimation is likely to work fine on this data.
-For BPCA, the eigenvalues are scaled differently because the scaling for scores / loadings differs from the other methods. But this is always a linear factor,
+For BPCA, the eigenvalues are scaled differently for reasons discussed above,
 see Figure \ref{fig:loadingBPCA}. The order of the eigenvectors remains the
-same. I will try to address this issue in future releases.
+same.
 \begin{figure}
 	\centering
 <<fig=true, width=12, height=12, results=hide, echo=false>>=
+par(mar=c(5, 6, 4, 2))
 sDevs <- cbind(resPCA@sDev, resPPCA@sDev, resBPCA@sDev, resSVDI@sDev, resNipals@sDev)
-matplot(sDevs, type = 'l', xlab="Eigenvalues", ylab="size", cex.lab=1.5, cex.main=1.5)
-legend(x="topright", legend=c("PCA", "PPCA", "BPCA", "SVDimpute","Nipals PCA"), lty=1:5, col=1:5, cex=1)
+matplot(sDevs, type = 'l', xlab="Eigenvalues", ylab="size", cex.lab=2.5, cex.main=1.5, cex.axis=2, lwd=2)
+legend(x="topright", legend=c("PCA", "PPCA", "BPCA", "SVDimpute","Nipals PCA"), lty=1:5, col=1:5, cex=2.5, lwd=2)
 @
 \caption{Eigenvalue structure as obtained with different methods\label{fig:eigenvalues}}
 \end{figure}
@@ -208,7 +219,6 @@ plot(resBPCA@loadings[,2], resSVDI@loadings[,2], xlab="BPCA", ylab="classic PCA"
   calculated with standard PCA. \label{fig:loadingBPCA}}
 \end{figure}
 
-\newpage
 \section{Cross validation}
 \texttt{Q2} is the goodness measure used for internal cross
 validation. This allows to estimate the level of structure in a data
@@ -289,7 +299,6 @@ barplot(drop(errEsti$nrmsep), xlab="Components", ylab="NRMSEP (Single iteration)
   NRMSEP. \label{fig:kEstimate}}
 \end{figure}
 
-\newpage
 \section{Visualisation of the results}
 Some methods for display of scores and loadings are also provided.
 \texttt{slplot()} is a convenient way to present a PCA result for two

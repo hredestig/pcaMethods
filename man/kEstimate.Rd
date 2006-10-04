@@ -5,6 +5,11 @@
 \description{
   Perform cross validation to estimate the optimal number of components for missing
   value estimation.
+  Cross validation is done on the subset containing only complete observations
+  because including incomplete observations may tamper the results.
+  The assumption hereby is that genes that are highly correlated in a distinct region (here
+  the non-missing observations) are also correlated in another (here the missing observations).
+  This also implies that the complete subset must be large enough to be representative.
   For each incomplete gene, the available values are divided into a user defined
   number of cv-segments. The segments have equal size, but are chosen from a random
   equal distribution. The non-missing values of the gene are covered completely.

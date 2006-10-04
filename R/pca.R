@@ -16,7 +16,7 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute"), 
   if(length(subset) > 0)
     object <- object[,subset]
 
-  object <- prep(object, ...)
+  #object <- prep(object, ...)
 
   if(missing > 0 & method == "svd") {
     warning("Found missing values, using the nipals method instead of requested svd")
@@ -40,16 +40,15 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute"), 
            res <- svdImpute(as.matrix(object),...)
          })
 
-  center <- attr(object, "scaled:center") 
-  if (!is.null(center)) {
-    res@center <- center 
-  }
-  res@centered <- !is.null(attr(object, "scaled:center"))
-  res@scaled <- attr(object, "scaled")
+  scaled = attr(object, "scaled")
+  if (!is.null(scaled)) {
+    res@scaled <- scaled
+  } else
+    res@scaled <- "none"
+
   if(length(subset) > 0)
     res@subset <- subset
-  res@missing <- missing
-
+    
   return(res)
 }
 
@@ -79,6 +78,7 @@ plotPcs <- function(object, pc=1:object@nPcs, scoresLoadings=c(TRUE, FALSE),...)
   for(i in 1:nrow(pp))
     slplot(object, pcs=pp[i,], scoresLoadings=scoresLoadings, rug=FALSE, sub="",...)
 }
+
 
 setMethod("print", "pcaRes",
           function(x, ...) {
@@ -139,7 +139,7 @@ setMethod("slplot", "pcaRes",
                 sub <- paste(sprintf("%.2f", object@R2cum[pcs] * 100),
                              "% of the variance explained", sep="")
 
-              if(sum(scoresLoadings) == 2) 
+              if(sum(scoresLoadings) == 2)
                 layout(matrix(c(1,2), 1, 2, TRUE), respect=matrix(c(1,1), 1, 2))
               if (length(pcs) == 1 || object@nPcs == 1) {
                 pcs <- 1
@@ -186,19 +186,28 @@ setMethod("slplot", "pcaRes",
             }
           })
 
-setMethod("completeObs", "pcaRes", 
-          function(object) {
-            if(object@method %in%  c("nipals", "svd"))
-              return(object@scores %*% t(object@loadings))
-            return(object@completeObs)
-          })
-
   
-nipalsPca <- function(object, nPcs=2, varLimit=1, maxSteps=5000, limit=1e-6, verbose=interactive(), ...) {
+nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimit=1, maxSteps=5000, 
+                      threshold=1e-6, verbose=interactive(), ...) {
 
+  ## Convert the object into a matrix (just in case we got a data frame) and do some
+  ## basic checks
+  Matrix <- as.matrix(Matrix)
+  if (!checkData(Matrix, verbose = verbose))
+    stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
+
+  if (nPcs > ncol(Matrix) - 1)
+    stop("more components than matrix columns selected, exiting")
+
+  if (center) {
+    object <- scale(Matrix, center = TRUE)
+    means <- attr(object, "scaled:center")
+  } else
+    object <- Matrix
+
+  missing <- is.na(Matrix)
   nObs <- nrow(object)
   nVar <- ncol(object)
-
 
   ##Find a good starting column
   ##(one where not all values are NA) and do some initial checking
@@ -261,7 +270,7 @@ nipalsPca <- function(object, nPcs=2, varLimit=1, maxSteps=5000, limit=1e-6, ver
       if (count > maxSteps) {
         stop("Too many iterations, quitting")
       }
-      if (t(na.omit(th.old - th)) %*% (na.omit(th.old - th)) <= limit) {
+      if (t(na.omit(th.old - th)) %*% (na.omit(th.old - th)) <= threshold) {
         continue = FALSE
       }
       if (verbose)cat("*")
@@ -286,11 +295,25 @@ nipalsPca <- function(object, nPcs=2, varLimit=1, maxSteps=5000, limit=1e-6, ver
       R2[i] <- R2cum[i] - R2cum[i-1]
     }
   }
+
+  if (completeObs) {
+    Ye <- scores %*% t(loadings)
+    if (center) {
+      for(i in 1:ncol(Ye)) {
+        Ye[,i] <- Ye[,i] + means[i]
+      }
+    }
+    cObs <- Matrix
+    cObs[missing] <- Ye[missing]
+  }
+
   rownames(scores) <- rownames(object)
   colnames(scores) <- paste("PC", 1:nPcs, sep="")
   rownames(loadings) <- colnames(object)
   colnames(loadings) <- paste("PC", 1:nPcs, sep="")
   r <- new("pcaRes")
+  if (completeObs)
+    r@completeObs <- cObs
   r@scores <- scores
   r@loadings <- loadings
   r@R2cum <- c(R2cum)
@@ -301,17 +324,39 @@ nipalsPca <- function(object, nPcs=2, varLimit=1, maxSteps=5000, limit=1e-6, ver
   r@varLimit <- varLimit
   r@nPcs <- nPcs
   r@scaled <- "none"
-  r@centered <- FALSE
+  r@centered <- center
+  r@center <- attr(scale(Matrix, center=TRUE, scale=FALSE), "scaled:center")
   r@method <- "nipals"
-  r
+  r@missing <- sum(is.na(Matrix))
+  return(r)
 }
 
-svdPca <- function(object, nPcs=2, varLimit=1, ...) {
+
+svdPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = FALSE, varLimit=1, ...) {
+  
+  ## Do some basic checks
+  Matrix <- as.matrix(Matrix)
+  if (!checkData(Matrix, verbose = verbose))
+    stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
+  if (nPcs > ncol(Matrix) - 1)
+    stop("more components than matrix columns selected, exiting")
+
+  if (sum(is.na(Matrix)) > 0)
+    stop("SVD PCA cannot handle missing values. Use Nipals PCA, PPCA, BPCA or SVDimpute!")
+
+  if (center) {
+    object <- scale(Matrix, center = TRUE, scale = FALSE)
+  } else
+    object <- Matrix
+
   pcs <- prcomp(object, center=FALSE, scale.=FALSE)
   imp <- summary(pcs)$importance
   if(varLimit < 1)
     nPcs <- sum(imp[3,] < varLimit) + 1
   r <- new("pcaRes")
+  if (completeObs)
+    r@completeObs <- Matrix
+  r@center <- attr(scale(Matrix, center=TRUE, scale=FALSE), "scaled:center")
   r@scores <- cbind(pcs$x[,1:nPcs])
   r@loadings <- cbind(pcs$rotation[,1:nPcs])
   r@R2cum <- imp[3,1:nPcs]
@@ -321,10 +366,11 @@ svdPca <- function(object, nPcs=2, varLimit=1, ...) {
   r@nVar <- ncol(object)
   r@varLimit <- varLimit
   r@scaled <- "none"
-  r@centered <- FALSE
+  r@centered <- center
   r@nPcs <- nPcs
   r@method <- "svd"
-  r
+  r@missing <- 0 
+  return(r)
 }
 
 prep <- function(object, scale=c("none", "pareto", "vector", "UV"), center=TRUE, ...) {

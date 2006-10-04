@@ -3,7 +3,7 @@
 \alias{svdImpute}
 \title{SVDimpute algorithm}
 \description{
-This implements the SVDimpute algorithm as proposed by Troyanskaya et. al, 2001.
+This implements the SVDimpute algorithm as proposed by Troyanskaya et al, 2001.
 The idea behind the algorithm is to estimate the missing values as a
 linear combination of the \code{k} most significant eigengenes.
 
@@ -30,8 +30,8 @@ Missing values are denoted as \code{NA}
   small data sets, but complexity may rise if the data sets become very large.
 }
 \usage{
-svdImpute(Matrix, nPcs=2, threshold = 0.01, maxSteps = 100, center = TRUE,
-verbose = interactive(), ...)
+svdImpute(Matrix, nPcs, center=TRUE, completeObs=TRUE, threshold = 0.01, 
+  maxSteps = 100, verbose = interactive(), ...)
 }
 \arguments{
   \item{Matrix}{\code{matrix} -- Data containing the variables in
@@ -41,11 +41,13 @@ verbose = interactive(), ...)
     The preciseness of the missing value estimation depends on the
     number of components, which should resemble the internal structure
     of the data.}
+  \item{center}{Mean center the data if TRUE}
+  \item{completeObs}{Return the estimated complete observations if TRUE. This is
+    the input data with NA values replaced by the estimated values.}
   \item{threshold}{The iteration stops if the change in the matrix
     falls below this threshold, the default is 0.01.
     (0.01 was empirically determined by Troyanskaya et. al)}
   \item{maxSteps}{Maximum number of iteration steps. Default is 100.}
-  \item{center}{Mean center the data if TRUE}
   \item{verbose}{Print some output if TRUE. Default is interactive()}
   \item{...}{Reserved for parameters used in future version of the algorithm}
 }
@@ -68,7 +70,7 @@ cond<-matrix(runif(rows * cols),rows,cols) < 0.1
 metaboliteData[cond] <- NA
 
 ## Perform probabilistic PCA using the 3 largest components
-result <- pca(metaboliteData, method="svdImpute", nPcs=3)
+result <- pca(metaboliteData, method="svdImpute", nPcs=3, center = TRUE)
 
 ## Get the estimated principal axes (loadings)
 loadings <- result@loadings

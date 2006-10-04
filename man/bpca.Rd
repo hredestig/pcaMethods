@@ -14,9 +14,22 @@
 	BPCA defines a likelihood function such that the likelihood for data
 	far from the training set is much lower, even if they are close to the
 	principal subspace.
-	This allows to improve the estimation accuracy.
 
-	The method works iteratively. Its complexity is growing with
+      Scores and loadings obtained with Bayesian PCA generally differ
+      from those obtained with conventional PCA.
+      This is because BPCA was developed especially for missing value estimation.
+	The algorithm does not force orthogonality between factor loadings,
+	as a result factor loadings are not necessarily orthogonal.
+	However, the BPCA authors found that including an orthogonality criterion made the
+	predictions worse.\cr
+      The authors also state that the difference between real and predicted
+      Eigenvalues becomes larger when the number of observation is smaller,
+      because it reflects the lack of information to accurately determine
+      true factor loadings from the limited and noisy data.
+	As a result, weights of factors to predict missing values are not the same as
+	with conventional PCA, buth the missing value estimation is improved.\cr
+
+	BPCA works iteratively, the complexity is growing with
 	\eqn{O(n^3)}{O(n^3)} because several matrix inversions are required.
 	The size of the matrices to invert depends on the number of components
 	used for re-estimation.\cr
@@ -27,7 +40,7 @@
 	number of components via cross validation.
 	In general few components are sufficient for reasonable estimation
 	accuracy. See also the package documentation for further discussion
-	on what kind of data PCA-based missing value estimation is advisable.\cr
+	about on what data PCA-based missing value estimation makes sense.\cr
 
 	Requires \code{MASS}.
 }
@@ -51,15 +64,18 @@
 	used for re-estimation.
 }
 \usage{
-        bpca(Matrix, nPcs = 2, maxSteps = 100, verbose = interactive(), ...)
+        bpca(Matrix, nPcs = NULL, completeObs = TRUE, maxSteps = 100, 
+        verbose = interactive(), ...)
 }
 \arguments{
 	\item{Matrix}{\code{matrix} -- Data containing the variables in
 	columns and observations in rows. The data may contain missing values,
 	denoted as \code{NA}.}
 	\item{nPcs}{\code{numeric} -- Number of components used for re-estimation.
-	Choosing few components may decrease the estimation
-	precision.}
+	Choosing few components may decrease the estimation precision. The default
+	is \code{ncol(Matrix) - 1}. }
+	\item{completeObs}{\code{boolean} Return the complete observations if TRUE. This
+	is the input data with NA values replaced by the estimated values.}
 	\item{maxSteps}{\code{numeric} -- Maximum number of estimation steps.
 	Default is 100. }
 	\item{verbose}{\code{boolean} -- BPCA prints the number of steps and the
@@ -92,7 +108,7 @@ cond<-matrix(runif(rows * cols),rows,cols) < 0.1
 metaboliteData[cond] <- NA
 
 ## Perform Bayesian PCA with 3 components
-result <- pca(metaboliteData, method="bpca", nPcs=2, center=FALSE, scale="none")
+result <- pca(metaboliteData, method="bpca", nPcs=2, center=FALSE)
 
 ## Get the estimated principal axes (loadings)
 loadings <- result@loadings

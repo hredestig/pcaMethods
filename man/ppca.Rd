@@ -43,7 +43,7 @@
   values show little variance the algorithm converged well.
 }
 \usage{
-  ppca(Matrix, nPcs=2, center = TRUE, seed = NA, ...)
+  ppca(Matrix, nPcs, center = TRUE, completeObs = TRUE, seed = NA, ...)
 }
 \arguments{
   \item{Matrix}{\code{matrix} -- Data containing the variables in
@@ -53,8 +53,10 @@
     The preciseness of the missing value estimation depends on the
     number of components, which should resemble the internal structure
     of the data.}
-  \item{center}{Mean center the data if TRUE}
-  \item{seed}{Set the seed for the random number generator. PPCA creates
+  \item{center}{\code{boolean} Mean center the data if TRUE}
+  \item{completeObs}{\code{boolean} Return the complete observations if TRUE. This
+    is the original data with NA values filled with the estimated values.}
+  \item{seed}{\code{numeric} Set the seed for the random number generator. PPCA creates
     fills the initial loading matrix with random numbers chosen from a normal
     distribution. Thus results may vary slightly. Set the seed for
     exact reproduction of your results.}
@@ -80,7 +82,7 @@ cond <- matrix(runif(rows * cols),rows,cols) < 0.1
 metaboliteData[cond] <- NA
 
 ## Perform probabilistic PCA using the 3 largest components
-result <- pca(metaboliteData, method="ppca", nPcs=3, center=TRUE, scale="none")
+result <- pca(metaboliteData, method="ppca", nPcs=3, center=TRUE)
 
 ## Get the estimated principal axes (loadings)
 loadings <- result@loadings
