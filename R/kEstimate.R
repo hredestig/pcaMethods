@@ -5,6 +5,8 @@
 ##
 ## Perform cross validation to estimate an optimal number of components for missing
 ## value estimation.
+## Cross validation is done on a subset containing only the complete observations
+## as inluding incomplete observations could lead to erroneous results.
 ## For each incomplete gene, the available values are diveded into a user defined
 ## number of segments. The segments have equal size, but are chosen from a random
 ## equal distribution. The available values are covered completely.
@@ -48,7 +50,7 @@
 ##########################################################################################
 
 kEstimate <- function(data, method = "ppca", maxPcs = 3, segs = 3, nruncv = 10,
-               allGenes = FALSE, verbose = interactive(), random = FALSE) {
+                      allGenes = FALSE, verbose = interactive(), random = FALSE) {
 
      ## If the data is a data frame, convert it into a matrix
     data <- as.matrix(data)
@@ -107,8 +109,7 @@ kEstimate <- function(data, method = "ppca", maxPcs = 3, segs = 3, nruncv = 10,
                         testSet <- set
                         testSet[cvsegs[[i]], index] <- NA
                         estimate <- pca(testSet, nPcs = nPcs, verbose = FALSE,
-                                   method = method, center = TRUE)@completeObs
-            
+                                        method = method, center = TRUE)@completeObs
                         estimate <- estimate[, index]
                         original <- target[compObs, ]
                     }

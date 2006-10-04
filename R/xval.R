@@ -10,7 +10,7 @@ Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10) {
   nR <- nrow(originalData)
   nC <- ncol(originalData)
 
-  ssx <- sum(originalData^2)
+  ssx <- sum(originalData^2, na.rm=TRUE)
   
   if(object@method %in% c("svd"))
     stop("Chosen PCA method can not handle missing values!")
