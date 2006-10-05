@@ -196,7 +196,7 @@ nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimi
   if (!checkData(Matrix, verbose = verbose))
     stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
 
-  if (nPcs > ncol(Matrix) - 1)
+  if (nPcs > ncol(Matrix))
     stop("more components than matrix columns selected, exiting")
 
   if (center) {
@@ -338,7 +338,7 @@ svdPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = FALSE, varLimit=
   Matrix <- as.matrix(Matrix)
   if (!checkData(Matrix, verbose = verbose))
     stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
-  if (nPcs > ncol(Matrix) - 1)
+  if (nPcs > ncol(Matrix))
     stop("more components than matrix columns selected, exiting")
 
   if (sum(is.na(Matrix)) > 0)

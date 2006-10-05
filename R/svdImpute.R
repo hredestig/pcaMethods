@@ -32,7 +32,7 @@
 ##
 #####################################################################################
 
-svdImpute <- function(Matrix, nPcs = 5, center = TRUE, completeObs = TRUE, threshold = 0.01, 
+svdImpute <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, threshold = 0.01, 
                       maxSteps = 100, verbose = interactive(), ...) {
 
     Matrix <- as.matrix(Matrix)
@@ -40,7 +40,7 @@ svdImpute <- function(Matrix, nPcs = 5, center = TRUE, completeObs = TRUE, thres
     if (!checkData(Matrix, verbose = verbose))
         stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
 
-    if (nPcs > ncol(Matrix) - 1)
+    if (nPcs > ncol(Matrix))
         stop("more components than matrix columns selected, exiting")
 
     Ye <- Matrix

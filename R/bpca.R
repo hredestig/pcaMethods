@@ -67,7 +67,7 @@
 ##
 ###########################################################################################
 
-bpca <- function(Matrix, nPcs = NULL, completeObs = TRUE, maxSteps = 100, 
+bpca <- function(Matrix, nPcs = 2, completeObs = TRUE, maxSteps = 100, 
                  verbose = interactive(), ... ) {
 
     ## If the data is a data frame, convert it into a matrix
@@ -77,10 +77,8 @@ bpca <- function(Matrix, nPcs = NULL, completeObs = TRUE, maxSteps = 100,
         stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
     }
 
-    if (!is.null(nPcs)) {
-        if (nPcs > ncol(Matrix) - 1) {
-            stop("more components than matrix columns selected, exiting\n")
-        }
+    if (nPcs > ncol(Matrix)) {
+        stop("more components than matrix columns selected, exiting\n")
     }
 
     mat <- Matrix
