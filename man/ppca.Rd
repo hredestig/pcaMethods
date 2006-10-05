@@ -43,7 +43,7 @@
   values show little variance the algorithm converged well.
 }
 \usage{
-  ppca(Matrix, nPcs, center = TRUE, completeObs = TRUE, seed = NA, ...)
+  ppca(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, seed = NA, ...)
 }
 \arguments{
   \item{Matrix}{\code{matrix} -- Data containing the variables in

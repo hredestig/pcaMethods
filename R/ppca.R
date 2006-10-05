@@ -58,7 +58,7 @@
 ##
 ##########################################################################################
           
-ppca <- function(Matrix, nPcs, center = TRUE, completeObs = TRUE, seed = NA, ... ) {
+ppca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, seed = NA, ... ) {
 
     ## Set the seed to the user defined value. This affects the generation
     ## of random values for the initial setup of the loading matrix
@@ -79,7 +79,7 @@ ppca <- function(Matrix, nPcs, center = TRUE, completeObs = TRUE, seed = NA, ...
     N <- nrow(Matrix)
     D <- ncol(Matrix)
 
-    if (d > D - 1) {
+    if (d > D) {
         stop("more components than matrix columns selected, exiting.\n")
     }
 

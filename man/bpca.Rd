@@ -64,7 +64,7 @@
 	used for re-estimation.
 }
 \usage{
-        bpca(Matrix, nPcs = NULL, completeObs = TRUE, maxSteps = 100, 
+        bpca(Matrix, nPcs = 2, completeObs = TRUE, maxSteps = 100, 
         verbose = interactive(), ...)
 }
 \arguments{
@@ -72,8 +72,7 @@
 	columns and observations in rows. The data may contain missing values,
 	denoted as \code{NA}.}
 	\item{nPcs}{\code{numeric} -- Number of components used for re-estimation.
-	Choosing few components may decrease the estimation precision. The default
-	is \code{ncol(Matrix) - 1}. }
+	Choosing few components may decrease the estimation precision.}
 	\item{completeObs}{\code{boolean} Return the complete observations if TRUE. This
 	is the input data with NA values replaced by the estimated values.}
 	\item{maxSteps}{\code{numeric} -- Maximum number of estimation steps.
