@@ -61,6 +61,10 @@ kEstimate <- function(data, method = "ppca", maxPcs = 3, segs = 3, nruncv = 10,
     if( !checkData(data, verbose=interactive()) )
         stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
 
+    if( (sum(is.na(data)) == 0) && (allGenes == FALSE) )
+        stop("No missing values. Maybe you want to set allGenes = TRUE. Exiting\n")
+
+
     missing <- apply(is.na(data), 2, sum) > 0
     missIx     <- which(missing == TRUE)
     if (allGenes)
