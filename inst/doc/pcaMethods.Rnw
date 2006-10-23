@@ -25,25 +25,25 @@ also be used for missing value estimation.
 When doing PCA one assumes that the data is restricted to a subspace
 of lower dimensionality, e.g. correlation patterns between jointly regulated
 genes. PCA aims to extract these structures thereby filtering noise out.
-If only the most significant eigenvectors are used for projection this can be
-written as:
+If only the most significant loadings (eigenvectors, also referred to as principal components)
+are used for projection this can be written as:
 \begin{equation}
-y = Cx + v
+X = TP^T + V
 \end{equation}
-Where $y$ denotes the observations, $C$ the transformation matrix
-(consisting of the eigenvectors of the covariance matrix),
-$x$ are the latent variables or scores, and $v$ is the noise.
+Where $X$ denotes the observations, $T$ the latent variables or scores,
+$P$ the transformation matrix (consisting of the most significant eigenvectors of the covariance matrix)
+and $V$ are the residuals.
 
 Missing values may be estimated by projecting the scores back into the original
 space.
 \begin{equation}
-y_{esti} = xC^T
+\hat{X} = TP^T
 \end{equation}
 Optimally, this produces an estimate of the missing data based on the
 underlying correlation structure, thereby ignoring noise.
 
-In order to calculate the transformation matrix $C$ one needs to determine
-the covariance matrix between variables or alternatively calculate $C$
+In order to calculate the transformation matrix $P$ one needs to determine
+the covariance matrix between variables or alternatively calculate $P$
 directly via SVD. In both cases, this can only be done on complete matrices.
 However, an approximation may be obtained by use of different
 regression methods.
@@ -51,7 +51,7 @@ The PCA methods provided in this package implement algorithms to accurately
 estimate the PCA solution on incomplete data.
 
 \section{PCA algorithms}
-All methods retrun a common class called \texttt{pcaRes} as a container
+All methods return a common class called \texttt{pcaRes} as a container
 for the results. This guarantees maximum flexibility for the user. A wrapper
 function called \texttt{pca()} is provided that receives the desired
 type of pca as a string.
@@ -62,7 +62,7 @@ function. It delivers the results as a \texttt{pcaRes} object
 for compatibility with the rest of the package.
 
 \subsection*{svdImpute}
-This implements the SVDimpute algorithm as proposed by Troyanskaya et.~al
+This implements the SVDimpute algorithm as proposed by Troyanskaya et~al
 \cite{troyanskaya01}.
 The idea behind the algorithm is to estimate the missing values as a
 linear combination of the $k$ most significant eigengenes\footnote{The
@@ -87,7 +87,41 @@ a probabilistic model. The EM approach is based on the assumption that
 the latent variables as well as the noise are normal distributed.
 
 In standard PCA data which is far from the training set but close to the
-principal subspace may have the same reconstruction error.
+principal subspace may have the same reconstruction error, see Figure
+\ref{fig:pcaSubspace} for explanation.
+<<results=hide, echo=false>>=
+library(pcaMethods)
+x=c(-4,7); y=c(-3,4)
+distX=rnorm(100, sd=0.3)*3
+distY=rnorm(100, sd=0.3) + distX * 0.3
+mat = cbind(distX, distY)
+res=pca(mat, nPcs=2, method="svd", center=F)
+loading = res@loadings[1,]
+grad = loading[2] / loading[1]
+if (grad < 0)
+   grad = grad * -1
+lx = c(-4,7)
+ly = c(grad * -4, grad * 7)
+@
+\begin{figure}
+	\centering
+<<fig=true, width=8, height=5, results=hide, echo=false>>=
+par(mar=c(2, 3, 2, 2))
+plot(x,y, type="n", cex.axis=2, cex.lab=2, xlab="", ylab="")
+abline(v=0, col="dark gray", lwd = 2); abline(h=0, col = "dark gray", lwd = 2)
+points(distX, distY, type = 'p', col = "blue")
+lines(lx,ly, lwd = 2)
+points(-1, -1 * grad + 0.5, pch = 19, col = "red", lwd=4)
+points(6, 6 * grad + 0.5, pch = 19, col = "red", lwd=4)
+@
+\caption{Normal distributed data with the first loading plotted in black.
+The two red points have the same reconstruction error because PCA does
+not define a density model. Thus the only measure of how well new data fits
+the model is the distance from the principal subspace. Data points far from
+the bulk of data but still close to the principal subspace will have a low
+reconstruction error. \label{fig:pcaSubspace}}
+\end{figure}
+
 PPCA defines a likelihood function such that the likelihood for data
 far from the training set is much lower, even if they are close to the
 principal subspace.
@@ -111,26 +145,26 @@ The algorithm seems to be tolerant to relatively high amounts of missing data
 Scores and loadings obtained with Bayesian PCA generally differ
 from those obtained with conventional PCA.
 This is because BPCA was developed especially for missing value estimation.
-The algorithm does not force orthogonality between factor loadings,
-as a result factor loadings are not necessarily orthogonal.
+The algorithm does not force orthogonality between loadings.
 However, the BPCA authors found that including an orthogonality criterion made the
-predictions worse.
+predictions worse (private communication).
 The authors also state that the difference between ``real'' and predicted
 Eigenvalues becomes larger when the number of observation is smaller,
 because it reflects the lack of information to accurately determine
-true factor loadings from the limited and noisy data.
+true loadings from the limited and noisy data.
 As a result, weights of factors to predict missing values are not the same as
-with conventional PCA, buth the missing value estimation is improved.
+with conventional PCA, but the missing value estimation is improved.
 
-BPCA was proposed by Oba et.~al \cite{oba03}.
+BPCA was proposed by Oba et~al \cite{oba03}.
 The method available in this package is a port of the \texttt{bpca} Matlab
 script also provided by the authors\footnote{
 \url{http://hawaii.aist-nara.ac.jp/\%7Eshige-o/tools/}}.
 
 \subsection*{Nipals PCA}
 Nipals (Nonlinear Estimation by Iterative Partial Least Squares) \cite{wold66}
-is an algorithm at the root of PLS regression. It is tolerant to small
-amounts (generally not more than 5\%) of missing data.
+is an algorithm at the root of PLS regression which can execute PCA with missing 
+values by simply leaving those out from the appropriate inner products.
+It is tolerant to small amounts (generally not more than 5\%) of missing data.
 
 \section{Getting started}
 \paragraph{Installing the package.} To install the package first download
@@ -162,7 +196,7 @@ library(lattice)
 library(pcaMethods)
 @
 To load the package and the two sample data sets type:
-<<>>=
+<<results=hide>>=
 library(pcaMethods)
 data(metaboliteData)
 data(metaboliteDataComplete)
@@ -185,21 +219,22 @@ resNipals  <- pca(md, method="nipals", center=FALSE, nPcs=5)
 Figure \ref{fig:eigenvalues} shows a plot of the eigenvalue structure
 (\texttt{pcaRes@sDev}).
 If most of the variance is captured
-with few eigenvectors PCA is likely to produce good missing value
+with few loadings PCA is likely to produce good missing value
 estimation results.
 For the sample data all methods show similar eigenvalues.
 One can also see
-that most of the variance is already captured by the first eigenvector,
+that most of the variance is already captured by the first loading,
 thus estimation is likely to work fine on this data.
 For BPCA, the eigenvalues are scaled differently for reasons discussed above,
-see Figure \ref{fig:loadingBPCA}. The order of the eigenvectors remains the
+see Figure \ref{fig:loadingBPCA}. The order of the loadings remains the
 same.
 \begin{figure}
 	\centering
 <<fig=true, width=12, height=12, results=hide, echo=false>>=
+par(mar=c(5, 6, 4, 2))
 sDevs <- cbind(resPCA@sDev, resPPCA@sDev, resBPCA@sDev, resSVDI@sDev, resNipals@sDev)
-matplot(sDevs, type = 'l', xlab="Eigenvalues", ylab="size", cex.lab=1.5, cex.main=1.5)
-legend(x="topright", legend=c("PCA", "PPCA", "BPCA", "SVDimpute","Nipals PCA"), lty=1:5, col=1:5, cex=1)
+matplot(sDevs, type = 'l', xlab="Eigenvalues", ylab="size", cex.lab=2.5, cex.main=1.5, lwd=3, cex.axis=2)
+legend(x="topright", legend=c("PCA", "PPCA", "BPCA", "SVDimpute","Nipals PCA"), lty=1:5, col=1:5, cex=2, lwd=3)
 @
 \caption{Eigenvalue structure as obtained with different methods\label{fig:eigenvalues}}
 \end{figure}
@@ -224,7 +259,7 @@ plot(resBPCA@loadings[,2], resSVDI@loadings[,2], xlab="BPCA", ylab="classic PCA"
 \section{Cross validation}
 \texttt{Q2} is the goodness measure used for internal cross
 validation. This allows to estimate the level of structure in a data
-set and to optimise the choice of number of principal components.
+set and to optimise the choice of number of loadings.
 Cross validation is performed by removing random elements of
 the data matrix, then estimating these using the PCA algorithm of
 choice and then calculating $Q^2$ accordingly. At the moment,
@@ -234,8 +269,8 @@ cross-validation is scheduled for implementation in later versions.
 $Q^2$ is defined as following for the mean centered data (and possibly
 scaled) matrix $X$.
 
-$$\mathrm{SSX}=\sum (x_{i,k})^2$$
-$$\mathrm{PRESS}=\sum (x_{i,k} - \hat{x}_{i,k})^2$$
+$$\mathrm{SSX}=\sum (x_{ij})^2$$
+$$\mathrm{PRESS}=\sum (x_{ij} - \hat{x}_{ij})^2$$
 $$Q^2=1 - \mathrm{PRESS}/\mathrm{SSX}$$
 The maximum value for $Q^2$ is thus 1 which means that all variance in
 $X$ is represented in the predictions; $X=\hat{X}$. 
@@ -266,37 +301,38 @@ print(xyplot(Q2~PC|method, q2, ylab=expression(Q^2), type="h", lwd=4))
 \end{figure}
 
 The second method called \texttt{kEstimate} uses cross validation to
-estimate the optimal number of components for missing value
-estimation.  The \texttt{NRMSEP} (normalised root mean square error)
+estimate the optimal number of loadings for missing value
+estimation.  The \texttt{NRMSEP} (normalised root mean square error of prediction)
 \cite{feten05} is used to define the average error of prediction. This
 error normalises the square difference between real and estimated
-values for a certain gene by the variance of this gene. The idea
+values for a certain gene by the variance within this gene. The idea
 behind this normalisation is that the error of prediction will
 automatically be higher if the variance is higher.  The
 \texttt{NRMSEP} for mean imputation is $\sqrt{\frac{nObs}{nObs - 1}}$
 when cross validation is used, where $nObs$ is the number of
 observations.  The exact definition is:
 \begin{equation}
-NRMSEP_k = \sqrt{\frac{1}{p} \sum_{j \in P} \frac{\sum_{i \in T_j}
-(y_{ij} - ye_{ijk})^2}{t_j s_{y_j}^2}}
+NRMSEP_k = \sqrt{\frac{1}{g} \sum_{j \in G} \frac{\sum_{i \in O_j}
+(x_{ij} - \hat{x}_{ijk})^2}{o_j s_{x_j}^2}}
 \end{equation}
-where $s^2_{y_j} = \sum_{i=1}^n (y_{ij} - \overline{y}_j)^2 / (n - 1)$,
+where $s^2_{x_j} = \sum_{i=1}^n (x_{ij} - \overline{x}_j)^2 / (n - 1)$,
 this is the variance within a certain gene.
-Further, $P$ denotes the set of incomplete genes, $p$ is the number of
-incomplete genes. $T_j$ is the set of missing observations in
-gene $j$ and $t_j$ is the number of missing observations in gene $j$.
-$ye_{ijk}$ stands for the estimate of value $i$ of gene $j$ using $k$
-components. See Figure \ref{fig:kEstimate} for an example. 
+Further, $G$ denotes the set of incomplete genes, $g$ is the number of
+incomplete genes. $O_j$ is the set of missing observations in
+gene $j$ and $o_j$ is the number of missing observations in gene $j$.
+$\hat{x}_{ijk}$ stands for the estimate of value $i$ of gene $j$ using $k$
+loadings. See Figure \ref{fig:kEstimate} for an example. 
 <<echo=true, results=hide>>=
 errEsti <- kEstimate(md, method = "svdImpute", maxPcs=5, nruncv=1)
 @
 \begin{figure}[!ht]
   \centering
 <<fig=true, width=9, height=9, results=hide, echo=false>>=
-barplot(drop(errEsti$nrmsep), xlab="Components", ylab="NRMSEP (Single iteration)", cex.lab=1.2)
+par(mar=c(5, 6, 4, 2))
+barplot(drop(errEsti$nrmsep), xlab="Loadings", ylab="NRMSEP (Single iteration)", cex.lab=2, cex.axis=1.5)
 @
 \caption{Boxplot showing the \texttt{NRMSEP} versus the number of
-  components. In this example only one iteration was performed, it is
+  loadings. In this example only one iteration was performed, it is
   recommendable to allow more iterations to obtain better estimates of the
   NRMSEP. \label{fig:kEstimate}}
 \end{figure}
@@ -304,7 +340,7 @@ barplot(drop(errEsti$nrmsep), xlab="Components", ylab="NRMSEP (Single iteration)
 \section{Visualisation of the results}
 Some methods for display of scores and loadings are also provided.
 \texttt{slplot()} is a convenient way to present a PCA result for two
-components. An example is shown in Figure \ref{fig:slplot}.
+scores / loadings. An example is shown in Figure \ref{fig:slplot}.
 \begin{figure}[!h]
   \centering
 <<fig=true, width=11, height=7, results=hide, echo=false>>=
@@ -330,7 +366,7 @@ plotPcs(resPPCA, pc=1:3, scoresLoadings=c(TRUE, FALSE))
 P. and Hastie T. and Tibshirani R. and Botstein D. and Altman RB.
 {\sl Missing value estimation methods for DNA microarrays.}
 Bioinformatics. 2001 Jun;17(6):520-5.
-\bibitem{feten05} G. Feten and T. Almoy and A.H. Aastveit
+\bibitem{feten05} Feten G. and Almoy T. and Aastveit A.H.
 {\sl Prediction of Missing Values in Microarray and Use of
 Mixed Models to Evaluate the Predictors.}, Stat. Appl. Genet. Mol. Biol.
 2005;4(1):Article10

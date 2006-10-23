@@ -8,6 +8,11 @@
 ##   the columns of mat, and the number of columns of ONB is the
 ##   rank of mat.
 ##
+##   Input parameters:
+##   mat      - matrix to calculate orthonormal base
+##   skipInac - do not include components with precision below .Machine$double.eps
+##              if TRUE
+##
 ## Author: Wolfram Stacklies
 ##         Max Planck Institut fuer Molekulare Pflanzenphysiologie
 ##         Golm, Germany
@@ -18,7 +23,7 @@
 ###################################################################################
 
 
-orth <- function(mat) {
+orth <- function(mat, skipInac = FALSE) {
 
     if(nrow(mat) > ncol(mat)) {
         leftSVs <- ncol(mat)
@@ -45,21 +50,29 @@ orth <- function(mat) {
     tol <- max(m,n) * max(s) * .Machine$double.eps
     r <- sum(s > tol)
     if ( r < ncol(U) ) {
-        warning("Precision for components ", r + 1 , " - ", ncol(U), 
-            " is below .Machine$double.eps. \n",
-            "Results for those components are likely to be inaccurate!!\n",
-            "These component(s) are not included in the returned solution!!\n")
+        if (skipInac) {
+            warning("Precision for components ", r + 1 , " - ", ncol(U), 
+                    " is below .Machine$double.eps. \n",
+                    "Results for those components are likely to be inaccurate!!\n",
+                    "These component(s) are not included in the returned solution!!\n")
+        } else {
+            warning("Precision for components ", r + 1 , " - ", ncol(U), 
+                    " is below .Machine$double.eps. \n",
+                    "Results for those components are likely to be inaccurate!!\n")
+        }
     }
     
-    ONB <- U[, 1:r, drop=FALSE]
-    ## Assing correct row and colnames
-    rownames(ONB) <- labels(mat[, 1:r, drop=FALSE])[[1]];
-    colnames(ONB) <- labels(mat[, 1:r, drop=FALSE])[[2]];
-
-    ##ONB<-U
-    ## Assing correct row and colnames
-        ##rownames(ONB) <- labels(mat)[[1]];
-        ##colnames(ONB) <- labels(mat)[[2]];
+    if (skipInac) {
+        ONB <- U[, 1:r, drop=FALSE]
+        ## Assing correct row and colnames
+        rownames(ONB) <- labels(mat[, 1:r, drop=FALSE])[[1]];
+        colnames(ONB) <- labels(mat[, 1:r, drop=FALSE])[[2]];
+    } else {
+        ONB<-U
+        ## Assing correct row and colnames
+        rownames(ONB) <- labels(mat)[[1]];
+        colnames(ONB) <- labels(mat)[[2]];
+    }
 
     return(ONB)
 }
