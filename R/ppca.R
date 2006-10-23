@@ -74,7 +74,7 @@ ppca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, seed = NA,
         stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
     }
 
-    threshold <- 1e-3
+    threshold <- 1e-5
 
     N <- nrow(Matrix)
     D <- ncol(Matrix)
