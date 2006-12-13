@@ -43,6 +43,9 @@
 	about on what data PCA-based missing value estimation makes sense.\cr
 
 	Requires \code{MASS}.
+
+        It is not recommended to use this function directely but rather to use
+        the pca() wrapper function.
 }
 \details{
 	Details about the probabilistic model underlying BPCA are found in
@@ -60,7 +63,7 @@
 	\deqn{maxSteps \cdot row_{miss} \cdot O(n^3)}{maxSteps * row_miss * O(n^3)}
 	Where \eqn{row_{miss}}{row_miss} is the number of rows containing missing values
 	and \eqn{O(n^3)}{O(n^3)} is the complexity for inverting a matrix of size
-	\eqn{components ×components}. Components is the number of components
+	\eqn{components}{components}. Components is the number of components
 	used for re-estimation.
 }
 \usage{

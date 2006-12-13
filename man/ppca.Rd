@@ -29,14 +29,19 @@
   on what kind of data PCA-based missing value estimation is advisable.\cr
 
   Requires \code{MASS}
+
+  It is not recommended to use this function directely but rather to use
+  the pca() wrapper function.
 }
 \details{
   \bold{Complexity:} Runtime is linear in the number of data,
   number of data dimensions and number of principal components.\cr
 
-  \bold{Convergence:} The algorithms seems not to converge to proper results
+  \bold{Convergence:} The algorithms does not to converge to proper results
   in rare cases when unfavourable initial random numbers were chosen. 
-  To avoid this you can set the seed (parameter seed) of the
+  The threshold indicating convergence was changed from 1e-3 in 1.2.x
+  to 1e-5 in the current version what leads to much more stable results.
+  For reproducability you can set the seed (parameter seed) of the
   random number generator. \cr
   If used for missing value estimation, results may be checked by simply
   running the algorithm several times with changing seed, if the estimated

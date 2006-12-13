@@ -1,20 +1,21 @@
 Package: pcaMethods
-Version: 1.3.3
-Date: 2006-07-26
+Version: 1.5.0
+Date: 2006-12-11
 Author: Wolfram Stacklies, Henning Redestig
-Maintainer: Wolfram Stacklies <stacklies@mpimp-golm.mpg.de> 
+Maintainer: Wolfram Stacklies <wolfram.stacklies@gmail.com> 
 Title: A collection of PCA methods.
 Depends: R, MASS, ellipse, pls, methods
 Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA and
-  the conventional SVD PCA.
+  the conventional SVD PCA. A cluster based method for missing value
+  estimationn is included for comparison.
   BPCA, PPCA and NipalsPCA may be used to perform PCA on incomplete data 
   as well as for accurate missing value estimation.
   A set of methods for printing and plotting the results is also provided.
-  All methods make use of the same data structure (pcaRes) to provide
+  All PCA methods make use of the same data structure (pcaRes) to provide
   a unique interface to the PCA results. Developed at the Max-Planck
   Institute for Molecular Plant Physiology, Golm, Germany.
 License: GPL version 2 (or later)
 biocViews: Statistics
 Collate: classes.R generic.R pca.R BPCA_dostep.R bpca.R ppca.R BPCA_initmodel.R 
- orth.R repmat.R xval.R svdImpute.R checkData.R kEstimate.R
+ orth.R repmat.R xval.R svdImpute.R checkData.R kEstimate.R llsImpute.R
 SaveImage: no

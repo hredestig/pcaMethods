@@ -1,7 +1,11 @@
 pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute"), subset=numeric(),...) {
   
-  if(inherits(object, "exprSet")) 
+  isExprSet <- FALSE
+  if(inherits(object, "exprSet")) {
+    set <- object
+    isExprSet <- TRUE
     object <- t(exprs(object))
+  }
 
   method <- match.arg(method)
 
@@ -15,8 +19,6 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute"), 
 
   if(length(subset) > 0)
     object <- object[,subset]
-
-  #object <- prep(object, ...)
 
   if(missing > 0 & method == "svd") {
     warning("Found missing values, using the nipals method instead of requested svd")
@@ -48,9 +50,59 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute"), 
 
   if(length(subset) > 0)
     res@subset <- subset
-    
-  return(res)
+   
+  ## If the input was an exprSet we also return an exprSet object
+  if (isExprSet) {
+      set@exprs <- t(res@completeObs)
+      return(list(res, set))
+  } else
+      return(res)
 }
+
+
+##
+## This method currently only serves for llsImpute
+##
+nni <- function(object, method=c("llsImpute"), subset=numeric(), ...) {
+
+  isExprSet <- FALSE
+  if(inherits(object, "exprSet")) {
+    set <- object
+    isExprSet <- TRUE
+    object <- t(exprs(object))
+  }
+
+  method <- match.arg(method)
+
+  # Do some basic checks of the data. We exit if the data contains NaN or Inf
+  # values or is not numeric.
+  if ( !checkData(as.matrix(object), verbose = interactive()) )
+        stop("Invalid data format, exiting...\n",
+             "Run checkData(data, verbose = TRUE) for details\n")
+
+  missing <- sum(is.na(object))
+  if(length(subset) > 0)
+    object <- object[,subset]
+
+  res <- llsImpute(object, ...) 
+
+  scaled = attr(object, "scaled")
+  if (!is.null(scaled)) {
+    res@scaled <- scaled
+  } else
+    res@scaled <- "none"
+
+  if(length(subset) > 0)
+    res@subset <- subset
+
+  ## If the input was an exprSet we also return an exprSet object
+  if (isExprSet) {
+      set@exprs <- t(res@completeObs)
+      return(list(res, set))
+  } else
+      return(res)
+}
+
 
 plotPcs <- function(object, pc=1:object@nPcs, scoresLoadings=c(TRUE, FALSE),...) {
 
@@ -98,6 +150,21 @@ setMethod("print", "pcaRes",
             print(dim(x@scores))
             cat("Loadings structure:\n")
             print(dim(x@loadings))
+          })
+
+setMethod("print", "nniRes",
+          function(x, ...) {
+            summary(x)
+            cat(x@nVar, "\tVariables\n")
+            cat(x@nObs,"\tSamples\n")
+            cat(x@missing, "\tNA's\n")
+            cat("*** Data was ")
+            if(x@scaled != "none") { cat("scaled (using ",x@scaled,") ", sep="") }
+            else { cat("NOT scaled ") }
+            if(x@centered && (x@scaled == "none")) { cat("but centered ***\n") }
+            else if(x@centered && (x@scaled != "none")) { cat("and centered ***\n") }
+            else if(!x@centered && (x@scaled != "none")) { cat("but NOT centered ***\n") }
+            else if(!x@centered && (x@scaled == "none")) { cat("and NOT centered ***\n") }
           })
 
 setMethod("summary", "pcaRes",

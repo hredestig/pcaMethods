@@ -8,6 +8,10 @@ The idea behind the algorithm is to estimate the missing values as a
 linear combination of the \code{k} most significant eigengenes.
 
 Missing values are denoted as \code{NA}
+
+It is not recommended to use this function directely but rather to use
+the pca() wrapper function.
+
 }
 \details{
   As SVD can only be performed on complete matrices, all missing

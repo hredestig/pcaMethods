@@ -2,7 +2,8 @@ importFrom(stats, screeplot)
 
 
 exportClasses(
-              pcaRes
+              pcaRes,
+              nniRes
               )
 
 exportMethods(
@@ -13,6 +14,7 @@ exportMethods(
 
 export(
        pca,
+       nni,
        plotPcs,
        ppca,
        bpca,
@@ -22,5 +24,6 @@ export(
        Q2,
        svdImpute,
        checkData,
-       kEstimate
+       kEstimate,
+       llsImpute
        )

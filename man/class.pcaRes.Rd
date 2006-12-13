@@ -13,13 +13,14 @@
 
 \section{Creating Objects}{
   \code{new("pcaRes", scores=[the scores], loadings=[the loadings],
-    k=[amount of PCs], R2cum=[cumulative R2], nobs=[amount of
-    observations], nvar=[amount of variables], R2=[R2 for each
-    individual PC], sdev=[stdev for each individual PC], scaled=[which
+    nPcs=[amount of PCs], R2cum=[cumulative R2], nObs=[amount of
+    observations], nVar=[amount of variables], R2=[R2 for each
+    individual PC], sDev=[stdev for each individual PC], scaled=[which
     method was used to scale data], centered=[was data centered],
     varLimit=[what variance limit was exceeded], method=[method used to
     calculate PCA], subset=[subset of variables of data used],
-    missing=[amount of NAs], center=[original means])}
+    missing=[amount of NAs], center=[original means], 
+    completeObs=[estimated complete observations])}
 }
 
 \section{Slots}{
@@ -41,7 +42,7 @@
     \item{method}{"character", the method used to perform PCA}
     \item{missing}{"numeric", the total amount of missing values in
       original data}
-    \item{completeObs}{"matrix", the complete observations}
+    \item{completeObs}{"matrix", the estimated complete observations}
   }
 }
 \section{Methods}{

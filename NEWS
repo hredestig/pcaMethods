@@ -1,1 +1,7 @@
+12/11/06 - kEstimate interface has changed. Instead of specifying a
+           single value for the maximum number of pcs it is now possible
+           to specify an array, e.g. c(3,5,7,9.20) or 3:7
+12/11/06 - Added a cluster based imputation method called llsImpute.
+           This is mainly thought for comparison with the other methods.
+           kEstimate may also be used with llsImpute.
 08/27/06 - This is the first revision of our pca package. Enjoy!
