@@ -3,7 +3,11 @@
 \title{Perform principal component analysis using singular value decomposition}
 \description{A wrapper function for R's standard function \code{prcomp}.
   Delivers the result as a \code{pcaRes} method for compatibility with
-  the rest of the pcaMethods package.}
+  the rest of the pcaMethods package.
+
+  It is not recommended to use this function directely but rather to use
+  the pca() wrapper function.
+}
 \usage{svdPca(Matrix, nPcs=2, center=TRUE, completeObs=FALSE, varLimit=1,...)}
 \arguments{
   \item{Matrix}{Numerical matrix samples in rows and variables as columns.}

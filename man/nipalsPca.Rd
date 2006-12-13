@@ -6,7 +6,11 @@
   matrix using either the NIPALS
   algorithm which is an iterative approach for estimating the principal
   components extracting them one at a time. NIPALS can handle a small
-  amount of missing values.}
+  amount of missing values.
+
+  It is not recommended to use this function directely but rather to use
+  the pca() wrapper function.
+}
 \usage{nipalsPca(Matrix, nPcs=2, center=TRUE, completeObs=TRUE, varLimit=1, maxSteps=5000, 
   threshold=1e-6, verbose=interactive(),...)}
 \arguments{

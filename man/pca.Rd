@@ -33,7 +33,8 @@
 }
 
 \value{
-  A \code{pcaRes} object.
+  A \code{pcaRes} object. Or a list containing a pcaRes object as first and an
+  exprSet object as second entry if the input was of type exprSet.
 }
 \references{
   Wold, H. (1966) Estimation of principal components and related models by

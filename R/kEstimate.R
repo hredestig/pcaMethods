@@ -1,16 +1,15 @@
 ##########################################################################################
 ##
-##kEstimate <- function(data, method = "ppca", maxPcs = 3, segs = 3, nruncv = 10,
-##                      allGenes = FALSE, verbose = interactive(), random = FALSE) {
+## kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
+##                       allGenes = FALSE, verbose = interactive(), random = FALSE)
 ##
 ## Perform cross validation to estimate an optimal number of components for missing
 ## value estimation.
-## Cross validation is done on a subset containing only the complete observations
-## as inluding incomplete observations could lead to erroneous results.
+## Cross validation is done on the complete subset of a varialbe (gene).
 ## For each incomplete gene, the available values are diveded into a user defined
 ## number of segments. The segments have equal size, but are chosen from a random
 ## equal distribution. The available values are covered completely.
-## PPCA, BPCA, SVDimpute and Nipals PCA may be used for imputation.
+## PPCA, BPCA, SVDimpute, Nipals PCA and llsImpute may be used for imputation.
 ##
 ## The whole cross validation is repeated several times.
 ## As error measure the NRMSEP (see Feten 2005) is used. This error basically
@@ -21,9 +20,13 @@
 ## Parameters:
 ##    data        - numeric matrix containing observations in rows and 
 ##                  genes in columns
-##    method      - One of ppca | bpca | svdImpute | nipals
-##    maxPcs      - number of principal components to use for cross validation.
-##                  The NRMSEP is calculated for 1:maxPcs components.
+##    method      - One of ppca | bpca | svdImpute | nipals | llsImpute | llsImputeAll.
+##                  llsImputeAll uses llsImpute with option allGenes = TRUE.
+##    evalPcs     - The principal components to use for cross validation
+##                  or cluster sizes if used with llsImpute.
+##                  Should be an array containing integer values, eg. evalPcs = 1:10
+##                  or evalPcs = C(2,5,8).
+##                  The NRMSEP is calculated for each component.
 ##    segs        - number of segments for cross validation
 ##    nruncv      - Times the whole cross validation is repeated
 ##    allGenes    - If TRUE, the NRMSEP is calculated for all genes,
@@ -41,16 +44,24 @@
 ## nrmsep    - a matrix of dimension [nruncv, maxPcs].
 ##             The columns contain the NRMSEP achieved for each repeat of the
 ##             cross validation.
+## evalPcs   - The evaluated numbers of pc's or cluster sizes (same as input)
 ##
 ## Author:  Wolfram Stacklies
 ##          Max Planck Institute for Molecular Plant Physiology
 ## Date:    06/28/2006
 ## Contact: wolfram.stacklies@gmail.com
 ##
+## Last modified: 12/11/06 by Wolfram Stacklies
+##
 ##########################################################################################
 
-kEstimate <- function(data, method = "ppca", maxPcs = 3, segs = 3, nruncv = 10,
+kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
                       allGenes = FALSE, verbose = interactive(), random = FALSE) {
+
+    method <- match.arg(method, c("ppca", "bpca", "svdImpute", "nipals", 
+                                  "llsImpute", "llsImputeAll"))
+    maxPcs <- max(evalPcs)
+    lengthPcs <- length(evalPcs)
 
      ## If the data is a data frame, convert it into a matrix
     data <- as.matrix(data)
@@ -73,8 +84,10 @@ kEstimate <- function(data, method = "ppca", maxPcs = 3, segs = 3, nruncv = 10,
     complete <- !missing
     compIx    <- which(complete == TRUE)
 
-    finalNrmsep <- matrix(0, nruncv, maxPcs)
-    for(nPcs in 1:maxPcs) {
+    finalNrmsep <- matrix(0, nruncv, lengthPcs)
+    iteration <- 0
+    for(nPcs in evalPcs) {
+        iteration = iteration + 1
         if (verbose) { cat("Doing CV for ", nPcs, " component(s) ") }
         error <- matrix(0, length(missIx), nruncv)
         for(cviter in 1:nruncv) {
@@ -112,8 +125,18 @@ kEstimate <- function(data, method = "ppca", maxPcs = 3, segs = 3, nruncv = 10,
                     ## Impute values using the given regression method
                         testSet <- set
                         testSet[cvsegs[[i]], index] <- NA
-                        estimate <- pca(testSet, nPcs = nPcs, verbose = FALSE,
-                                        method = method, center = TRUE)@completeObs
+                        if (method == "llsImpute") {
+                            estimate <- llsImpute(testSet, k = nPcs, verbose = FALSE,
+                                                  allGenes = FALSE, 
+                                                  center = FALSE)@completeObs
+                        } else if (method == "llsImputeAll") {
+                            estimate <- llsImpute(testSet, k = nPcs, verbose = FALSE,
+                                                  allGenes = TRUE, 
+                                                  center = FALSE)@completeObs
+                        } else {
+                            estimate <- pca(testSet, nPcs = nPcs, verbose = FALSE,
+                                            method = method, center = TRUE)@completeObs
+                        }
                         estimate <- estimate[, index]
                         original <- target[compObs, ]
                     }
@@ -128,16 +151,17 @@ kEstimate <- function(data, method = "ppca", maxPcs = 3, segs = 3, nruncv = 10,
         } ##iteration over nruncv
         
         errorAllGenes <- apply(error, 2, sum) / nrow(error)
-        finalNrmsep[, nPcs] <- sqrt(errorAllGenes)
+        finalNrmsep[, iteration] <- sqrt(errorAllGenes)
         if (verbose)
-            cat(" - the average NRMSEP is ", sum(finalNrmsep[,nPcs]) / nrow(finalNrmsep), 
-                ". The variance is ", var(finalNrmsep[,nPcs]), "\n")
+            cat(" - the average NRMSEP is ", sum(finalNrmsep[,iteration]) / nrow(finalNrmsep), 
+                ". The variance is ", var(finalNrmsep[,iteration]), "\n")
     } ## iteration over number components
 
     avgNrmsep <- apply(finalNrmsep, 2, sum)
     ret <- list()
     ret$mink <- which(avgNrmsep == min(avgNrmsep))
     ret$nrmsep <- finalNrmsep
+    ret$evalPcs <- evalPcs
 
     return(ret)
 }
