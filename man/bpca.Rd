@@ -109,7 +109,7 @@ cols <- ncol(metaboliteData)
 cond<-matrix(runif(rows * cols),rows,cols) < 0.1
 metaboliteData[cond] <- NA
 
-## Perform Bayesian PCA with 3 components
+## Perform Bayesian PCA with 2 components
 result <- pca(metaboliteData, method="bpca", nPcs=2, center=FALSE)
 
 ## Get the estimated principal axes (loadings)

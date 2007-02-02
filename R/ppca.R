@@ -189,22 +189,22 @@ ppca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, seed = NA,
     cObs <- Matrix
     cObs[hidden] <- Ye[hidden]
 
-        ## Calculate R2cum
+    ## Calculate R2cum
     R2cum <- NULL
-    scaled  <- scale(cObs, center = TRUE, scale = FALSE)
-        for (i in 1:ncol(C)) {
-                difference <- scaled - ( X[,1:i, drop=FALSE] %*% t(C[,1:i, drop=FALSE]) )
-                R2cum <- cbind( R2cum, 1 - ( sum(difference^2) / sum(scaled^2) ) )
-        }
+    scaled  <- scale(Matrix, center = TRUE, scale = FALSE)
+    for (i in 1:ncol(C)) {
+      difference <- scaled - ( X[,1:i, drop=FALSE] %*% t(C[,1:i, drop=FALSE]) )
+      R2cum <- cbind( R2cum, 1 - ( sum(difference^2, na.rm=TRUE) / sum(scaled^2, na.rm=TRUE) ) )
+    }
 
     ## Calculate R2
-        R2 <- vector(length=length(R2cum), mode="numeric")
-        R2[1] <- R2cum[1]
-        if (ncol(C) > 1) {
-                for (i in 2:ncol(C)) {
-                        R2[i] <- R2cum[i] - R2cum[i - 1]
-                }
-        }
+    R2 <- vector(length=length(R2cum), mode="numeric")
+    R2[1] <- R2cum[1]
+    if (ncol(C) > 1) {
+      for (i in 2:ncol(C)) {
+        R2[i] <- R2cum[i] - R2cum[i - 1]
+      }
+    }
 
 
     ####################################################################

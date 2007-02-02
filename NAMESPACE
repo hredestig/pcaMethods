@@ -1,15 +1,17 @@
-importFrom(stats, screeplot)
+importFrom(stats, fitted)
 
 
 exportClasses(
               pcaRes,
-              nniRes
+              nniRes,
+              nlpcaNet
               )
 
 exportMethods(
               slplot,
               summary,
-              print
+              print,
+              fitted
               )
 
 export(
@@ -25,5 +27,8 @@ export(
        svdImpute,
        checkData,
        kEstimate,
-       llsImpute
+       llsImpute,
+       nlpca,
+       plotR2,
+       fitted.pcaRes
        )
