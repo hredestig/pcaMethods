@@ -1,7 +1,7 @@
 ##########################################################################################
 ##
 ## kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
-##                       allGenes = FALSE, verbose = interactive(), random = FALSE)
+##                       allVariables = FALSE, verbose = interactive(), random = FALSE)
 ##
 ## Perform cross validation to estimate an optimal number of components for missing
 ## value estimation.
@@ -20,8 +20,8 @@
 ## Parameters:
 ##    data        - numeric matrix containing observations in rows and 
 ##                  genes in columns
-##    method      - One of ppca | bpca | svdImpute | nipals | llsImpute | llsImputeAll.
-##                  llsImputeAll uses llsImpute with option allGenes = TRUE.
+##    method      - One of ppca | bpca | svdImpute | nipals | llsImpute | llsImputeAll | nlpca.
+##                  llsImputeAll uses llsImpute with option allVariables = TRUE.
 ##    evalPcs     - The principal components to use for cross validation
 ##                  or cluster sizes if used with llsImpute.
 ##                  Should be an array containing integer values, eg. evalPcs = 1:10
@@ -29,7 +29,7 @@
 ##                  The NRMSEP is calculated for each component.
 ##    segs        - number of segments for cross validation
 ##    nruncv      - Times the whole cross validation is repeated
-##    allGenes    - If TRUE, the NRMSEP is calculated for all genes,
+##    allVariables    - If TRUE, the NRMSEP is calculated for all genes,
 ##                  If FALSE, only the incomplete ones are included.
 ##                  You maybe want to do this to compare several methods on a 
 ##                  complete data set
@@ -56,10 +56,10 @@
 ##########################################################################################
 
 kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
-                      allGenes = FALSE, verbose = interactive(), random = FALSE) {
+                      allVariables = FALSE, verbose = interactive(), random = FALSE,...) {
 
     method <- match.arg(method, c("ppca", "bpca", "svdImpute", "nipals", 
-                                  "llsImpute", "llsImputeAll"))
+                                  "llsImpute", "llsImputeAll", "nlpca"))
     maxPcs <- max(evalPcs)
     lengthPcs <- length(evalPcs)
 
@@ -72,13 +72,13 @@ kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 1
     if( !checkData(data, verbose=interactive()) )
         stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
 
-    if( (sum(is.na(data)) == 0) && (allGenes == FALSE) )
-        stop("No missing values. Maybe you want to set allGenes = TRUE. Exiting\n")
+    if( (sum(is.na(data)) == 0) && (allVariables == FALSE) )
+        stop("No missing values. Maybe you want to set allVariables = TRUE. Exiting\n")
 
 
     missing <- apply(is.na(data), 2, sum) > 0
     missIx     <- which(missing == TRUE)
-    if (allGenes)
+    if (allVariables)
         missIx <- 1:ncol(data)
 
     complete <- !missing
@@ -127,15 +127,15 @@ kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 1
                         testSet[cvsegs[[i]], index] <- NA
                         if (method == "llsImpute") {
                             estimate <- llsImpute(testSet, k = nPcs, verbose = FALSE,
-                                                  allGenes = FALSE, 
+                                                  allVariables = FALSE, 
                                                   center = FALSE)@completeObs
                         } else if (method == "llsImputeAll") {
                             estimate <- llsImpute(testSet, k = nPcs, verbose = FALSE,
-                                                  allGenes = TRUE, 
+                                                  allVariables = TRUE, 
                                                   center = FALSE)@completeObs
                         } else {
                             estimate <- pca(testSet, nPcs = nPcs, verbose = FALSE,
-                                            method = method, center = TRUE)@completeObs
+                                            method = method, center = TRUE,...)@completeObs
                         }
                         estimate <- estimate[, index]
                         original <- target[compObs, ]

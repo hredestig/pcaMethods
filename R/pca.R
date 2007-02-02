@@ -1,4 +1,5 @@
-pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute"), subset=numeric(),...) {
+pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute", "nlpca"),
+                subset=numeric(),...) {
   
   isExprSet <- FALSE
   if(inherits(object, "exprSet")) {
@@ -11,9 +12,9 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute"), 
 
   # Do some basic checks of the data. We exit if the data contains NaN or Inf
   # values or is not numeric.
-  if ( !checkData(as.matrix(object), verbose = interactive()) )
+  if ( !checkData(as.matrix(object), verbose=interactive()) )
 	stop("Invalid data format, exiting...\n",
-	     "Run checkData(data, verbose = TRUE) for details\n")
+	     "Run checkData(data, verbose=TRUE) for details\n")
 	
   missing <- sum(is.na(object))
 
@@ -40,6 +41,9 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute"), 
          },
          svdImpute = {
            res <- svdImpute(as.matrix(object),...)
+         },
+         nlpca = {
+           res <- nlpca(as.matrix(object),...)
          })
 
   scaled = attr(object, "scaled")
@@ -149,7 +153,18 @@ setMethod("print", "pcaRes",
             cat("Scores structure:\n")
             print(dim(x@scores))
             cat("Loadings structure:\n")
-            print(dim(x@loadings))
+            if(x@method == "nlpca") {
+              cat("Inverse hierarchical neural network architecture\n")
+              cat(drop(x@network@net), "\n")
+              cat("Functions in layers\n")
+              cat(x@network@fct, "\n")
+              cat("hierarchic layer:", x@network@hierarchic$layer, "\n")
+              cat("hierarchic coefficients:", x@network@hierarchic$var, "\n")
+              cat("scaling factor:", x@network@scalingFactor, "\n")
+            }
+            else{
+              print(dim(x@loadings))
+            }
           })
 
 setMethod("print", "nniRes",
@@ -182,28 +197,97 @@ setMethod("summary", "pcaRes",
               }
             }
             r <- rbind(prop, object@R2cum)
-            rownames(r) <- c("Proportion of Variance", "Cumulative Proportion")
+            rownames(r) <- c("R2", "Cumulative R2")
             colnames(r) <- paste("PC", 1:object@nPcs, sep="")
             print(r, digits=4)
             invisible(r)
           })
 
-setMethod("screeplot", "pcaRes",
-          function(x, npcs=min(10, length(x@R2)), type = c("barplot", "lines"),
-                   main = deparse(substitute(x)), ...) {
-            newx <- list(sDev=x@sDev)
-            screeplot(newx, nPcs, type, main,...)
-          })
+fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs) {
+
+  ##<..Beg Rdocu..>
+  ## ~name~
+  ##   fitted.pcaRes
+  ## ~title~
+  ##   Extract fitted values from PCA.
+  ## ~description~
+  ##   This function extracts the fitted values from a
+  ##   pcaResobject. For PCA methods like SVD, Nipals, PPCA etc this
+  ##   isbasically just the scores multipled by the loadings,
+  ##   forNon-linear PCA the original data is propagated through
+  ##   thenetwork to obtain the approximated data.
+  ## ~usage~
+  ##   fitted.pcaRes(object, data=NULL, nPcs=object@nPcs)
+  ## ~arguments~
+  ##   ~-object~
+  ##     the \code{pcaRes} object of interest.
+  ##   ~-data~
+  ##     For standard PCA methods this can safely be left null to
+  ##     getscores x loadings but if set then the scores are obtained
+  ##     byprojecting provided data onto the loadings. Non-linear PCA
+  ##     isan exception, here if data is NULL then data is set to
+  ##     thecompleteObs and propaged through the network.
+  ##   ~-nPcs~
+  ##     The amount of PC's to consider
+  ## ~value~
+  ##   A matrix with the fitted values.
+  ## ~keywords~
+  ##   multivariate
+  ## ~author~
+  ##   Henning Redestig <redestig[at]mpimp-golm.mpg.de>
+  ##>..End Rdocu..<
+
+  switch(object@method,
+         nlpca = {
+           if(is.null(data) & is.null(object@completeObs))
+             stop("completeObs slot is empty -- provide the training data")
+           if(is.null(data))
+             data <- object@completeObs
+           data <- t(data)
+           if(object@centered)
+             data <- sweep(data, 1, object@center)
+           recData <- errorHierarchic(object@network, t(object@scores), data)$out[,,nPcs]
+           recData <- recData / object@network@scalingFactor
+           if(object@centered) 
+             recData <- t(recData + object@center)
+         },
+         {                              #default method
+           if(!is.null(data)) {
+             if(object@centered)
+               data <- sweep(data, 2, object@center)
+             scores <- data %*% object@loadings[,1:nPcs, drop=FALSE]
+           }
+           else
+             scores <- object@scores[,1:nPcs, drop=FALSE]
+           recData <- tcrossprod(scores, object@loadings[,1:nPcs, drop=FALSE])
+           if(object@centered)
+             recData <- t(t(recData) + object@center)
+         }
+         )
+  recData
+}
+setMethod("fitted", "pcaRes", fitted.pcaRes)
+
+plotR2 <- function(object, nPcs=object@nPcs, type = c("barplot", "lines"), main = deparse(substitute(x)), ...) {
+  main <- main    #this is not a typo! the deparse(subsitute(x)) later
+                                        #fails otherwise (dont ask me)
+  names(object@sDev) <- paste("PC", 1:nPcs, sep="")
+  newx <- list(sdev=object@R2)
+  screeplot(newx, nPcs, type, main,...)
+}
 
 setMethod("slplot", "pcaRes",
           function(object, pcs=c(1,2), scoresLoadings=c(TRUE, TRUE), sl=rownames(object@scores),
                    ll=rownames(object@loadings), hotelling=0.95, rug=TRUE,sub=NULL,...) {
+            
+            if(object@method == "nlpca" && scoresLoadings[2])
+              scoresLoadings[2] <- FALSE
             if(length(pcs) > 2)
               plotPcs(object, pcs, scoresLoadings=scoresLoadings,...)
 
             else {
               if(is.null(sub))
-                sub <- paste(sprintf("%.2f", object@R2cum[pcs] * 100),
+                sub <- paste(sprintf("%.2f", object@R2cum[max(pcs)] * 100),
                              "% of the variance explained", sep="")
 
               if(sum(scoresLoadings) == 2)

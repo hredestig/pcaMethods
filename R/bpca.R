@@ -107,10 +107,10 @@ bpca <- function(Matrix, nPcs = 2, completeObs = TRUE, maxSteps = 100,
     
     ## Calculate R2cum
     R2cum <- NULL
-    centered <- scale(M$yest, center = TRUE, scale = FALSE)
+    centered <- scale(mat, center = TRUE, scale = FALSE)
     for (i in 1:nPcs) {
         difference <- centered - ( M$scores[,1:i, drop=FALSE] %*% t(M$PA[,1:i, drop=FALSE]) )
-        R2cum <- cbind( R2cum, 1 - ( sum(difference^2) / sum(centered^2) ) )
+        R2cum <- cbind( R2cum, 1 - ( sum(difference^2, na.rm=TRUE) / sum(centered^2, na.rm=TRUE) ) )
     }
 
     ## Calculate R2

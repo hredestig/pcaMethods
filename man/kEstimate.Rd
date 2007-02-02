@@ -5,18 +5,19 @@
 \description{
   Perform cross validation to estimate the optimal number of components for missing
   value estimation.
-  Cross validation is done for the complete subset of a variable (gene).
-  The assumption hereby is that genes that are highly correlated in a distinct region (here
+  Cross validation is done for the complete subset of a variable.
+  The assumption hereby is that variables that are highly correlated in a distinct region (here
   the non-missing observations) are also correlated in another (here the missing observations).
   This also implies that the complete subset must be large enough to be representative.
-  For each incomplete gene, the available values are divided into a user defined
+  For each incomplete variable, the available values are divided into a user defined
   number of cv-segments. The segments have equal size, but are chosen from a random
-  equal distribution. The non-missing values of the gene are covered completely.
-  PPCA, BPCA, SVDimpute, Nipals PCA and llsImpute may be used for imputation. \cr
-  The whole cross validation is repeated several times.
+  equal distribution. The non-missing values of the variable are covered completely.
+  PPCA, BPCA, SVDimpute, Nipals PCA, llsImpute an NLPCA may be used for imputation. \cr
+  The whole cross validation is repeated several times so, depending on
+  the parameters, the calculations can take very long time.
   As error measure the NRMSEP (see Feten et. al, 2005) is used. This error
   basically
-  normalises the RMSD between original data and estimate by the gene-wise
+  normalises the RMSD between original data and estimate by the variable-wise
   variance. The reason for this is that a higher variance will lead to a
   higher estimation error.
 }
@@ -26,15 +27,15 @@
   The estimation method is called 
   \eqn{(g_{miss} \cdot segs \cdot nruncv)}{(g\_miss * segs * nruncv)}
   times, where \eqn{g_{miss}}{g\_miss}
-  is the number of genes showing missing values.
+  is the number of variables showing missing values.
 }
 \usage{
 kEstimate(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
-allGenes = FALSE, verbose = interactive(), random = FALSE)
+allVariables = FALSE, verbose = interactive(), random = FALSE,...)
 }
 \arguments{
 \item{data}{\code{matrix} -- numeric matrix containing observations in rows and 
-  genes in columns}
+  variables in columns}
 \item{method}{\code{character} -- One of ppca | bpca | svdImpute | nipals}
 \item{evalPcs}{\code{numeric} -- The principal components to use for cross validation
 or cluster sizes if used with llsImpute.
@@ -42,7 +43,7 @@ Should be an array containing integer values, eg. evalPcs = 1:10
 or evalPcs = C(2,5,8).The NRMSEP is calculated for each component.}
 \item{segs}{\code{numeric} -- number of segments for cross validation}
 \item{nruncv}{\code{numeric} -- Times the whole cross validation is repeated}
-\item{allGenes}{\code{boolean} -- If TRUE, the NRMSEP is calculated for all genes,
+\item{allVariables}{\code{boolean} -- If TRUE, the NRMSEP is calculated for all variables,
 If FALSE, only the incomplete ones are included.
 You maybe want to do this to compare several methods on a 
 complete data set.}
@@ -51,6 +52,7 @@ to the console each iteration.}
 \item{random}{\code{boolean} -- Impute normal distributed random values with
 same mean and standard deviation than the original data.
 This is only thought for comparison.}
+\item{...}{Further arguments to \code{pca}}
 }
 \value{
   \item{list}{Returns a list with the elements:

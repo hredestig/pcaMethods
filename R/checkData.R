@@ -47,21 +47,21 @@ checkData <- function(data, verbose = FALSE) {
         isNumeric <- FALSE
         isValid <- FALSE
         if (verbose)
-            cat("Error: Data is not numeric!\n")
+            cat("Error: Data is not numeric\n")
     } 
 
     if ( sum(is.infinite(data) >= 1) ) {
         isInfinite <- TRUE
         isValid <- FALSE
         if (verbose)
-            cat("Error: Data contains 'Inf' values!\n")
+            cat("Error: Data contains 'Inf' values\n")
     } 
 
     if (sum(is.nan(data) >= 1)) {
         isNaN <- TRUE
         isValid <- FALSE
         if (verbose)
-            cat("Error: Data contains 'NaN' values!\n",
+            cat("Error: Data contains 'NaN' values\n",
                 "Missing values must be denoted by 'NA'.\n")
     } 
 
@@ -69,8 +69,8 @@ checkData <- function(data, verbose = FALSE) {
         isMatrix <- FALSE
         isValid <- FALSE
         if (verbose)
-            cat("Error: data is not a matrix!!\n",
-                "Maybe try to use as.matrix(data)\n")
+            cat("Error: data is not a matrix\n",
+                "Try to use as.matrix(data)\n")
     }
 
     ## Check for entire rows that are NA only
@@ -78,8 +78,8 @@ checkData <- function(data, verbose = FALSE) {
         naRows <- TRUE
         isValid <- FALSE
         if (verbose)
-            cat("Error: Data contains rows in which all elements are 'NA'!\n",
-                "Remove them first!\n")
+            cat("Error: Data contains rows in which all elements are 'NA'\n",
+                "Remove them first\n")
     }
 
     ## Check for entire columns that are NA only
@@ -87,8 +87,8 @@ checkData <- function(data, verbose = FALSE) {
         naCols <- TRUE
         isValid <- FALSE
         if (verbose)
-            cat("Error: Data contains columns in which all elements are 'NA'!\n",
-                "Remove them first!\n")
+            cat("Error: Data contains columns in which all elements are 'NA'\n",
+                "Remove them first\n")
     } 
     
     attr(isValid, "isNumeric")     <- isNumeric

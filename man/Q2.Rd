@@ -5,7 +5,8 @@
 \description{Internal cross-validation can be used for estimating the
   level of structure in a data set and to optimise the choice of number
   of principal components.}
-\usage{Q2(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10)}
+\usage{Q2(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10,
+segments=NULL, verbose=interactive())}
 \arguments{
 \item{object}{A \code{pcaRes} object (result from previous PCA
 analysis.)}
@@ -13,6 +14,10 @@ analysis.)}
 \item{nPcs}{The amount of principal components to estimate Q2 for.}
 \item{fold}{The amount of groups to divide the data in.}
 \item{nruncv}{The amount of times to repeat the whole cross-validation}
+\item{segments}{\code{list} A predefined list where each element is the
+  set of indices to leave out. Note that if this is provided, Q2 becomes
+  deterministic (if the PCA is deterministic of course).}
+\item{verbose}{\code{boolean} If TRUE Q2 outputs a primitive progress bar.}
 }
 \details{
 This method calculates \eqn{Q^2} for a PCA model. This is the predictory
@@ -33,8 +38,9 @@ leave-one-out cross-validation this is
 not what is performed if fold is less than the amount of rows and/or
 columns.
 
-A random set of values in the matrix are set to
-NA and scores and loadings are estimated without them.
+Diagonal rows of elements in the matrix are deleted and the
+re-estimated. You can choose your own segmentation as well make sure no
+complete row or column is lost.
 }
 
 \value{

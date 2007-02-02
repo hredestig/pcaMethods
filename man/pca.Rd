@@ -4,14 +4,15 @@
 \title{Perform principal component analysis}
 \description{Can be used for computing PCA on a numeric
   matrix for visualisation, information extraction and missing value imputation.}
-\usage{pca(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute"), subset=numeric(),...)}
+\usage{pca(object, method=c("svd", "nipals", "bpca", "ppca",
+"svdImpute", "nlpca"), subset=numeric(),...)}
 \arguments{
   \item{object}{Numerical matrix  with (or an object coercible to such) with
     samples in rows and variables as columns. Also takes \code{exprSet} in
     which case the transposed \code{exprs} slot is used.}
   \item{subset}{For convenience one can pass a large matrix but only
     use the variable specified as subset. Can be colnames or indices.}
-  \item{method}{One of "svd", "nipals", "bpca" or "ppca".}
+  \item{method}{One of "svd", "nipals", "bpca", "nlpca" or "ppca".}
   \item{...}{Further arguments to the chosen pca method and to \code{prep}.}
 }
 \details{
