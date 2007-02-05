@@ -1,7 +1,8 @@
 ##########################################################################################
 ##
 ## kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
-##                       allVariables = FALSE, verbose = interactive(), random = FALSE)
+##                       em = "nrmsep", allVariables = FALSE, verbose = interactive(),
+##                       random = FALSE,...) {
 ##
 ## Perform cross validation to estimate an optimal number of components for missing
 ## value estimation.
@@ -29,7 +30,9 @@
 ##                  The NRMSEP is calculated for each component.
 ##    segs        - number of segments for cross validation
 ##    nruncv      - Times the whole cross validation is repeated
-##    allVariables    - If TRUE, the NRMSEP is calculated for all genes,
+##    em          - Error measure (em) to use, this can be "nrmsep" (default)
+##                  or "q2"
+##    allVariables- If TRUE, the NRMSEP is calculated for all genes,
 ##                  If FALSE, only the incomplete ones are included.
 ##                  You maybe want to do this to compare several methods on a 
 ##                  complete data set
@@ -41,9 +44,11 @@
 ## Return values:
 ## A list with the elements
 ## mink      - number of PCs for which the minimal average NRMSEP was obtained
-## nrmsep    - a matrix of dimension [nruncv, maxPcs].
-##             The columns contain the NRMSEP achieved for each repeat of the
-##             cross validation.
+## eError    - an array of of size length(evalPcs). Contains the average error
+##             of the cross validation runs for each number of components.
+## eErrorMat - Estimation error for each of the separately done cross validations.
+##             Rows represent the separate runs, columns the number of components
+##             used for estimation.
 ## evalPcs   - The evaluated numbers of pc's or cluster sizes (same as input)
 ##
 ## Author:  Wolfram Stacklies
@@ -51,15 +56,17 @@
 ## Date:    06/28/2006
 ## Contact: wolfram.stacklies@gmail.com
 ##
-## Last modified: 12/11/06 by Wolfram Stacklies
+## Last modified: 05/02/07 by Wolfram Stacklies
 ##
 ##########################################################################################
 
 kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
-                      allVariables = FALSE, verbose = interactive(), random = FALSE,...) {
+                      em = "nrmsep", allVariables = FALSE, verbose = interactive(),
+                      random = FALSE,...) {
 
     method <- match.arg(method, c("ppca", "bpca", "svdImpute", "nipals", 
                                   "llsImpute", "llsImputeAll", "nlpca"))
+    em <- match.arg(em, c("nrmsep", "q2"))
     maxPcs <- max(evalPcs)
     lengthPcs <- length(evalPcs)
 
@@ -84,7 +91,7 @@ kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 1
     complete <- !missing
     compIx    <- which(complete == TRUE)
 
-    finalNrmsep <- matrix(0, nruncv, lengthPcs)
+    finalError <- matrix(0, nruncv, lengthPcs)
     iteration <- 0
     for(nPcs in evalPcs) {
         iteration = iteration + 1
@@ -113,6 +120,7 @@ kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 1
                 cvsegs <- cvsegments(nObs, segments)
                 set <- data[compObs,]
                 nrmsep <- 0
+                q2 <- 0
     
                 for (i in length(cvsegs)) {
                     n <- length(cvsegs[[i]]) ## n is the number of created missing values
@@ -141,26 +149,40 @@ kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 1
                         original <- target[compObs, ]
                     }
                     ## Error of prediction, error is calculated for removed elements only
-                    nrmsep <- nrmsep +
-                        sum( (original - estimate)^2) /
-                        (n * sum( (original - mean(original))^2)  / (nObs - 1) )
+                    if (em == "nrmsep") {
+                        nrmsep <- nrmsep +
+                            sum( (original - estimate)^2) /
+                            (n * sum( (original - mean(original))^2)  / (nObs - 1) )
+                    } else {
+                        q2 <- q2 +
+                              sum( (original - estimate)^2 ) / sum(original^2)
+                    }
                 } ## iteration over cv segments
         
-                error[pos, cviter] <- (nrmsep / length(cvsegs))
+                if (em == "nrmsep") {
+                    error[pos, cviter] <- (nrmsep / length(cvsegs))
+                } else
+                    error[pos, cviter] <- 1 - (q2 / length(cvsegs))
             } ## iteration over genes
         } ##iteration over nruncv
         
         errorAllGenes <- apply(error, 2, sum) / nrow(error)
-        finalNrmsep[, iteration] <- sqrt(errorAllGenes)
+        if (em == "nrmsep")
+            finalError[, iteration] <- sqrt(errorAllGenes)
+        else
+            finalError[, iteration] <- errorAllGenes
+
         if (verbose)
-            cat(" - the average NRMSEP is ", sum(finalNrmsep[,iteration]) / nrow(finalNrmsep), 
-                ". The variance is ", var(finalNrmsep[,iteration]), "\n")
+            cat(" - the average", em, "is", 
+                sum(finalError[,iteration]) / nrow(finalError), 
+                ". The variance is", var(finalError[,iteration]), "\n")
     } ## iteration over number components
 
-    avgNrmsep <- apply(finalNrmsep, 2, sum)
+    avgError <- apply(finalError, 2, sum) / ncol(finalError)
     ret <- list()
-    ret$mink <- which(avgNrmsep == min(avgNrmsep))
-    ret$nrmsep <- finalNrmsep
+    ret$mink <- which(avgError == min(avgError))
+    ret$eError <- avgError
+    ret$eErrorMat <- finalError
     ret$evalPcs <- evalPcs
 
     return(ret)

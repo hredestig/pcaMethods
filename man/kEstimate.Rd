@@ -15,11 +15,14 @@
   PPCA, BPCA, SVDimpute, Nipals PCA, llsImpute an NLPCA may be used for imputation. \cr
   The whole cross validation is repeated several times so, depending on
   the parameters, the calculations can take very long time.
-  As error measure the NRMSEP (see Feten et. al, 2005) is used. This error
-  basically
+  As error measure the NRMSEP (see Feten et. al, 2005) or the Q2 distance is used.
+  The NRMSEP basically
   normalises the RMSD between original data and estimate by the variable-wise
-  variance. The reason for this is that a higher variance will lead to a
+  variance. The reason for this is that a higher variance will generally lead to a
   higher estimation error.
+  If the number of samples is small, the gene - wise variance may become an unstable
+  criterion and the Q2 distance should be used instead. Also if variance normalisation
+  was applied previously.
 }
 \details{
   Run time may be very high on large data sets. Especially when used with methods
@@ -27,11 +30,16 @@
   The estimation method is called 
   \eqn{(g_{miss} \cdot segs \cdot nruncv)}{(g\_miss * segs * nruncv)}
   times, where \eqn{g_{miss}}{g\_miss}
-  is the number of variables showing missing values.
+  is the number of variables showing missing values.\cr
+  As cross validation can only be done gene-wise, in this function the NRMSEP / Q2 are
+  defined on single genes, not on the entire data set. This is when calculating Q2
+  as \eqn{\frac{\sum(X - Xe)^2}{\sum(X^2)}}{sum(X - Xe)^2 \ sum(X^2)},
+  X is the currently used gene and Xe it's estimate. Same for the NRMSEP.
 }
 \usage{
 kEstimate(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
-allVariables = FALSE, verbose = interactive(), random = FALSE,...)
+em = "nrmsep", allVariables = FALSE, verbose = interactive(), 
+random = FALSE,...)
 }
 \arguments{
 \item{data}{\code{matrix} -- numeric matrix containing observations in rows and 
@@ -43,6 +51,7 @@ Should be an array containing integer values, eg. evalPcs = 1:10
 or evalPcs = C(2,5,8).The NRMSEP is calculated for each component.}
 \item{segs}{\code{numeric} -- number of segments for cross validation}
 \item{nruncv}{\code{numeric} -- Times the whole cross validation is repeated}
+\item{em}{\code{character} -- The error measure. This can be nrmsep or q2}
 \item{allVariables}{\code{boolean} -- If TRUE, the NRMSEP is calculated for all variables,
 If FALSE, only the incomplete ones are included.
 You maybe want to do this to compare several methods on a 
@@ -58,8 +67,11 @@ This is only thought for comparison.}
   \item{list}{Returns a list with the elements:
   \itemize{
     \item mink - number of PCs for which the minimal average NRMSEP was obtained
-    \item nrmsep - a matrix of dimension (nruncv, maxPcs).
-    The columns contain the NRMSEP obtained for each repeat of the cross validation.
+    \item eError - an array of of size length(evalPcs). Contains the average error
+    of the cross validation runs for each number of components.
+    \item eErrorMat - Estimation error for each of the separately done cross validations.
+    Rows represent the separate runs, columns the number of components
+    used for estimation.
     \item evalPcs - The evaluated numbers of components or cluster sizes 
     (the same as the evalPcs input parameter).
   }}
