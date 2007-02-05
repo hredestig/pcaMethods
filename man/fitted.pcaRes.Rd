@@ -7,15 +7,16 @@
   thisisbasically just the scores multipled by the loadings,forNon-linear
   PCA the original data is propagated throughthenetwork to obtain the
   approximated data.}
-\usage{fitted.pcaRes(object, data=NULL, nPcs=object@nPcs)}
+\usage{fitted.pcaRes(object, data=NULL, nPcs=object@nPcs,...)}
 \arguments{
-  \item{object}{the \code{pcaRes} object of interest.}
-  \item{data}{For standard PCA methods this can safely be left null to
+  \item{object}{\code{pcaRes} the \code{pcaRes} object of interest.}
+  \item{data}{\code{matrix} For standard PCA methods this can safely be left null to
     get scores x loadings but if set then the scores are obtained by
     projecting provided data onto the loadings. Non-linear PCA is an
     exception, here if data is NULL then data is set to the completeObs
     and propagated through the network.} 
-  \item{nPcs}{The amount of PC's to consider}
+  \item{nPcs}{\code{numeric} The amount of PC's to consider}
+  \item{...}{Not passed on anywhere, included for S3 consistency.}
 }
 \value{A matrix with the fitted values.}
 \keyword{multivariate}

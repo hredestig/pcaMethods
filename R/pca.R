@@ -203,7 +203,7 @@ setMethod("summary", "pcaRes",
             invisible(r)
           })
 
-fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs) {
+fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs, ...) {
 
   ##<..Beg Rdocu..>
   ## ~name~
@@ -229,6 +229,8 @@ fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs) {
   ##     thecompleteObs and propaged through the network.
   ##   ~-nPcs~
   ##     The amount of PC's to consider
+  ##   ~-...~
+  ##     Not passed on anywhere
   ## ~value~
   ##   A matrix with the fitted values.
   ## ~keywords~
