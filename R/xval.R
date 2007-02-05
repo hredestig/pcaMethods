@@ -1,4 +1,4 @@
-Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10, segments=NULL, verbose=interactive()) {
+Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10, segments=NULL, verbose=interactive(),...) {
 
   originalData <- as.matrix(originalData)
   
@@ -30,7 +30,8 @@ Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10, segmen
       ## not get the indices of those diagonals
       for(i in 1:ncol(diags)) 
         seg[[i]] <- which(is.na(deletediagonals(originalData, diags[,i])))
-      
+
+      ## <to remove later>
       ## check that we didnt make a mistake
       for(i in 1:length(seg)) {
         tmp <- originalData
@@ -39,6 +40,7 @@ Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10, segmen
            any(apply(tmp, 2, function(x) sum(is.na(x))) == nrow(tmp)))
           stop("ooops! a column or a row was completely lost, this should not have happened. Please contact the maintainer")
       }
+      ## </to remove later>
       
     }
     
@@ -51,7 +53,7 @@ Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10, segmen
       test <- originalData
       test[i] <- NA
       pc <- pca(test, nPcs=nPcs, method=object@method, verbose=FALSE,
-                center=object@centered, scale=object@scaled)
+                center=object@centered, scale=object@scaled,...)
       
       ## add up to the press estimate
       for(np in 1:nPcs) {

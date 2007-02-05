@@ -6,7 +6,7 @@
   level of structure in a data set and to optimise the choice of number
   of principal components.}
 \usage{Q2(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10,
-segments=NULL, verbose=interactive())}
+segments=NULL, verbose=interactive(), ...)}
 \arguments{
 \item{object}{A \code{pcaRes} object (result from previous PCA
 analysis.)}
@@ -17,7 +17,9 @@ analysis.)}
 \item{segments}{\code{list} A predefined list where each element is the
   set of indices to leave out. Note that if this is provided, Q2 becomes
   deterministic (if the PCA is deterministic of course).}
-\item{verbose}{\code{boolean} If TRUE Q2 outputs a primitive progress bar.}
+\item{verbose}{\code{boolean} If TRUE Q2 outputs a primitive progress
+  bar.}
+\item{...}{Further arguments for the corresponding PCA method}
 }
 \details{
 This method calculates \eqn{Q^2} for a PCA model. This is the predictory
