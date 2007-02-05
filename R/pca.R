@@ -108,33 +108,35 @@ nni <- function(object, method=c("llsImpute"), subset=numeric(), ...) {
 }
 
 
-plotPcs <- function(object, pc=1:object@nPcs, scoresLoadings=c(TRUE, FALSE),...) {
+plotPcs <- function(object, pcs=1:object@nPcs, type=c("scores", "loadings"), sl=NULL,
+                    hotelling=0.95,...) {
+  type <- match.arg(type)
+  
+  panel <- function(x,y, ...) {
+    abline(h=0, v=0, col="black")
+    if(!is.null(hotelling)) {
+      A <- length(pcs)
+      lines(ellipse(cov(cbind(x,y)), level=hotelling))
+    }
+    if(is.null(sl))
+      points(x, y, ...)
+    else
+      text(x, y, labels=sl,...)
 
-  ## number of plot areas needed
-  ba <- (length(pc)*(length(pc) - 1)) / 2
-  mf <- c(floor(sqrt(ba)), ceiling(sqrt(ba)))
-  if(mf[1] * mf[2] < ba)
-    mf[1] <- mf[1] + 1
-  mat <- matrix(c(1:ba, rep(0, mf[1]*mf[2] - ba)), ncol=mf[1], nrow=mf[2], byrow=TRUE)
-  layout(mat)
-
-  perm <- function(object) {
-    res <- NULL
-    tri <- matrix(TRUE, length(object), length(object))
-    tri[upper.tri(tri, TRUE)] <- FALSE
-    for(i in 1:length(object))
-      for(j in 1:length(object))
-        if(tri[i,j])
-          res <- rbind(res, c(object[i],object[j]))
-    res
   }
 
-  pp <- t(apply(perm(pc), 1, sort))
-
-  for(i in 1:nrow(pp))
-    slplot(object, pcs=pp[i,], scoresLoadings=scoresLoadings, rug=FALSE, sub="",...)
+  switch(type,
+         scores = {
+           labels <- paste("PC", pcs, "\n", "R^2 =", round(object@R2[pcs], 2))
+           pairs(object@scores[,pcs], labels=labels, panel=panel, upper.panel=NULL,...)
+         },
+         loadings = {
+           if(object@method == "nlpca")
+             stop("No loadings plot for Non-linear PCA (the loadings are hidden in a neural network)")
+           labels <- paste("PC", pcs, "\n", "R^2 =", round(object@R2[pcs], 2))
+           pairs(object@loadings[,pcs], labels=labels, panel=panel, upper.panel=NULL, ...)
+         })
 }
-
 
 setMethod("print", "pcaRes",
           function(x, ...) {

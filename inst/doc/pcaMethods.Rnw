@@ -380,7 +380,7 @@ PCs plotted against each other, see Figure \ref{fig:plotPcs}.
 \begin{figure}[!ht]
   \centering
 <<fig=true, width=11, height=11, results=hide, echo=false>>=
-plotPcs(resPPCA, pc=1:3, scoresLoadings=c(TRUE, FALSE))
+plotPcs(resPPCA, pcs=1:3, type="scores")
 @
 \caption{A plot of score 1:3 for PPCA created with \texttt{plotPcs()}
   \label{fig:plotPcs}}
