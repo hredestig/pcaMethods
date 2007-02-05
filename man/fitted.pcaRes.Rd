@@ -3,9 +3,9 @@
 \alias{fitted,pcaRes-method}
 \title{Extract fitted values from PCA.}
 \description{This function extracts the fitted values from
-  apcaResobject. For PCA methods like SVD, Nipals, PPCA etc
-  thisisbasically just the scores multipled by the loadings,forNon-linear
-  PCA the original data is propagated throughthenetwork to obtain the
+  a pcaRes object. For PCA methods like SVD, Nipals, PPCA etc
+  this is basically just the scores multipled by the loadings, for non-linear
+  PCA the original data is propagated through the network to obtain the
   approximated data.}
 \usage{fitted.pcaRes(object, data=NULL, nPcs=object@nPcs,...)}
 \arguments{

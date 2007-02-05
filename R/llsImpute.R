@@ -45,9 +45,9 @@
 llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correlation = "pearson", 
                       allGenes = FALSE, maxSteps = 100, verbose = interactive(), ...) {
 
-    threshold = 0.001
+    threshold <- 0.001
 
-    correlation = match.arg(correlation, c("pearson", "kendall", "spearman"))
+    correlation <- match.arg(correlation, c("pearson", "kendall", "spearman"))
 
     ## If the data is a data frame, convert it into a matrix
     Matrix <- as.matrix(Matrix)
@@ -63,20 +63,20 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correl
     ## Set allGenes TRUE if k exceeds number of complete genes
     ## Print warning messages in the first case and when less than 50% of all genes are complete
     ## and allGenes == FALSE
-    cg = sum( apply(is.na(Matrix), 2, sum) == 0)
+    cg <- sum( apply(is.na(Matrix), 2, sum) == 0)
     if ( (k > cg) && (!allGenes) ) {
         warning("Cluster size larger than number of complete genes, using allGenes = TRUE")
-        allGenes = TRUE
+        allGenes <- TRUE
     } else if ( (cg < (ncol(Matrix) / 2)) && (!allGenes) ) {
         warning("Less than 50% of the genes are complete, consider using allGenes = TRUE")
     } else if (sum(is.na(Matrix)) == 0)
         stop("No missing values, no need for missing value imputation :))")
 
     ## Find all genes with missing values
-    missing = apply(is.na(Matrix), 2, sum) > 0
-    missIx = which(missing == TRUE)
-    obs = Matrix    ## working copy of the data
-    Ye = Matrix     ## Estimated complete observations
+    missing <- apply(is.na(Matrix), 2, sum) > 0
+    missIx <- which(missing == TRUE)
+    obs <- Matrix    ## working copy of the data
+    Ye <- Matrix     ## Estimated complete observations
 
     ## Center the data column wise
     if (center) {
@@ -86,62 +86,62 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correl
     }
 
     if (allGenes) {
-        compIx = 1:ncol(obs)
+        compIx <- 1:ncol(obs)
         ## Impute the row average
-        rowMeans = apply(obs, 1, mean, na.rm = TRUE)
+        rowMeans <- apply(obs, 1, mean, na.rm = TRUE)
         for (i in 1:nrow(obs)) {
-            obs[i, is.na(Matrix[i,])] = rowMeans[i]
+            obs[i, is.na(Matrix[i,])] <- rowMeans[i]
         }
         ## distances between all genes, ignore the diagonal (correlation to itself)
         distance = abs(cor(obs, obs, method = correlation))
     } else {
-        compIx = which(missing == FALSE)
+        compIx <- which(missing == FALSE)
         ## missing genes are the rows, complete genes the columns
         distance = abs(cor(obs[,missIx], obs[,compIx], use="pairwise.complete.obs",
                        method = correlation))
     }
 
-    change = Inf
-    step = 0
+    change <- Inf
+    step <- 0
     while ( (change > threshold) && (step < maxSteps) ) {
-        step = step + 1
-        iteration = 0
+        step <- step + 1
+        iteration <- 0
         
         ## Do the regression and imputation
         for (index in missIx) {
-            iteration = iteration + 1
+            iteration <- iteration + 1
 	    if (allGenes) {
-                similar = sort(distance[iteration,], index.return = TRUE, decreasing = TRUE)
-                simIx = compIx[ similar$ix[similar$ix != iteration][1:k] ]
+                similar <- sort(distance[iteration,], index.return = TRUE, decreasing = TRUE)
+                simIx <- compIx[ similar$ix[similar$ix != iteration][1:k] ]
             } else {
-                similar = sort(distance[iteration,], index.return = TRUE, decreasing = TRUE)
-                simIx = compIx[ similar$ix[1:k] ]
+                similar <- sort(distance[iteration,], index.return = TRUE, decreasing = TRUE)
+                simIx <- compIx[ similar$ix[1:k] ]
             }
 
             ##
             ## Do a regression against the k most similar genes
             ## See Kim et. al 2005 for details
             ##
-            target = obs[, index, drop = FALSE]
-            tMiss = is.na(Matrix[, index, drop = FALSE])
+            target <- obs[, index, drop = FALSE]
+            tMiss <- is.na(Matrix[, index, drop = FALSE])
 
-            Apart = obs[!tMiss, simIx, drop = FALSE]
-            Bpart = obs[tMiss, simIx, drop = FALSE]
-            targetComplete = target[!tMiss, , drop = FALSE]
-            X = ginv(Apart) %*% targetComplete
-            estimate = Bpart %*% X
+            Apart <- obs[!tMiss, simIx, drop = FALSE]
+            Bpart <- obs[tMiss, simIx, drop = FALSE]
+            targetComplete <- target[!tMiss, , drop = FALSE]
+            X <- ginv(Apart) %*% targetComplete
+            estimate <- Bpart %*% X
 
             ## Impute the estimate
-            Ye[tMiss, index] = estimate
+            Ye[tMiss, index] <- estimate
         }
 
-        ## We do not want to iterate if allGenes = FALSE
+        ## We do not want to iterate if allGenes == FALSE
         if (!allGenes) {
             break
         } else {
             ## relative change in estimation
-            change = sqrt(sum( (obs - Ye)^2 ) / sum(obs^2))
-            obs = Ye
+            change <- sqrt(sum( (obs - Ye)^2 ) / sum(obs^2))
+            obs <- Ye
             if (verbose) {
                 cat("Step number     : ", step, '\n')
                 cat("Relative change : ", change, '\n')
@@ -159,21 +159,21 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correl
 
     ## Build the nniRes object
     ##
-    result = new("nniRes")
+    result <- new("nniRes")
 
     if(completeObs) {
-        Ye[!is.na(Matrix)] = Matrix[!is.na(Matrix)]
-        result@completeObs = Ye
+        Ye[!is.na(Matrix)] <- Matrix[!is.na(Matrix)]
+        result@completeObs <- Ye
     }
-    result@center          = attr(scale(Matrix, center=TRUE, scale=FALSE), "scaled:center")
-    result@centered        = center
-    result@scaled          = "none"
-    result@nObs            = nrow(Matrix)
-    result@nVar            = ncol(Matrix)
-    result@method          = "llsImpute"
-    result@correlation     = "correlation"
-    result@k               = k
-    result@missing         = sum(is.na(Matrix))
+    result@center          <- attr(scale(Matrix, center=TRUE, scale=FALSE), "scaled:center")
+    result@centered        <- center
+    result@scaled          <- "none"
+    result@nObs            <- nrow(Matrix)
+    result@nVar            <- ncol(Matrix)
+    result@method          <- "llsImpute"
+    result@correlation     <- "correlation"
+    result@k               <- k
+    result@missing         <- sum(is.na(Matrix))
 
     return(result)        
 } 

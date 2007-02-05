@@ -13,7 +13,7 @@
   \item{subset}{For convenience one can pass a large matrix but only
     use the variable specified as subset. Can be colnames or indices.}
   \item{method}{One of "svd", "nipals", "bpca", "nlpca" or "ppca".}
-  \item{...}{Further arguments to the chosen pca method and to \code{prep}.}
+  \item{...}{Further arguments to the chosen pca method.}
 }
 \details{
   This method is wrapper function for the following set of pca methods:
@@ -28,8 +28,6 @@
   Extra arguments usually given to this function include:
   \describe{
     \item{nPcs:}{The amount of principal components to extract}
-    \item{scale:}{Type of scaling to use as preprocessing (see
-      \code{\link{prep}}).}
   }
 }
 
@@ -58,8 +56,8 @@
 \examples{
 data(iris)
 ## Usually some kind of scaling is appropriate
-pcIr <- pca(iris[,1:4], scale="UV", method="nipals")
-pcIr <- pca(iris[,1:4], scale="UV", method="svd")
+pcIr <- pca(iris[,1:4], nPcs = 2, method="nipals")
+pcIr <- pca(iris[,1:4], nPcs = 2, method="svd")
 ## Get a short summary on the calculated model
 summary(pcIr)
 ## Scores and loadings plot
