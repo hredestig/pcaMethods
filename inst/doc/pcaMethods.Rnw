@@ -354,7 +354,7 @@ errEsti <- kEstimate(md, method = "svdImpute", evalPcs=1:5, nruncv=1)
   \centering
 <<fig=true, width=9, height=9, results=hide, echo=false>>=
 par(mar=c(5, 6, 4, 2))
-barplot(drop(errEsti$nrmsep), xlab="Loadings", ylab="NRMSEP (Single iteration)", cex.lab=2, cex.axis=1.5)
+barplot(drop(errEsti$eError), xlab="Loadings", ylab="NRMSEP (Single iteration)", cex.lab=2, cex.axis=1.5)
 @
 \caption{Boxplot showing the \texttt{NRMSEP} versus the number of
   loadings. In this example only one iteration was performed, it is
