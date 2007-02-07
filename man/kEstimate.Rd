@@ -93,7 +93,7 @@ metaboliteData[cond] <- NA
 nrmsep <- kEstimate(metaboliteData, method = "ppca", evalPcs = 2:4, nruncv=1)
 
 # Plot the result
-barplot(drop(nrmsep$nrmsep), xlab = "Components",ylab = "NRMSEP (1 iterations)")
+barplot(drop(nrmsep$eError), xlab = "Components",ylab = "NRMSEP (1 iterations)")
 
 # The best k value is:
 print(nrmsep$mink)
