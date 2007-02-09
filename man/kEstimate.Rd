@@ -31,20 +31,21 @@
   \eqn{(g_{miss} \cdot segs \cdot nruncv)}{(g\_miss * segs * nruncv)}
   times, where \eqn{g_{miss}}{g\_miss}
   is the number of variables showing missing values.\cr
-  As cross validation can only be done gene-wise, in this function the NRMSEP / Q2 are
+  As cross validation can only be done gene-wise, in this function Q2 is
   defined on single genes, not on the entire data set. This is when calculating Q2
   as \eqn{\frac{\sum(X - Xe)^2}{\sum(X^2)}}{sum(X - Xe)^2 \ sum(X^2)},
-  X is the currently used gene and Xe it's estimate. Same for the NRMSEP.
+  X is the currently used gene and Xe it's estimate.
 }
 \usage{
-kEstimate(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
+kEstimate(Matrix, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
 em = "nrmsep", allVariables = FALSE, verbose = interactive(), 
 random = FALSE,...)
 }
 \arguments{
-\item{data}{\code{matrix} -- numeric matrix containing observations in rows and 
+\item{Matrix}{\code{matrix} -- numeric matrix containing observations in rows and 
   variables in columns}
-\item{method}{\code{character} -- One of ppca | bpca | svdImpute | nipals}
+\item{method}{\code{character} -- One of ppca | bpca | svdImpute | nipals | nlpca | llsImpute
+  | llsImputeAll. llsImputeAll uses llsImpute with option allVariables = TRUE.}
 \item{evalPcs}{\code{numeric} -- The principal components to use for cross validation
 or cluster sizes if used with llsImpute.
 Should be an array containing integer values, eg. evalPcs = 1:10
@@ -84,24 +85,23 @@ This is only thought for comparison.}
 data(metaboliteData)
 
 # Now remove 10\% of the data
-rows <- nrow(metaboliteData)
-cols <- ncol(metaboliteData)
-cond<-matrix(runif(rows * cols),rows,cols) < 0.1
+cond<-runif(length(metaboliteData))
+cond<-cond<0.1
 metaboliteData[cond] <- NA
 
 # Do cross validation with ppca for component 2:4
-nrmsep <- kEstimate(metaboliteData, method = "ppca", evalPcs = 2:4, nruncv=1)
+esti <- kEstimate(metaboliteData, method = "ppca", evalPcs = 2:4, nruncv=1, em="nrmsep")
 
 # Plot the result
-barplot(drop(nrmsep$eError), xlab = "Components",ylab = "NRMSEP (1 iterations)")
+barplot(drop(esti$eError), xlab = "Components",ylab = "NRMSEP (1 iterations)")
 
 # The best k value is:
-print(nrmsep$mink)
+print(esti$mink)
 }
 \keyword{multivariate}
 
 \author{Wolfram Stacklies \cr
-        Max Planck Institut fuer Molekulare Pflanzenphysiologie, Potsdam, Germany \cr
+        CAS-MPG Partner Institute for Computational Biology, Shanghai, China \cr        
         \email{wolfram.stacklies@gmail.com} \cr
 }
 

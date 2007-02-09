@@ -15,7 +15,7 @@
 	far from the training set is much lower, even if they are close to the
 	principal subspace.
 
-      Scores and loadings obtained with Bayesian PCA generally differ
+      Scores and loadings obtained with Bayesian PCA slightly differ
       from those obtained with conventional PCA.
       This is because BPCA was developed especially for missing value estimation.
 	The algorithm does not force orthogonality between factor loadings,

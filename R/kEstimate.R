@@ -1,9 +1,5 @@
 ##########################################################################################
 ##
-## kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
-##                       em = "nrmsep", allVariables = FALSE, verbose = interactive(),
-##                       random = FALSE,...) {
-##
 ## Perform cross validation to estimate an optimal number of components for missing
 ## value estimation.
 ## Cross validation is done on the complete subset of a varialbe (gene).
@@ -19,7 +15,7 @@
 ## higher estimation error.
 ##
 ## Parameters:
-##    data        - numeric matrix containing observations in rows and 
+##    Matrix      - numeric matrix containing observations in rows and 
 ##                  genes in columns
 ##    method      - One of ppca | bpca | svdImpute | nipals | llsImpute | llsImputeAll | nlpca.
 ##                  llsImputeAll uses llsImpute with option allVariables = TRUE.
@@ -60,7 +56,7 @@
 ##
 ##########################################################################################
 
-kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
+kEstimate <- function(Matrix, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
                       em = "nrmsep", allVariables = FALSE, verbose = interactive(),
                       random = FALSE,...) {
 
@@ -71,22 +67,22 @@ kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 1
     lengthPcs <- length(evalPcs)
 
      ## If the data is a data frame, convert it into a matrix
-    data <- as.matrix(data)
-    if(maxPcs > (ncol(data) - 1))
+    Matrix <- as.matrix(Matrix)
+    if(maxPcs > (ncol(Matrix) - 1))
         stop("maxPcs exceeds matrix size, choose a lower value!")
 
      ## And now check if everything is right...
-    if( !checkData(data, verbose=interactive()) )
+    if( !checkData(Matrix, verbose=interactive()) )
         stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
 
-    if( (sum(is.na(data)) == 0) && (allVariables == FALSE) )
+    if( (sum(is.na(Matrix)) == 0) && (allVariables == FALSE) )
         stop("No missing values. Maybe you want to set allVariables = TRUE. Exiting\n")
 
 
-    missing <- apply(is.na(data), 2, sum) > 0
+    missing <- apply(is.na(Matrix), 2, sum) > 0
     missIx     <- which(missing == TRUE)
     if (allVariables)
-        missIx <- 1:ncol(data)
+        missIx <- 1:ncol(Matrix)
 
     complete <- !missing
     compIx    <- which(complete == TRUE)
@@ -102,14 +98,14 @@ kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 1
             pos <- 0
             for (index in missIx) {
                 pos <- pos + 1
-                target <- data[, index, drop = FALSE]
+                target <- Matrix[, index, drop = FALSE]
                 compObs <- !is.na(target)
                 missObs <- is.na(target)
                 nObs <- sum(compObs)
 
                 ## Remove all observations that are missing in the target genes,
                 ## as additional missing values may tamper the results
-                set <- data[compObs,]
+                set <- Matrix[compObs,]
 
                 if (nObs >= (2 * segs)) {
                     segments <- segs
@@ -118,7 +114,7 @@ kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 1
 
                 ## We assume normal distributed missing values when choosing the segments
                 cvsegs <- cvsegments(nObs, segments)
-                set <- data[compObs,]
+                set <- Matrix[compObs,]
                 nrmsep <- 0
                 q2 <- 0
     
@@ -178,9 +174,9 @@ kEstimate <- function(data, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 1
                 ". The variance is", var(finalError[,iteration]), "\n")
     } ## iteration over number components
 
-    avgError <- apply(finalError, 2, sum) / ncol(finalError)
+    avgError <- apply(finalError, 2, sum) / nrow(finalError)
     ret <- list()
-    ret$mink <- which(avgError == min(avgError))
+    ret$mink <- evalPcs[which(avgError == min(avgError))]
     ret$eError <- avgError
     ret$eErrorMat <- finalError
     ret$evalPcs <- evalPcs

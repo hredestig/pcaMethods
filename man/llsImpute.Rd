@@ -4,9 +4,10 @@
 \title{LLSimpute algorithm}
 \description{
   Missing value estimation using local least squares (LLS).
-  First, k genes are selected by pearson, spearman or kendall correlation coefficients.
+  First, k variables (for Microarrya data usually the genes) 
+  are selected by pearson, spearman or kendall correlation coefficients.
   Then missing values are imputed by a linear combination of the k selected
-  genes. The optimal combination is found by LLS regression.
+  variables. The optimal combination is found by LLS regression.
   The method was first described by Kim et al, Bioinformatics, 21(2),2005.
 
   Missing values are denoted as \code{NA}
@@ -16,10 +17,10 @@
 }
 \details{
   The methods provides two ways for missing value estimation, selected by
-  the \code{allGenes} option. The first one is to use only complete genes for the 
-  regression. This is preferable when the number of incomplete genes is relatively small.
+  the \code{allVariables} option. The first one is to use only complete variables for the 
+  regression. This is preferable when the number of incomplete variables is relatively small.
 
-  The second way is to consider all genes as candidates for the regression.
+  The second way is to consider all variables as candidates for the regression.
   Hereby missing values are initially replaced by the columns wise mean. 
   The method then iterates, using
   the current estimate as input for the regression until the change between new
@@ -27,12 +28,12 @@
 
   \bold{Complexity:} Each step the generalized inverse of a \code{miss} x {k}
   matrix is calculated. Where \code{miss} is the number of missing values in
-  gene j and \code{k} the number of neighbours. This may be slow for large values of
+  variable j and \code{k} the number of neighbours. This may be slow for large values of
   k and / or many missing values. See also help("ginv").
 }
 \usage{
   llsImpute(Matrix, k = 10, center = FALSE, completeObs = TRUE, correlation = "pearson",
-  allGenes = FALSE, maxSteps = 100, verbose = interactive(), ...)
+  allVariables = FALSE, maxSteps = 100, verbose = interactive(), ...)
 }
 \arguments{
   \item{Matrix}{\code{matrix} -- Data containing the variables (genes) in
@@ -45,11 +46,11 @@
     TRUE. This is the input data with NA values replaced by the estimated values.}
   \item{correlation}{\code{character} -- How to calculate the distance between genes. 
      One out of pearson | kendall | spearman , see also help("cor").}
-  \item{allGenes}{\code{boolean} -- Use only complete genes to do the regression if TRUE, all
+  \item{allVariables}{\code{boolean} -- Use only complete genes to do the regression if TRUE, all
      genes if FALSE.}
   \item{maxSteps}{\code{numeric} -- Maximum number of iteration steps if allGenes = TRUE.}
   \item{verbose}{\code{boolean} -- Print step number and relative change if TRUE and 
-    allGenes = TRUE}
+    allVariables = TRUE}
   \item{...}{Reserved for parameters used in future version of the algorithm}
 }
 \value{

@@ -38,11 +38,8 @@
 ##            pcaRes@nObs        - number of observations (rows of input matrix)
 ##            pcaRes@nVar        - number of variables (columns of input matrix)
 ##            pcaRes@centered    - boolean, TRUE if centered, FALSE otherwise
-##            pcaRes@center      - row wise mean
-##            pcaRes@subset      - subset used for estimation. Rows / columns
 ##                                 that contain only NAs are left out.
 ##            pcaRes@varLimit    - NULL, not used here
-##            pcaRes@scaled      - boolean, TRUE if data was scaled, FALSE otherwise
 ##            pcaRes@nPcs        - number of principal components (d)
 ##            pcaRes@method      - "ppca"
 ##            pcaRes@missing     - Number of NAs in the data
@@ -216,10 +213,8 @@ ppca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, seed = NA,
 
     if (completeObs)
         result@completeObs <- cObs
-    result@center          <- attr(scale(Matrix, center=TRUE, scale=FALSE), "scaled:center")
-
     result@centered        <- center
-    result@scaled          <- "none"
+    result@center          <- attr(scale(Matrix, center = TRUE, scale = FALSE), "scaled:center")
     result@scores          <- X
     result@loadings        <- C
     result@R2cum           <- c(R2cum)
@@ -227,8 +222,7 @@ ppca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, seed = NA,
     result@sDev            <- apply(X, 2, sd)
     result@nObs            <- nrow(Matrix)
     result@nVar            <- ncol(Matrix)
-##    result@subset        <- NULL
-##    result@varLimit      <- NULL
+    # varLimit : There is no varLimit in this method, leving default (NULL)
     result@nPcs            <- ncol(C)
     result@method          <- "ppca"
     result@missing         <- sum(is.na(Matrix))

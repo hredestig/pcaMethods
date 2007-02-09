@@ -46,15 +46,6 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute", "
            res <- nlpca(as.matrix(object),...)
          })
 
-  scaled = attr(object, "scaled")
-  if (!is.null(scaled)) {
-    res@scaled <- scaled
-  } else
-    res@scaled <- "none"
-
-  if(length(subset) > 0)
-    res@subset <- subset
-   
   ## If the input was an exprSet we also return an exprSet object
   if (isExprSet) {
       set@exprs <- t(res@completeObs)
@@ -90,15 +81,6 @@ nni <- function(object, method=c("llsImpute"), subset=numeric(), ...) {
 
   res <- llsImpute(object, ...) 
 
-  scaled = attr(object, "scaled")
-  if (!is.null(scaled)) {
-    res@scaled <- scaled
-  } else
-    res@scaled <- "none"
-
-  if(length(subset) > 0)
-    res@subset <- subset
-
   ## If the input was an exprSet we also return an exprSet object
   if (isExprSet) {
       set@exprs <- t(res@completeObs)
@@ -111,7 +93,7 @@ nni <- function(object, method=c("llsImpute"), subset=numeric(), ...) {
 plotPcs <- function(object, pcs=1:object@nPcs, type=c("scores", "loadings"), sl=NULL,
                     hotelling=0.95,...) {
   type <- match.arg(type)
-  
+
   panel <- function(x,y, ...) {
     abline(h=0, v=0, col="black")
     if(!is.null(hotelling)) {
@@ -138,6 +120,7 @@ plotPcs <- function(object, pcs=1:object@nPcs, type=c("scores", "loadings"), sl=
          })
 }
 
+
 setMethod("print", "pcaRes",
           function(x, ...) {
             summary(x)
@@ -145,13 +128,10 @@ setMethod("print", "pcaRes",
             cat(x@nObs,"\tSamples\n")
             cat(x@missing, "\tNA's\n")
             cat(x@nPcs, "\tCalculated component(s)\n")
-            cat("*** Data was ")
-            if(x@scaled != "none") { cat("scaled (using ",x@scaled,") ", sep="") }
-            else { cat("NOT scaled ") }
-            if(x@centered && (x@scaled == "none")) { cat("but centered ***\n") }
-            else if(x@centered && (x@scaled != "none")) { cat("and centered ***\n") }
-            else if(!x@centered && (x@scaled != "none")) { cat("but NOT centered ***\n") }
-            else if(!x@centered && (x@scaled == "none")) { cat("and NOT centered ***\n") }
+            if(x@centered)
+                cat("Data was mean centered before running PCA \n")
+            else
+                cat("Data was NOT mean centered before running PCA \n")
             cat("Scores structure:\n")
             print(dim(x@scores))
             cat("Loadings structure:\n")
@@ -175,13 +155,11 @@ setMethod("print", "nniRes",
             cat(x@nVar, "\tVariables\n")
             cat(x@nObs,"\tSamples\n")
             cat(x@missing, "\tNA's\n")
-            cat("*** Data was ")
-            if(x@scaled != "none") { cat("scaled (using ",x@scaled,") ", sep="") }
-            else { cat("NOT scaled ") }
-            if(x@centered && (x@scaled == "none")) { cat("but centered ***\n") }
-            else if(x@centered && (x@scaled != "none")) { cat("and centered ***\n") }
-            else if(!x@centered && (x@scaled != "none")) { cat("but NOT centered ***\n") }
-            else if(!x@centered && (x@scaled == "none")) { cat("and NOT centered ***\n") }
+            cat("k was set to", x@k, "\n")
+            if(x@centered)
+                cat("Data was mean centered before running LLSimpute \n")
+            else
+                cat("Data was NOT mean centered before running LLSimpute \n")
           })
 
 setMethod("summary", "pcaRes",
@@ -215,9 +193,9 @@ fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs, ...) {
   ## ~description~
   ##   This function extracts the fitted values from a
   ##   pcaResobject. For PCA methods like SVD, Nipals, PPCA etc this
-  ##   isbasically just the scores multipled by the loadings,
+  ##   is basically just the scores multipled by the loadings,
   ##   forNon-linear PCA the original data is propagated through
-  ##   thenetwork to obtain the approximated data.
+  ##   the network to obtain the approximated data.
   ## ~usage~
   ##   fitted.pcaRes(object, data=NULL, nPcs=object@nPcs)
   ## ~arguments~
@@ -226,13 +204,12 @@ fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs, ...) {
   ##   ~-data~
   ##     For standard PCA methods this can safely be left null to
   ##     getscores x loadings but if set then the scores are obtained
-  ##     byprojecting provided data onto the loadings. Non-linear PCA
-  ##     isan exception, here if data is NULL then data is set to
-  ##     thecompleteObs and propaged through the network.
+  ##     byprojecting provided data onto the loadings. 
+  ##     If data contains NA values the result will be all NA!!!! (fix this?)
+  ##     Non-linear PCA is an exception, here if data is NULL then data is set to
+  ##     the completeObs and propaged through the network.
   ##   ~-nPcs~
   ##     The amount of PC's to consider
-  ##   ~-...~
-  ##     Not passed on anywhere
   ## ~value~
   ##   A matrix with the fitted values.
   ## ~keywords~
@@ -251,9 +228,9 @@ fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs, ...) {
            if(object@centered)
              data <- sweep(data, 1, object@center)
            recData <- errorHierarchic(object@network, t(object@scores), data)$out[,,nPcs]
-           recData <- recData / object@network@scalingFactor
+           recData <- t(recData / object@network@scalingFactor)
            if(object@centered) 
-             recData <- t(recData + object@center)
+             recData <- recData + object@center
          },
          {                              #default method
            if(!is.null(data)) {
@@ -267,8 +244,8 @@ fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs, ...) {
            if(object@centered)
              recData <- t(t(recData) + object@center)
          }
-         )
-  recData
+     )
+  return(recData)
 }
 setMethod("fitted", "pcaRes", fitted.pcaRes)
 
@@ -478,9 +455,8 @@ nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimi
   r@nVar <- nVar
   r@varLimit <- varLimit
   r@nPcs <- nPcs
-  r@scaled <- "none"
   r@centered <- center
-  r@center <- attr(scale(Matrix, center=TRUE, scale=FALSE), "scaled:center")
+  r@center <- attr(scale(Matrix, center = TRUE, scale = FALSE), "scaled:center")
   r@method <- "nipals"
   r@missing <- sum(is.na(Matrix))
   return(r)
@@ -511,7 +487,6 @@ svdPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = FALSE, varLimit=
   r <- new("pcaRes")
   if (completeObs)
     r@completeObs <- Matrix
-  r@center <- attr(scale(Matrix, center=TRUE, scale=FALSE), "scaled:center")
   r@scores <- cbind(pcs$x[,1:nPcs])
   r@loadings <- cbind(pcs$rotation[,1:nPcs])
   r@R2cum <- imp[3,1:nPcs]
@@ -520,8 +495,8 @@ svdPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = FALSE, varLimit=
   r@nObs <- nrow(object)
   r@nVar <- ncol(object)
   r@varLimit <- varLimit
-  r@scaled <- "none"
   r@centered <- center
+  r@center <- attr(scale(Matrix, center = TRUE, scale = FALSE), "scaled:center")
   r@nPcs <- nPcs
   r@method <- "svd"
   r@missing <- 0 

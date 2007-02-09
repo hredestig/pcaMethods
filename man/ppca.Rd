@@ -37,15 +37,15 @@
   \bold{Complexity:} Runtime is linear in the number of data,
   number of data dimensions and number of principal components.\cr
 
-  \bold{Convergence:} The algorithms does not to converge to proper results
-  in rare cases when unfavourable initial random numbers were chosen. 
+  \bold{Convergence:} 
   The threshold indicating convergence was changed from 1e-3 in 1.2.x
   to 1e-5 in the current version what leads to much more stable results.
   For reproducability you can set the seed (parameter seed) of the
   random number generator. \cr
   If used for missing value estimation, results may be checked by simply
   running the algorithm several times with changing seed, if the estimated
-  values show little variance the algorithm converged well.
+  values show little variance the algorithm converged well. This should,
+  however not be necessary with the lowered threshold.
 }
 \usage{
   ppca(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, seed = NA, ...)

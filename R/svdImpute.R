@@ -126,9 +126,8 @@ svdImpute <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, thres
     cObs[missing] <- Ye[missing]
     if (completeObs)
         result@completeObs <- cObs
-    result@center <- attr(scale(Matrix, center=TRUE, scale=FALSE), "scaled:center") 
     result@centered <- center
-    result@scaled <- "none"
+    result@center <- attr(scale(Matrix, center = TRUE, scale = FALSE), "scaled:center")
     result@scores <- scores
     result@loadings <- loadings
     result@R2cum <- c(R2cum)
