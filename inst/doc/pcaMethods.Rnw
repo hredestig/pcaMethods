@@ -6,7 +6,10 @@
 
 \title{The pcaMethods Package}
 \author{Wolfram Stacklies and Henning Redestig\\
+CAS-MPG Partner Institute for Computational Biology (PICB)\\
+and\\
 Max Planck Institute for Molecular Plant Physiology\\
+and\\
 Potsdam, Germany\\
 \url{http://bioinformatics.mpimp-golm.mpg.de/}
 }
@@ -28,19 +31,24 @@ genes. PCA aims to extract these structures thereby filtering noise out.
 If only the most significant loadings (eigenvectors, also referred to as principal components)
 are used for projection this can be written as:
 \begin{equation}
-X = TP^T + V
+X = 1\times{}\bar{x}^T + TP^T + V
 \end{equation}
-Where $X$ denotes the observations, $T$ the latent variables or scores,
-$P$ the transformation matrix (consisting of the most significant eigenvectors of the covariance matrix)
+Where the term $1\times{}\bar{x}^T$ represents the original variable
+averages, $X$ denotes the observations, $T={t_1, t_2,\ldots,t_k}$ the
+latent variables or scores, $P={p_1, p_2,\ldots,p_k}$ 
+the transformation matrix (consisting of the most significant eigenvectors of the covariance matrix)
 and $V$ are the residuals.
 
 Missing values may be estimated by projecting the scores back into the original
 space.
 \begin{equation}
-\hat{X} = TP^T
+$\hat{X} = 1\times{}\bar{x}^T + TP^T$.
 \end{equation}
 Optimally, this produces an estimate of the missing data based on the
 underlying correlation structure, thereby ignoring noise.
+This will only produce reasonable results
+if the residuals $V$ are sufficiently small, implying that most of the
+important information is captured by the first $k$ components.
 
 In order to calculate the transformation matrix $P$ one needs to determine
 the covariance matrix between variables or alternatively calculate $P$
@@ -71,14 +79,14 @@ This implements the SVDimpute algorithm as proposed by Troyanskaya et~al
 The idea behind the algorithm is to estimate the missing values as a
 linear combination of the $k$ most significant eigengenes\footnote{The
 term ``eigengenes'' denotes the loadings when PCA was applied considering
-genes as observations.}.
+variables (here the genes) as observations.}.
 The algorithm works iteratively until the change in the estimated solution
 falls below a certain threshold.
 Each step the eigengenes of the current estimate are calculated and
 used to determine a new estimate.
 
 An optimal linear combination is found by regressing an incomplete
-gene against the $k$ most significant eigengenes. If the value at
+variable against the $k$ most significant eigengenes. If the value at
 position $j$ is missing,
 the $j^{th}$ value of the eigengenes is not used when determining
 the regression coefficients.\\
@@ -146,13 +154,18 @@ Similar to probabilistic PCA, Bayesian PCA uses an EM approach together
 with a Bayesian model to calculate the likelihood for a reconstructed value.\\
 The algorithm seems to be tolerant to relatively high amounts of missing data
 (> 10\%).
-Scores and loadings obtained with Bayesian PCA generally differ
+Scores and loadings obtained with Bayesian PCA slightly differ
 from those obtained with conventional PCA.
-This is because BPCA was developed especially for missing value estimation.
+This is because BPCA was developed especially for missing value estimation and
+is based on a variational Bayesian
+framework (VBF), with automatic relevance
+determination (ARD). In BPCA, ARD leads to a different scaling of the
+scores, loadings and eigenvalues when compared to standard PCA or
+PPCA.
 The algorithm does not force orthogonality between loadings.
-However, the BPCA authors found that including an orthogonality criterion made the
-predictions worse (private communication).
-The authors also state that the difference between ``real'' and predicted
+However, the authors of the BPCA paper found that including an orthogonality criterion made the
+predictions worse.
+They also state that the difference between ``real'' and predicted
 Eigenvalues becomes larger when the number of observation is smaller,
 because it reflects the lack of information to accurately determine
 true loadings from the limited and noisy data.
@@ -164,6 +177,21 @@ The method available in this package is a port of the \texttt{bpca} Matlab
 script also provided by the authors\footnote{
 \url{http://hawaii.aist-nara.ac.jp/\%7Eshige-o/tools/}}.
 
+\subsection*{Inverse non-linear PCA (NLPCA)} 
+NLPCA \cite{scholz05} is especially suitable for data from experiments
+where the studied response is non-linear. Examples of such experiments
+are ubiquitous in biology -- enzyme kinetics are inherently non-linear
+as are gene expression responses influenced by the cell cycle or
+diurnal oscillations.
+NLPCA is based on training an auto-associative neural network composed of a component
+layer which serves as the ``bottle-neck'', a hidden non-linear layer
+and an output layer corresponding to the reconstructed data.
+The loadings can be seen as hidden in the network.
+Missing values in the training data are simply ignored when calculating the
+error during back-propagation. Thus NLPCA can be used to impute missing values
+in the same way as for conventional PCA. The only difference is that the
+loadings $P$ are now represented by a neural network.
+
 \subsection*{Nipals PCA}
 Nipals (Nonlinear Estimation by Iterative Partial Least Squares) \cite{wold66}
 is an algorithm at the root of PLS regression which can execute PCA with missing 
@@ -171,9 +199,10 @@ values by simply leaving those out from the appropriate inner products.
 It is tolerant to small amounts (generally not more than 5\%) of missing data.
 
 \subsection{Local least squares (LLS) imputation}
-The package provides an algorithm called \texttt{llsImpute} for missing value estimation 
-based on a linear combination of the $k$ nearest neighbours of an incomplete variable (gene). 
-The distance between genes is defined as the absolute
+The package provides an algorithm called \texttt{llsImpute} for missing value estimation
+based on a linear combination of the $k$ nearest neighbours of an incomplete variable 
+(in Microarray experiments normally a gene).
+The distance between variables is defined as the absolute
 value of the Pearson, Spearman or Kendall correlation coefficient.
 The optimal linear combination is found by solving a local least squares problem
 as described in \cite{kim05}. In tests performed in the cited paper the llsImpute
@@ -182,10 +211,10 @@ with BPCA.
 
 In the current implementation two slightly different ways for missing value estimation
 are provided. The first one is to restrict the neighbour searching to the 
-subset of complete genes.
-This is preferable when the number of incomplete genes is relatively small.
+subset of complete variables.
+This is preferable when the number of incomplete variables is relatively small.
 
-The second way is to consider all genes as candidates.
+The second way is to consider all variables as candidates.
 Here, missing values are initially replaced by the columns wise mean.
 The method then iterates, using the current estimate as input for the
 LLS regression until the change between new and old estimate falls below a 
@@ -240,6 +269,7 @@ resPPCA  <- pca(md, method="ppca", center=FALSE, nPcs=5)
 resBPCA  <- pca(md, method="bpca", center=FALSE, nPcs=5)
 resSVDI  <- pca(md, method="svdImpute", center=FALSE, nPcs=5)
 resNipals  <- pca(md, method="nipals", center=FALSE, nPcs=5)
+resNLPCA <- pca(md, method="nlpca", center=FALSE, nPcs=5, maxSteps=400)
 @
 Figure \ref{fig:eigenvalues} shows a plot of the eigenvalue structure
 (\texttt{pcaRes@sDev}).
@@ -257,9 +287,9 @@ same.
 	\centering
 <<fig=true, width=12, height=12, results=hide, echo=false>>=
 par(mar=c(5, 6, 4, 2))
-sDevs <- cbind(resPCA@sDev, resPPCA@sDev, resBPCA@sDev, resSVDI@sDev, resNipals@sDev)
+sDevs <- cbind(resPCA@sDev, resPPCA@sDev, resBPCA@sDev, resSVDI@sDev, resNipals@sDev, resNLPCA@sDev)
 matplot(sDevs, type = 'l', xlab="Eigenvalues", ylab="size", cex.lab=2.5, cex.main=1.5, lwd=3, cex.axis=2)
-legend(x="topright", legend=c("PCA", "PPCA", "BPCA", "SVDimpute","Nipals PCA"), lty=1:5, col=1:5, cex=2, lwd=3)
+legend(x="topright", legend=c("PCA", "PPCA", "BPCA", "SVDimpute","Nipals PCA","NLPCA"), lty=1:6, col=1:6, cex=2, lwd=3)
 @
 \caption{Eigenvalue structure as obtained with different methods\label{fig:eigenvalues}}
 \end{figure}
@@ -275,7 +305,7 @@ Figure \ref{fig:loadingBPCA} shows this for BPCA on the sample data.
 par(mar=c(5, 6, 4, 2))
 par(mfrow=c(1,2))
 plot(resBPCA@loadings[,1], resPCA@loadings[,1], xlab="BPCA", ylab="classic PCA", main = "Loading 1", cex.lab = 2.5, cex.main=2.5, cex.axis = 2)
-plot(resBPCA@loadings[,2], resSVDI@loadings[,2], xlab="BPCA", ylab="classic PCA", main = "Loading 2", cex.lab = 2.5, cex.main=2.5, cex.axis = 2)
+plot(resBPCA@loadings[,2], resPCA@loadings[,2], xlab="BPCA", ylab="classic PCA", main = "Loading 2", cex.lab = 2.5, cex.main=2.5, cex.axis = 2)
 @
 \caption{Loading 1 and 2 calculated with BPCA plotted against those
   calculated with standard PCA. \label{fig:loadingBPCA}}
@@ -308,7 +338,9 @@ q2PPCA <- Q2(resPPCA, mdC, nPcs=5, nruncv=1, fold=10)
 # PPCA does not converge / misestimate a value in very rare cases.
 # This is a workaround to avoid that such a case will break the
 # diagram displayed in the vignette.
-# I am further investigating this issue...
+# From the 2.0 release of bioconductor on, the convergence threshold
+# for PPCA was lowert to 1e-5, this should make the method much more
+# stable. So this workaround might be obsolete now...
 while( sum((abs(q2PPCA)) > 1) >= 1 ) {
     q2PPCA <- Q2(resPPCA, mdC, nPcs=5, nruncv=1, fold=10)
 }
@@ -328,9 +360,9 @@ print(xyplot(Q2~PC|method, q2, ylab=expression(Q^2), type="h", lwd=4))
 The second method called \texttt{kEstimate} uses cross validation to
 estimate the optimal number of loadings for missing value
 estimation.  The \texttt{NRMSEP} (normalised root mean square error of prediction)
-\cite{feten05} is used to define the average error of prediction. This
-error normalises the square difference between real and estimated
-values for a certain gene by the variance within this gene. The idea
+\cite{feten05} or Q2 can be used to define the average error of prediction. The
+NRMSEP normalises the square difference between real and estimated
+values for a certain variable by the variance within this variable. The idea
 behind this normalisation is that the error of prediction will
 automatically be higher if the variance is higher.  The
 \texttt{NRMSEP} for mean imputation is $\sqrt{\frac{nObs}{nObs - 1}}$
@@ -341,14 +373,18 @@ NRMSEP_k = \sqrt{\frac{1}{g} \sum_{j \in G} \frac{\sum_{i \in O_j}
 (x_{ij} - \hat{x}_{ijk})^2}{o_j s_{x_j}^2}}
 \end{equation}
 where $s^2_{x_j} = \sum_{i=1}^n (x_{ij} - \overline{x}_j)^2 / (n - 1)$,
-this is the variance within a certain gene.
-Further, $G$ denotes the set of incomplete genes, $g$ is the number of
-incomplete genes. $O_j$ is the set of missing observations in
-gene $j$ and $o_j$ is the number of missing observations in gene $j$.
-$\hat{x}_{ijk}$ stands for the estimate of value $i$ of gene $j$ using $k$
-loadings. See Figure \ref{fig:kEstimate} for an example. 
+this is the variance within a certain variable.
+Further, $G$ denotes the set of incomplete variables, $g$ is the number of
+incomplete varialbes. $O_j$ is the set of missing observations in
+variable $j$ and $o_j$ is the number of missing observations in variable $j$.
+$\hat{x}_{ijk}$ stands for the estimate of value $i$ of variable $j$ using $k$
+loadings. See Figure \ref{fig:kEstimate} for an example.
+The NRMSEP should be the error measure of choice. But if the number of
+observations is small, the variance within a certain variable may become
+and unstable criterion. If so or if variance scaling was applied we
+recommend to use Q2 instead.
 <<echo=true, results=hide>>=
-errEsti <- kEstimate(md, method = "svdImpute", evalPcs=1:5, nruncv=1)
+errEsti <- kEstimate(md, method = "ppca", evalPcs=1:5, nruncv=1, em="nrmsep")
 @
 \begin{figure}[!ht]
   \centering
@@ -357,9 +393,8 @@ par(mar=c(5, 6, 4, 2))
 barplot(drop(errEsti$eError), xlab="Loadings", ylab="NRMSEP (Single iteration)", cex.lab=2, cex.axis=1.5)
 @
 \caption{Boxplot showing the \texttt{NRMSEP} versus the number of
-  loadings. In this example only one iteration was performed, it is
-  recommendable to allow more iterations to obtain better estimates of the
-  NRMSEP. \label{fig:kEstimate}}
+  loadings. In this example 10 iterations of the whole cross validation were performed.
+  \label{fig:kEstimate}}
 \end{figure}
 
 \section{Visualisation of the results}
@@ -380,13 +415,16 @@ PCs plotted against each other, see Figure \ref{fig:plotPcs}.
 \begin{figure}[!ht]
   \centering
 <<fig=true, width=11, height=11, results=hide, echo=false>>=
-plotPcs(resPPCA, pcs=1:3, type="scores")
+plotPcs(resPPCA, pc=1:3, scoresLoadings=c(TRUE, FALSE))
 @
 \caption{A plot of score 1:3 for PPCA created with \texttt{plotPcs()}
   \label{fig:plotPcs}}
 \end{figure}
 \cleardoublepage
 \begin{thebibliography}{2006}
+\bibitem{scholz05} Scholz, M. , Kaplan, F., Guy, C.L., Kopka, J. and Selbig, J.
+{\sl Non-linear pca: a missing data approach.}
+Bioinformatics. 2005, 21, 3887-3895.
 \bibitem{troyanskaya01} Troyanskaya O. and Cantor M. and Sherlock G. and Brown
 P. and Hastie T. and Tibshirani R. and Botstein D. and Altman RB.
 {\sl Missing value estimation methods for DNA microarrays.}

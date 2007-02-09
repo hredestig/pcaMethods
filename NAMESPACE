@@ -30,5 +30,6 @@ export(
        llsImpute,
        nlpca,
        plotR2,
-       fitted.pcaRes
+       fitted.pcaRes,
+       kEstimateFast
        )

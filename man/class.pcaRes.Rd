@@ -15,11 +15,10 @@
   \code{new("pcaRes", scores=[the scores], loadings=[the loadings],
     nPcs=[amount of PCs], R2cum=[cumulative R2], nObs=[amount of
     observations], nVar=[amount of variables], R2=[R2 for each
-    individual PC], sDev=[stdev for each individual PC], scaled=[which
-    method was used to scale data], centered=[was data centered],
+    individual PC], sDev=[stdev for each individual PC],
+    centered=[was data centered], center=[original means],
     varLimit=[what variance limit was exceeded], method=[method used to
-    calculate PCA], subset=[subset of variables of data used],
-    missing=[amount of NAs], center=[original means], 
+    calculate PCA], missing=[amount of NAs], 
     completeObs=[estimated complete observations])}
 }
 
@@ -35,9 +34,7 @@
     \item{nVar}{"numeric", amount of variables}
     \item{centered}{"logical", data was centered or not}
     \item{center}{"numeric", the original variable centers}
-    \item{subset}{"numeric", the subset of variables used}
     \item{varLimit}{"numeric", the exceeded variance limit}
-    \item{scaled}{"characted", the scaled method  used}
     \item{nPcs}{"numeric", the amount of calculated PCs}
     \item{method}{"character", the method used to perform PCA}
     \item{missing}{"numeric", the total amount of missing values in

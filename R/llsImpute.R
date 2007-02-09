@@ -1,13 +1,13 @@
 ####################################################################################################
 ## LLSimpute <- function(Matrix, k = 10, center = TRUE, completeObs = TRUE, correlation = "pearson", 
-##                      allGenes = FALSE, maxSteps = 100, verbose = interactive(), ...) {
+##                      allVariables = FALSE, maxSteps = 100, verbose = interactive(), ...) {
 ##
 ## Missing value estimation using local least sqares (LLS).
 ## First k genes are selected by pearson or spearman correlation coefficients.
 ## Then missing values are imputed by regression against the k selected
 ## genes.
 ## The method was first described in Kim et al, Bioinformatics, 21(2),2005.
-## The allGenes option allows to choose if either only complete genes or all
+## The allVariables option allows to choose if either only complete genes or all
 ## genes may be used for estimation. If all genes are used, initially the missing
 ## values are replaced by the columns wise mean. The method then iterates, using
 ## the current estimate as input for the regression until the change between new
@@ -23,12 +23,12 @@
 ## center      - mean center the data if TRUE
 ## completeObs - Return estimated complete observations if TRUE
 ## correlation - one out of "pearson | kendall | spearman". See also help("cor").
-##               allGenes If FALSE only complete genes are used for the regression, if set
+##               allVariables If FALSE only complete genes are used for the regression, if set
 ##               TRUE all genes are considered. Therefore missing values are initially replaced 
 ##               by the row wise mean. Then the estimation is repeated with the newly imputed
 ##               values until the change falls below a certain threshold (here 0.001).
-## maxSteps    - Maximum number of steps when allGenes = TRUE
-## verbose     - Print step number and relative change if TRUE and allGenes = TRUE
+## maxSteps    - Maximum number of steps when allVariables = TRUE
+## verbose     - Print step number and relative change if TRUE and allVariables = TRUE
 ##
 ## Return values:
 ## nniRes      - a nearest neighbour imputation (nni) result object
@@ -43,7 +43,7 @@
 ####################################################################################################
 
 llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correlation = "pearson", 
-                      allGenes = FALSE, maxSteps = 100, verbose = interactive(), ...) {
+                      allVariables = FALSE, maxSteps = 100, verbose = interactive(), ...) {
 
     threshold <- 0.001
 
@@ -60,15 +60,15 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correl
     if (k > ncol(Matrix))
         stop("Cluster size larger than the number of columns, choose a k < ncol(Matrix)!")
  
-    ## Set allGenes TRUE if k exceeds number of complete genes
+    ## Set allVariables TRUE if k exceeds number of complete genes
     ## Print warning messages in the first case and when less than 50% of all genes are complete
-    ## and allGenes == FALSE
+    ## and allVariables == FALSE
     cg <- sum( apply(is.na(Matrix), 2, sum) == 0)
-    if ( (k > cg) && (!allGenes) ) {
-        warning("Cluster size larger than number of complete genes, using allGenes = TRUE")
-        allGenes <- TRUE
-    } else if ( (cg < (ncol(Matrix) / 2)) && (!allGenes) ) {
-        warning("Less than 50% of the genes are complete, consider using allGenes = TRUE")
+    if ( (k > cg) && (!allVariables) ) {
+        warning("Cluster size larger than number of complete genes, using allVariables = TRUE")
+        allVariables <- TRUE
+    } else if ( (cg < (ncol(Matrix) / 2)) && (!allVariables) ) {
+        warning("Less than 50% of the genes are complete, consider using allVariables = TRUE")
     } else if (sum(is.na(Matrix)) == 0)
         stop("No missing values, no need for missing value imputation :))")
 
@@ -85,7 +85,7 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correl
         means <- attr(Ye, "scaled:center")
     }
 
-    if (allGenes) {
+    if (allVariables) {
         compIx <- 1:ncol(obs)
         ## Impute the row average
         rowMeans <- apply(obs, 1, mean, na.rm = TRUE)
@@ -110,7 +110,7 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correl
         ## Do the regression and imputation
         for (index in missIx) {
             iteration <- iteration + 1
-	    if (allGenes) {
+	    if (allVariables) {
                 similar <- sort(distance[iteration,], index.return = TRUE, decreasing = TRUE)
                 simIx <- compIx[ similar$ix[similar$ix != iteration][1:k] ]
             } else {
@@ -135,8 +135,8 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correl
             Ye[tMiss, index] <- estimate
         }
 
-        ## We do not want to iterate if allGenes == FALSE
-        if (!allGenes) {
+        ## We do not want to iterate if allVariables == FALSE
+        if (!allVariables) {
             break
         } else {
             ## relative change in estimation
@@ -165,9 +165,8 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correl
         Ye[!is.na(Matrix)] <- Matrix[!is.na(Matrix)]
         result@completeObs <- Ye
     }
-    result@center          <- attr(scale(Matrix, center=TRUE, scale=FALSE), "scaled:center")
     result@centered        <- center
-    result@scaled          <- "none"
+    result@center          <- attr(scale(Matrix, center = TRUE, scale = FALSE), "scaled:center")
     result@nObs            <- nrow(Matrix)
     result@nVar            <- ncol(Matrix)
     result@method          <- "llsImpute"

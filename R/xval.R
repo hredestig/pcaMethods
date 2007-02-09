@@ -1,11 +1,7 @@
 Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10, segments=NULL, verbose=interactive(),...) {
 
   originalData <- as.matrix(originalData)
-  
-  if(length(object@subset) > 0)
-    originalData <- originalData[,object@subset]
-  
-  originalData <- prep(originalData, center=object@centered, scale=object@scaled)
+  originalData <- prep(originalData, center=object@centered)
 
   nR <- nrow(originalData)
   nC <- ncol(originalData)
@@ -53,7 +49,7 @@ Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10, segmen
       test <- originalData
       test[i] <- NA
       pc <- pca(test, nPcs=nPcs, method=object@method, verbose=FALSE,
-                center=object@centered, scale=object@scaled,...)
+                center=object@centered)
       
       ## add up to the press estimate
       for(np in 1:nPcs) {

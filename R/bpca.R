@@ -131,9 +131,8 @@ bpca <- function(Matrix, nPcs = 2, completeObs = TRUE, maxSteps = 100,
 
     if (completeObs)
         result@completeObs <- M$yest
-    result@center          <- attr(scale(Matrix, center=TRUE, scale=FALSE), "scaled:center") 
     result@centered        <- TRUE
-    result@scaled          <- "none"
+    result@center          <- attr(scale(Matrix, center = TRUE, scale = FALSE), "scaled:center")
     result@scores          <- M$scores 
     result@loadings        <- M$PA
     result@R2cum           <- c(R2cum)

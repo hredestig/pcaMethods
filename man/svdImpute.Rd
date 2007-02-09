@@ -21,16 +21,16 @@ the pca() wrapper function.
   falls below a certain threshold.
   Each step the eigengenes of the current estimate are calculated and
   used to determine a new estimate. Eigengenes denote the loadings if
-  pca is performed considering genes as observations.
+  pca is performed considering variable (for Microarray data genes) as observations.
 
   An optimal linear combination is found by regressing the incomplete
-  gene against the \code{k} most significant eigengenes. If the value at
+  variable against the \code{k} most significant eigengenes. If the value at
   position \code{j} is missing,
   the \eqn{j^th}{j^th} value of the eigengenes is not used when determining
   the regression coefficients.
 
   \bold{Complexity:} Each iteration, standard PCA (\code{prcomp}) needs to be
-  done for each incomplete gene to get the eigengenes. This is usually fast for
+  done for each incomplete variable to get the eigengenes. This is usually fast for
   small data sets, but complexity may rise if the data sets become very large.
 }
 \usage{

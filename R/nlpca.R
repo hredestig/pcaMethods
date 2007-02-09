@@ -208,9 +208,8 @@ nlpca <- function(Matrix, nPcs=2, center=TRUE, completeObs=TRUE, maxSteps=2 * pr
   r@nObs <- nObs
   r@nVar <- ncol(object)
   r@nPcs <- nPcs
-  r@scaled <- "none"
   r@centered <- center
-  r@center <- attr(scale(Matrix, center=TRUE, scale=FALSE), "scaled:center")
+  r@center <- attr(scale(Matrix, center = TRUE, scale = FALSE), "scaled:center")
   r@method <- "nlpca"
   r@missing <- sum(is.na(Matrix))
 
