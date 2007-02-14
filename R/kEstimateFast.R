@@ -87,7 +87,8 @@ kEstimateFast <- function(Matrix, method = "ppca", evalPcs = 1:3,
     }
             
     ret <- list()
-    ret$mink <- evalPcs[which(error == min(error))]
+    if (em == "nrmsep") ret$bestNPcs <- evalPcs[which(error == min(error))]
+    else ret$bestNPcs <- evalPcs[which(error == max(error))]
     ret$eError <- error
     ret$evalPcs <- evalPcs
 
