@@ -28,6 +28,8 @@
 ##               by the row wise mean. Then the estimation is repeated with the newly imputed
 ##               values until the change falls below a certain threshold (here 0.001).
 ## maxSteps    - Maximum number of steps when allVariables = TRUE
+## xval        - For cross validation: Index of the gene to estimate, all other genes will
+##               be ignored if this parameter is set.
 ## verbose     - Print step number and relative change if TRUE and allVariables = TRUE
 ##
 ## Return values:
@@ -43,7 +45,7 @@
 ####################################################################################################
 
 llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correlation = "pearson", 
-                      allVariables = FALSE, maxSteps = 100, verbose = interactive(), ...) {
+                      allVariables = FALSE, maxSteps = 100, xval = NULL, verbose = interactive(), ...) {
 
     threshold <- 0.001
 
@@ -75,6 +77,10 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correl
     ## Find all genes with missing values
     missing <- apply(is.na(Matrix), 2, sum) > 0
     missIx <- which(missing == TRUE)
+    # For cross validation we want to only estimate one variable, the others
+    # are not considered in the cross validation anyway
+    if (!is.null(xval))
+        missIx = xval
     obs <- Matrix    ## working copy of the data
     Ye <- Matrix     ## Estimated complete observations
 
@@ -97,7 +103,7 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correl
     } else {
         compIx <- which(missing == FALSE)
         ## missing genes are the rows, complete genes the columns
-        distance = abs(cor(obs[,missIx], obs[,compIx], use="pairwise.complete.obs",
+        distance = abs(cor(obs[,missIx, drop=FALSE], obs[,compIx, drop=FALSE], use="pairwise.complete.obs",
                        method = correlation))
     }
 
@@ -136,7 +142,7 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correl
         }
 
         ## We do not want to iterate if allVariables == FALSE
-        if (!allVariables) {
+        if (!allVariables || !is.null(xval)) {
             break
         } else {
             ## relative change in estimation

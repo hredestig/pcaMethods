@@ -6,8 +6,9 @@
   Perform cross validation to estimate the optimal number of components for missing
   value estimation.
   Cross validation is done for the complete subset of a variable.
-  The assumption hereby is that variables that are highly correlated in a distinct region (here
-  the non-missing observations) are also correlated in another (here the missing observations).
+  The assumption hereby is that variables that are highly correlated in a 
+  distinct region (here the non-missing observations) are also correlated in another 
+  (here the missing observations).
   This also implies that the complete subset must be large enough to be representative.
   For each incomplete variable, the available values are divided into a user defined
   number of cv-segments. The segments have equal size, but are chosen from a random
@@ -20,36 +21,51 @@
   normalises the RMSD between original data and estimate by the variable-wise
   variance. The reason for this is that a higher variance will generally lead to a
   higher estimation error.
-  If the number of samples is small, the gene - wise variance may become an unstable
+  If the number of samples is small, the variable - wise variance may become an unstable
   criterion and the Q2 distance should be used instead. Also if variance normalisation
-  was applied previously.
+  was applied previously.\cr
+  The method proceeds variable - wise, the NRMSEP / Q2 distance is calculated for
+  each incomplete variable and averaged afterwards. This allows to easily see for
+  wich set of variables missing value imputation makes senes and for wich set no
+  imputation or something like mean-imputation should be used.\cr
+  Use \code{kEstimateFast} or \code{Q2} if you are not interested in variable wise
+  values.
 }
 \details{
-  Run time may be very high on large data sets. Especially when used with methods
+  Run time may be very high on large data sets. Especially when used with
   complex methods like BPCA or Nipals PCA.
-  The estimation method is called 
-  \eqn{(g_{miss} \cdot segs \cdot nruncv)}{(g\_miss * segs * nruncv)}
-  times, where \eqn{g_{miss}}{g\_miss}
+  For PPCA, BPCA, Nipals PCA and NLPCA the estimation method is called
+  \eqn{(v_{miss} \cdot segs \cdot nruncv \cdot)}{(v\_miss * segs * nruncv)}
+  times as the error for all numbers of principal components can be calculated at once.
+  For LLSimpute and SVDimpute this is not possible, and the method is called
+  \eqn{(v_{miss} \cdot segs \cdot nruncv \cdot length(evalPcs))}{(v\_miss * segs * 
+  nruncv * length(evalPcs))} times. This should still be fast for LLSimpute because
+  the method allows to choose to only do the estimation for one particular variable.
+  This saves a lot of iterations.
+  Here, \eqn{v_{miss}}{v\_miss}
   is the number of variables showing missing values.\cr
-  As cross validation can only be done gene-wise, in this function Q2 is
-  defined on single genes, not on the entire data set. This is when calculating Q2
-  as \eqn{\frac{\sum(X - Xe)^2}{\sum(X^2)}}{sum(X - Xe)^2 \ sum(X^2)},
-  X is the currently used gene and Xe it's estimate.
+  As cross validation is done variable-wise, in this function Q2 is
+  defined on single variables, not on the entire data set. This is Q2 is calculated as
+  as \eqn{\frac{\sum(x - xe)^2}{\sum(x^2)}}{sum(x - xe)^2 \ sum(x^2)},
+  where x is the currently used variable and xe it's estimate. The values are then averaged
+  over all variables. The NRMSEP is already defined variable-wise. For a single variable
+  it is then \eqn{\sqrt(\frac{\sum(x - xe)^2}{(n \cdot var(x))})}{sqrt(sum(x - xe)^2 \ (n * var(x)))}, 
+  where x is the variable and xe it's estimate, n is the length of x.
+  The variable wise estimation errors are returned in parameter variableWiseError.
 }
 \usage{
-kEstimate(Matrix, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 10,
-em = "nrmsep", allVariables = FALSE, verbose = interactive(), 
-random = FALSE,...)
+kEstimate(Matrix, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 5,
+em = "q2", allVariables = FALSE, verbose = interactive(),...)
 }
 \arguments{
 \item{Matrix}{\code{matrix} -- numeric matrix containing observations in rows and 
   variables in columns}
-\item{method}{\code{character} -- One of ppca | bpca | svdImpute | nipals | nlpca | llsImpute
-  | llsImputeAll. llsImputeAll uses llsImpute with option allVariables = TRUE.}
+\item{method}{\code{character} -- One of ppca | bpca | svdImpute | nipals | nlpca | llsImpute |
+  llsImputeAll. The option llsImputeAll calls llsImpute with the allVariables = TRUE parameter.}
 \item{evalPcs}{\code{numeric} -- The principal components to use for cross validation
-or cluster sizes if used with llsImpute.
+or the number of neighbour variables if used with llsImpute.
 Should be an array containing integer values, eg. evalPcs = 1:10
-or evalPcs = C(2,5,8).The NRMSEP is calculated for each component.}
+or evalPcs = C(2,5,8). The NRMSEP or Q2 is calculated for each component.}
 \item{segs}{\code{numeric} -- number of segments for cross validation}
 \item{nruncv}{\code{numeric} -- Times the whole cross validation is repeated}
 \item{em}{\code{character} -- The error measure. This can be nrmsep or q2}
@@ -57,46 +73,47 @@ or evalPcs = C(2,5,8).The NRMSEP is calculated for each component.}
 If FALSE, only the incomplete ones are included.
 You maybe want to do this to compare several methods on a 
 complete data set.}
-\item{verbose}{\code{boolean} -- If TRUE, the NRMSEP and the variance are printed
-to the console each iteration.}
-\item{random}{\code{boolean} -- Impute normal distributed random values with
-same mean and standard deviation than the original data.
-This is only thought for comparison.}
-\item{...}{Further arguments to \code{pca}}
+\item{verbose}{\code{boolean} -- If TRUE, some output like the variable indexes are
+ printed to the console each iteration.}
+\item{...}{Further arguments to \code{pca()} or \code{nni()}}
 }
 \value{
   \item{list}{Returns a list with the elements:
   \itemize{
-    \item mink - number of PCs for which the minimal average NRMSEP was obtained
+    \item bestNPcs - number of PCs or k for which the minimal average NRMSEP or the
+       maximal Q2 was obtained.
     \item eError - an array of of size length(evalPcs). Contains the average error
-    of the cross validation runs for each number of components.
-    \item eErrorMat - Estimation error for each of the separately done cross validations.
-    Rows represent the separate runs, columns the number of components
-    used for estimation.
-    \item evalPcs - The evaluated numbers of components or cluster sizes 
-    (the same as the evalPcs input parameter).
+       of the cross validation runs for each number of components.
+    \item variableWiseError - Matrix of size incomplete\_variables x length(evalPcs).
+      Contains the NRMSEP or Q2 distance for each variable and each number of PCs.
+      This allows to easily see for wich variables imputation makes sense and for
+      which one it should not be done or mean imputation should be used.
+    \item evalPcs - The evaluated numbers of components or number of neighbours 
+      (the same as the evalPcs input parameter).
+    \item variableIx - Index of the incomplete variables. This can be used to map 
+      the variable wise error to the original data.
   }}
 }
 \seealso{
-  \code{\link{bpca}, \link{svdImpute}, \link{prcomp}, \link{nipalsPca}, \link{pca}}.
+  \code{\link{kEstimateFast}, \link{Q2}, \link{pca}, \link{nni}}.
 }
 \examples{
-## Load a sample metabolite dataset (metaboliteData)
+## Load a sample metabolite dataset with 5\% missing values (metaboliteData)
 data(metaboliteData)
-
-# Now remove 10\% of the data
-cond<-runif(length(metaboliteData))
-cond<-cond<0.1
-metaboliteData[cond] <- NA
 
 # Do cross validation with ppca for component 2:4
 esti <- kEstimate(metaboliteData, method = "ppca", evalPcs = 2:4, nruncv=1, em="nrmsep")
 
-# Plot the result
+# Plot the average NRMSEP
 barplot(drop(esti$eError), xlab = "Components",ylab = "NRMSEP (1 iterations)")
 
-# The best k value is:
-print(esti$mink)
+# The best result was obtained for this number of PCs:
+print(esti$bestNPcs)
+
+# Now have a look at the variable wise estimation error
+barplot(drop(esti$variableWiseError[, which(esti$evalPcs == esti$bestNPcs)]), 
+        xlab = "Incomplete variable Index", ylab = "NRMSEP")
+
 }
 \keyword{multivariate}
 

@@ -64,14 +64,8 @@ svdImpute(Matrix, nPcs = 2, center=TRUE, completeObs=TRUE, threshold = 0.01,
   \code{\link{bpca}, \link{ppca}, \link{prcomp}, \link{nipalsPca}, \link{pca}, \link{pcaRes}}.
 }
 \examples{
-## Load a sample metabolite dataset (metaboliteData)
+## Load a sample metabolite dataset with 5\% missing values (metaboliteData)
 data(metaboliteData)
-
-# Now remove 10\% of the data
-rows <- nrow(metaboliteData)
-cols <- ncol(metaboliteData)
-cond<-matrix(runif(rows * cols),rows,cols) < 0.1
-metaboliteData[cond] <- NA
 
 ## Perform probabilistic PCA using the 3 largest components
 result <- pca(metaboliteData, method="svdImpute", nPcs=3, center = TRUE)

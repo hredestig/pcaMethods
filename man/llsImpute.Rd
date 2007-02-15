@@ -33,7 +33,7 @@
 }
 \usage{
   llsImpute(Matrix, k = 10, center = FALSE, completeObs = TRUE, correlation = "pearson",
-  allVariables = FALSE, maxSteps = 100, verbose = interactive(), ...)
+  allVariables = FALSE, maxSteps = 100, xval = NULL, verbose = interactive(), ...)
 }
 \arguments{
   \item{Matrix}{\code{matrix} -- Data containing the variables (genes) in
@@ -49,6 +49,9 @@
   \item{allVariables}{\code{boolean} -- Use only complete genes to do the regression if TRUE, all
      genes if FALSE.}
   \item{maxSteps}{\code{numeric} -- Maximum number of iteration steps if allGenes = TRUE.}
+  \item{xval}{\code{numeric} Use LLSimpute for cross validation. xval is the index of the gene 
+    to estimate, all other incomplete genes will be ignored if this parameter is set. We
+    do not consider them in the cross-validation anyway...}
   \item{verbose}{\code{boolean} -- Print step number and relative change if TRUE and 
     allVariables = TRUE}
   \item{...}{Reserved for parameters used in future version of the algorithm}
@@ -61,7 +64,7 @@
   \code{\link{pca}, \link{nniRes}, \link{nni}}.
 }
 \examples{
-## Load a sample metabolite dataset (metaboliteData) with already 10\% of
+## Load a sample metabolite dataset (metaboliteData) with already 5\% of
 ## data missing
 data(metaboliteData)
 

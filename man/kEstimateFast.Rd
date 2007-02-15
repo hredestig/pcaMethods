@@ -39,7 +39,7 @@ em = "nrmsep", verbose = interactive(),...)
 \value{
   \item{list}{Returns a list with the elements:
   \itemize{
-    \item mink - number of PCs for which the minimal average NRMSEP was obtained
+    \item minNPcs - number of PCs for which the minimal average NRMSEP was obtained
     \item eError - an array of of size length(evalPcs). Contains the estimation error
     for each number of components.
     \item evalPcs - The evaluated numbers of components or cluster sizes 
@@ -50,22 +50,17 @@ em = "nrmsep", verbose = interactive(),...)
   \code{\link{kEstimate}}.
 }
 \examples{
-## Load a sample metabolite dataset (metaboliteData)
+## Load a sample metabolite dataset with 5\% missing values (metaboliteData)
 data(metaboliteData)
 
-# Now remove 10\% of the data
-cond<-runif(length(metaboliteData))
-cond<-cond<0.1
-metaboliteData[cond] <- NA
-
-# Estimate best k with ppca for component 2:4
-esti <- kEstimateFast(metaboliteData, method = "ppca", evalPcs = 2:4, em="nrmsep")
+# Estimate best number of PCs with ppca for component 2:4
+esti <- kEstimateFast(t(metaboliteData), method = "ppca", evalPcs = 2:4, em="nrmsep")
 
 # Plot the result
 barplot(drop(esti$eError), xlab = "Components",ylab = "NRMSEP (1 iterations)")
 
 # The best k value is:
-print(esti$mink)
+print(esti$minNPcs)
 }
 \keyword{multivariate}
 

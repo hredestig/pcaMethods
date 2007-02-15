@@ -100,14 +100,8 @@
   \code{\link{ppca}, \link{svdImpute}, \link{prcomp}, \link{nipalsPca}, \link{pca}, \link{pcaRes}. \link{kEstimate}}.
 }
 \examples{
-## Load a sample metabolite dataset (metaboliteData)
+## Load a sample metabolite dataset with 5\% missig values (metaboliteData)
 data(metaboliteData)
-
-# Now remove 10\% of the data
-rows <- nrow(metaboliteData)
-cols <- ncol(metaboliteData)
-cond<-matrix(runif(rows * cols),rows,cols) < 0.1
-metaboliteData[cond] <- NA
 
 ## Perform Bayesian PCA with 2 components
 result <- pca(metaboliteData, method="bpca", nPcs=2, center=FALSE)
