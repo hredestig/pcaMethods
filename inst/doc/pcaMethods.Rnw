@@ -40,10 +40,7 @@ the transformation matrix (consisting of the most significant eigenvectors of th
 and $V$ are the residuals.
 
 Missing values may be estimated by projecting the scores back into the original
-space.
-\begin{equation}
-$\hat{X} = 1\times{}\bar{x}^T + TP^T$.
-\end{equation}
+space using $\hat{X} = 1\times{}\bar{x}^T + TP^T$.
 Optimally, this produces an estimate of the missing data based on the
 underlying correlation structure, thereby ignoring noise.
 This will only produce reasonable results
@@ -190,7 +187,12 @@ The loadings can be seen as hidden in the network.
 Missing values in the training data are simply ignored when calculating the
 error during back-propagation. Thus NLPCA can be used to impute missing values
 in the same way as for conventional PCA. The only difference is that the
-loadings $P$ are now represented by a neural network.
+loadings $P$ are now represented by a neural network.\\
+A shortcoming of the current implementation is that there is no reasonable
+stop criterion. The quality of the estimated solution depends on the number of
+iterations. This should in most cases be somewhat between 500 and 1500.
+We recommend to use \texttt{kEstimate} or \texttt{kEstimateFast} to determine
+this parameter.
 
 \subsection*{Nipals PCA}
 Nipals (Nonlinear Estimation by Iterative Partial Least Squares) \cite{wold66}
@@ -384,7 +386,7 @@ observations is small, the variance within a certain variable may become
 and unstable criterion. If so or if variance scaling was applied we
 recommend to use Q2 instead.
 <<echo=true, results=hide>>=
-errEsti <- kEstimate(md, method = "ppca", evalPcs=1:5, nruncv=1, em="nrmsep")
+errEsti <- kEstimate(md, method = "ppca", evalPcs=1:10, nruncv=1, em="nrmsep")
 @
 \begin{figure}[!ht]
   \centering
@@ -393,9 +395,31 @@ par(mar=c(5, 6, 4, 2))
 barplot(drop(errEsti$eError), xlab="Loadings", ylab="NRMSEP (Single iteration)", cex.lab=2, cex.axis=1.5)
 @
 \caption{Boxplot showing the \texttt{NRMSEP} versus the number of
-  loadings. In this example 10 iterations of the whole cross validation were performed.
+  loadings. In this example only 1 iteration of the whole cross validation were performed.
+  It is normally advisable to do more than just one iteration.
   \label{fig:kEstimate}}
 \end{figure}
+
+\texttt{kEstimate} also provides information about the estimation error for individual variables.
+The $Q^2$ distance or the NRMSEP are calculated separately for each variable. 
+See the manpage for \texttt{kEstimate} and \texttt{kEstimateFast} for details.
+Plotting the variable - wise results gives information about for which variables
+missing value estimation makes sense, and for which no imputation or mean imputation
+is preferable, see Figure \ref{fig:variableWiseError}.
+If you are not interested in variable - wise information we recommend to use the faster
+\texttt{kEstimateFast} instead.
+\begin{figure}[!ht]
+  \centering
+<<fig=true, width=9, height=9, results=hide, echo=false>>=
+par(mar=c(5, 6, 4, 2))
+barplot(drop(errEsti$variableWiseError[, which(errEsti$evalPcs == errEsti$bestNPcs)]), 
+xlab="Incomplete variable Index", ylab="NRMSEP", cex.lab=2, cex.axis=1.5)
+@
+\caption{Boxplot showing the \texttt{NRMSEP} for all incomplete variables in the data set.
+For the first 7 variables missing value imputation does not seem to make too much sense. 
+\label{fig:variableWiseError}}
+\end{figure}
+
 
 \section{Visualisation of the results}
 Some methods for display of scores and loadings are also provided.
