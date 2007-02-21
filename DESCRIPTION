@@ -1,10 +1,10 @@
 Package: pcaMethods
-Version: 1.9.1
-Date: 2007-02-15
+Version: 1.9.2
+Date: 2007-02-21
 Author: Wolfram Stacklies, Henning Redestig
 Maintainer: Wolfram Stacklies <wolfram.stacklies@gmail.com> 
 Title: A collection of PCA methods.
-Depends: R, MASS, ellipse, pls, methods
+Depends: R, MASS, pls, methods
 Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA and
   the conventional SVD PCA. A cluster based method for missing value
   estimationn is included for comparison.

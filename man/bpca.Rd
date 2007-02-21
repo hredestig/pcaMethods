@@ -115,8 +115,8 @@ scores <- result@scores
 ## Get the estimated complete observations
 cObs <- result@completeObs
 
-## Now plot the scores
-plotPcs(result, scoresLoadings=c(TRUE,FALSE))
+## Now make a scores and loadings plot
+slplot(result)
 }
 \keyword{multivariate}
 \author{Wolfram Stacklies \cr 

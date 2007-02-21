@@ -98,7 +98,8 @@ plotPcs <- function(object, pcs=1:object@nPcs, type=c("scores", "loadings"), sl=
     abline(h=0, v=0, col="black")
     if(!is.null(hotelling)) {
       A <- length(pcs)
-      lines(ellipse(cov(cbind(x,y)), level=hotelling))
+      el <- simpleEllipse(x, y, alfa=hotelling)
+      lines(el)
     }
     if(is.null(sl))
       points(x, y, ...)
@@ -165,7 +166,7 @@ setMethod("print", "nniRes",
 setMethod("summary", "pcaRes",
           function(object) {
             if (length(object@R2cum) != length(na.omit(object@R2cum))) {
-              warning("Whole row or column was NA in original matriobject. Variance cannot be estimated")
+              warning("Whole row or column was NA in original matrix object. Variance cannot be estimated")
             }
             cat(object@method, "calculated PCA\n")
             cat("Importance of component(s):\n")
@@ -301,7 +302,8 @@ setMethod("slplot", "pcaRes",
                 abline(h=0, v=0)
                 if(!is.null(hotelling)) {
                   A <- length(pcs)
-                  lines(ellipse(cov(object@scores[,pcs]), level=hotelling))
+                  el <- simpleEllipse(object@scores[,pcs[1]], object@scores[,pcs[2]], alfa=hotelling)
+                  lines(el)
                 }
               }
               if(scoresLoadings[2]) {
@@ -545,3 +547,45 @@ prep <- function(object, scale=c("none", "pareto", "vector", "UV"), center=TRUE,
   object
 }
 
+
+simpleEllipse <- function(x, y, alfa=0.95, len=200) {
+
+  ##<..Beg Rdocu..>
+  ## ~name~
+  ##   simpleEllipse
+  ## ~title~
+  ##   Hotelling's T^2 Ellipse
+  ## ~description~
+  ##   As described in 'Introduction to multi and megavariate data
+  ##   analysis using PCA and PLS' by Eriksson et al. This produces
+  ##   very similar ellipse as compared to the ellipse function from
+  ##   the ellipse package except that this function assumes that x
+  ##   and y are uncorrelated (which they of course are if they are
+  ##   scores or loadings from a PCA). This function is mainly
+  ##   included to get rid of the dependance on the ellipse package.
+  ## ~usage~
+  ##   simpleEllipse(x, y, alfa=0.95, len=200)
+  ## ~arguments~
+  ##   ~-x~
+  ##     First PC
+  ##   ~-y~
+  ##     Second PC
+  ##   ~-alfa~
+  ##     Significance level of the circle
+  ##   ~-len~
+  ##     Amount of points in the circle
+  ## ~value~
+  ##   A matrix with X and Y coordinates for the circle
+  ## ~seealso~
+  ##   'ellipse'
+  ## ~author~
+  ##   Henning Redestig <redestig[at]mpimp-golm.mpg.de>
+  ##>..End Rdocu..<
+
+  N <- length(x)
+  A <- 2
+  mypi <- seq(0, 2 * pi, len)
+  r1 <- sqrt(var(x) * qf(alfa, 2, N - 2) * (2*(N^2 - 1)/(N * (N - 2))))
+  r2 <- sqrt(var(y) * qf(alfa, 2, N - 2) * (2*(N^2 - 1)/(N * (N - 2))))
+  cbind(r1 * cos(mypi) + mean(x), r2 * sin(mypi) + mean(y))
+}
