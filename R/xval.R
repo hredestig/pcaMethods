@@ -2,6 +2,8 @@ Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10, segmen
 
   originalData <- as.matrix(originalData)
   originalData <- prep(originalData, center=object@centered)
+  if(any(is.na(originalData)))
+    stop("Q2 is intended for comparison with complete data. If you do not have a complete data set you can first impute the missing values and then run Q2 on the estimated data set.")
 
   nR <- nrow(originalData)
   nC <- ncol(originalData)
@@ -34,7 +36,7 @@ Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10, segmen
         tmp[seg[[i]]] <- NA
         if(any(apply(tmp, 1, function(x) sum(is.na(x))) == ncol(tmp)) ||
            any(apply(tmp, 2, function(x) sum(is.na(x))) == nrow(tmp)))
-          stop("ooops! a column or a row was completely lost, this should not have happened. Please contact the maintainer")
+          stop("ooops! a column or row was completely lost. this should not have happened, please consider contacting the maintainer.")
       }
       ## </to remove later>
       
@@ -48,15 +50,23 @@ Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10, segmen
         cat(".")
       test <- originalData
       test[i] <- NA
-      pc <- pca(test, nPcs=nPcs, method=object@method, verbose=FALSE,
-                center=object@centered)
+      if (object@method != "llsImpute") {
+        pc <- pca(test, nPcs=nPcs, method=object@method, verbose=FALSE,
+                  center=object@centered, scale=object@scaled,...)
+      }
       
       ## add up to the press estimate
       for(np in 1:nPcs) {
-        if(object@method == "nlpca")
-          fittedData <- fitted(pc, data=test, nPcs=np)
-        else
-          fittedData <- fitted(pc, data=NULL, nPcs=np)
+        if(object@method == "llsImpute") {
+          fittedData <- llsImpute(test, k = np, verbose = FALSE,
+                                  allVariables = TRUE, center = FALSE)@completeObs
+        }
+        else {
+          if(object@method == "nlpca")
+            fittedData <- fitted(pc, data=test, nPcs=np)
+          else
+            fittedData <- fitted(pc, data=NULL, nPcs=np)
+        }
         press[np] <- press[np] +
           sum((originalData[i] - fittedData[i])^2, na.rm=TRUE)
       }

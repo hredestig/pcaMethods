@@ -1,0 +1,9 @@
+Its annoying to get a different kind of result back when you give
+pca() an exprSet instead of matrix as plotting etc doesnt work
+then. Better would be to provide a as() function to allow for easy
+conversion.
+
+regarding Q2, removing diagonals are good but there is no
+randomization anymore, this must be fixed. also it would be good if
+you could suggest a percentage of missing values and that the method
+itself would remove the appropriate amount of diagonals.
