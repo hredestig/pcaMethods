@@ -390,14 +390,19 @@ errEsti <- kEstimate(md, method = "ppca", evalPcs=1:10, nruncv=1, em="nrmsep")
 @
 \begin{figure}[!ht]
   \centering
+  \begin{minipage}[c]{0.65\textwidth}
+    \centering  
 <<fig=true, width=9, height=9, results=hide, echo=false>>=
 par(mar=c(5, 6, 4, 2))
 barplot(drop(errEsti$eError), xlab="Loadings", ylab="NRMSEP (Single iteration)", cex.lab=2, cex.axis=1.5)
 @
-\caption{Boxplot showing the \texttt{NRMSEP} versus the number of
-  loadings. In this example only 1 iteration of the whole cross validation were performed.
-  It is normally advisable to do more than just one iteration.
-  \label{fig:kEstimate}}
+  \end{minipage}
+  \begin{minipage}[c]{0.35\textwidth}
+    \caption{Boxplot showing the \texttt{NRMSEP} versus the number of
+    loadings. In this example only 1 iteration of the whole cross validation were performed.
+    It is normally advisable to do more than just one iteration.
+    \label{fig:kEstimate}}
+  \end{minipage}
 \end{figure}
 
 \texttt{kEstimate} also provides information about the estimation error for individual variables.
@@ -410,29 +415,36 @@ If you are not interested in variable - wise information we recommend to use the
 \texttt{kEstimateFast} instead.
 \begin{figure}[!ht]
   \centering
+  \begin{minipage}[c]{0.65\textwidth}
+    \centering
 <<fig=true, width=9, height=9, results=hide, echo=false>>=
 par(mar=c(5, 6, 4, 2))
 barplot(drop(errEsti$variableWiseError[, which(errEsti$evalPcs == errEsti$bestNPcs)]), 
 xlab="Incomplete variable Index", ylab="NRMSEP", cex.lab=2, cex.axis=1.5)
 @
-\caption{Boxplot showing the \texttt{NRMSEP} for all incomplete variables in the data set.
-For the first 7 variables missing value imputation does not seem to make too much sense. 
-\label{fig:variableWiseError}}
+  \end{minipage}
+  \begin{minipage}[c]{0.35\textwidth}
+    \caption{Boxplot showing the \texttt{NRMSEP} for all incomplete variables in the data set.
+    For the first 7 variables missing value imputation does not seem to make too much sense. 
+    \label{fig:variableWiseError}}
+  \end{minipage}
 \end{figure}
 
-
+\newpage
 \section{Visualisation of the results}
 Some methods for display of scores and loadings are also provided.
 \texttt{slplot()} is a convenient way to present a PCA result for two
-scores / loadings. An example is shown in Figure \ref{fig:slplot}.
-\begin{figure}[!h]
-  \centering
-<<fig=true, width=11, height=7, results=hide, echo=false>>=
-slplot(resSVDI, pcs=c(1,2))
-@
-\caption{\texttt{slplot} for scores and loadings obtained with
-  SVDimpute. \label{fig:slplot}}
-\end{figure}
+scores / loadings.
+
+%An example is shown in Figure \ref{fig:slplot}.
+%\begin{figure}[!h]
+%  \centering
+%<<fig=true, width=11, height=7, results=hide, echo=false>>=
+%slplot(resSVDI, pcs=c(1,2))
+%@
+%\caption{\texttt{slplot} for scores and loadings obtained with
+%  SVDimpute. \label{fig:slplot}}
+%\end{figure}
 
 \noindent Another method called \texttt{plotPcs()} allows to visualise many
 PCs plotted against each other, see Figure \ref{fig:plotPcs}.

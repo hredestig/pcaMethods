@@ -69,7 +69,8 @@
 data(metaboliteData)
 
 ## Perform llsImpute using k = 10
-result <- llsImpute(metaboliteData, k = 10, correlation = "pearson")
+## Set allVariables TRUE because there are very few complete variables
+result <- llsImpute(metaboliteData, k = 10, correlation = "pearson", allVariables = TRUE)
 
 ## Get the estimated complete observations
 cObs <- result@completeObs
