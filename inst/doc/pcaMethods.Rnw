@@ -386,18 +386,18 @@ observations is small, the variance within a certain variable may become
 and unstable criterion. If so or if variance scaling was applied we
 recommend to use Q2 instead.
 <<echo=true, results=hide>>=
-errEsti <- kEstimate(md, method = "ppca", evalPcs=1:10, nruncv=1, em="nrmsep")
+errEsti <- kEstimate(md, method = "ppca", evalPcs=1:5, nruncv=1, em="nrmsep")
 @
 \begin{figure}[!ht]
   \centering
-  \begin{minipage}[c]{0.65\textwidth}
+  \begin{minipage}[c]{0.6\textwidth}
     \centering  
 <<fig=true, width=9, height=9, results=hide, echo=false>>=
 par(mar=c(5, 6, 4, 2))
 barplot(drop(errEsti$eError), xlab="Loadings", ylab="NRMSEP (Single iteration)", cex.lab=2, cex.axis=1.5)
 @
   \end{minipage}
-  \begin{minipage}[c]{0.35\textwidth}
+  \begin{minipage}[c]{0.3\textwidth}
     \caption{Boxplot showing the \texttt{NRMSEP} versus the number of
     loadings. In this example only 1 iteration of the whole cross validation were performed.
     It is normally advisable to do more than just one iteration.
@@ -415,7 +415,7 @@ If you are not interested in variable - wise information we recommend to use the
 \texttt{kEstimateFast} instead.
 \begin{figure}[!ht]
   \centering
-  \begin{minipage}[c]{0.65\textwidth}
+  \begin{minipage}[c]{0.6\textwidth}
     \centering
 <<fig=true, width=9, height=9, results=hide, echo=false>>=
 par(mar=c(5, 6, 4, 2))
@@ -423,7 +423,7 @@ barplot(drop(errEsti$variableWiseError[, which(errEsti$evalPcs == errEsti$bestNP
 xlab="Incomplete variable Index", ylab="NRMSEP", cex.lab=2, cex.axis=1.5)
 @
   \end{minipage}
-  \begin{minipage}[c]{0.35\textwidth}
+  \begin{minipage}[c]{0.3\textwidth}
     \caption{Boxplot showing the \texttt{NRMSEP} for all incomplete variables in the data set.
     For the first 7 variables missing value imputation does not seem to make too much sense. 
     \label{fig:variableWiseError}}
