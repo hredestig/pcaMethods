@@ -23,7 +23,7 @@ Potsdam, Germany\\
 \section{Missing value imputation}
 One application for missing value robust principal component analysis
 is that it effectively can be used to impute the missing values and
-thus obtain an estimated complete data set. The pcaMethods package war
+thus obtain an estimated complete data set. The pcaMethods package was
 partly written with this application in mind.
 
 PCA is a way of creating a model of a matrix, $X$, by defining two
@@ -40,8 +40,10 @@ as an estimate for $x_{i,j}$ if $x_{i,j}$ is missing.
 
 This is can be done as the following example illustrates. First we
 attach the metabolite data set with missing values.
-<<>>=
+<<results=hide>>=
 library(pcaMethods)
+@
+<<>>=
 data(metaboliteData)
 mD <- metaboliteData
 sum(is.na(mD))
@@ -56,16 +58,17 @@ rather low.
 data(metaboliteDataComplete)
 mdComp <- metaboliteDataComplete
 sum((mdComp[is.na(mD)] - imputed[is.na(mD)])^2) / sum(mdComp[is.na(mD)]^2)
-@ 
+@
 If the data we are interested in was gene expression set of class
 'exprSet' we could simply do
 <<>>= 
 library(Biobase)
-data(exSet)
+data(sample.exprSet.1)
+exSet <- sample.exprSet.1
 exSetNa <- exSet
 exSetNa@exprs[sample(13000, 200)] <- NA
 lost <- is.na(exSetNa@exprs)
-impExSet <- pca(exSetNa, nPcs=2, method="ppca")[[2]]
+impExSet <- asExprSet(pca(exSetNa, nPcs=2, method="ppca"), exSetNa)
 sum((exSet@exprs[lost] - impExSet@exprs[lost])^2) / sum(exSet@exprs[lost]^2)
 @ 
 Different results will be obtained with different PCA
@@ -73,6 +76,6 @@ algorithms. Which one to use depends on the general structure of the
 data set and the imputation performance can be estimated by
 cross-validation. Please see the 'introduction' vignette on further
 details on how to use the cross-validation capabilities of this
-package. 
+package.
 
 \end{document}

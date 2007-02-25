@@ -47,11 +47,12 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute", "
          })
 
   ## If the input was an exprSet we also return an exprSet object
-  if (isExprSet) {
-      set@exprs <- t(res@completeObs)
-      return(list(res, set))
-  } else
-      return(res)
+## We do not do this anymore, use asExprSet instead
+#  if (isExprSet) {
+#      set@exprs <- t(res@completeObs)
+#      return(list(res, set))
+#  } else
+   return(res)
 }
 
 
@@ -81,12 +82,27 @@ nni <- function(object, method=c("llsImpute"), subset=numeric(), ...) {
 
   res <- llsImpute(object, ...) 
 
-  ## If the input was an exprSet we also return an exprSet object
-  if (isExprSet) {
-      set@exprs <- t(res@completeObs)
-      return(list(res, set))
-  } else
-      return(res)
+  return(res)
+}
+
+
+##
+## This basically copies object@completeObs into the slot
+## exprSet@exprs of an expression set object
+##
+asExprSet <- function(object, exprSet) {
+  if(!inherits(exprSet, "exprSet"))
+    stop("Parameter exprSet must be of type exprSet")
+  if(!inherits(object, "pcaRes") && !inherits(object, "nniRes"))
+    stop("Parameter object must be either of type pcaRes or nniRes")
+  if (is.null(object@completeObs))
+    stop("object@completeObs is NULL, exiting")
+  if(length(exprSet@exprs) != length(object@completeObs))
+    stop("Size of exprSet@exprs and object@completeObs differ. 
+Did you really do missing value estimation using this exprSet object?")
+  
+  exprSet@exprs <- t(object@completeObs) 
+  return(exprSet)
 }
 
 

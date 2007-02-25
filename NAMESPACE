@@ -31,5 +31,6 @@ export(
        nlpca,
        plotR2,
        fitted.pcaRes,
-       kEstimateFast
+       kEstimateFast,
+       asExprSet
        )
