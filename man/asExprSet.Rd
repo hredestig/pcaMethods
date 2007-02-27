@@ -12,7 +12,7 @@ asExprSet(object, exprSet)
   \item{object}{\code{pcaRes} -- The object containing the completed
     data.}
   \item{exprSet}{\code{exprSet} -- The object passed on to \code{pca}
-    for missing value estimation.
+    for missing value estimation.}
 }
 \value{
   An object without missing values of class \code{exprSet}
@@ -23,6 +23,6 @@ asExprSet(object, exprSet)
   object does not hold any \code{phenoData} for example).
 }
 \author{Wolfram Stacklies \cr 
-  Max Planck Institut fuer Molekulare Pflanzenphysiologie, Potsdam, Germany \cr
+  CAS-MPG Partner Institute for Computational Biology, Shanghai, China \cr
   \email{wolfram.stacklies@gmail.com} \cr}
 \keyword{multivariate}
