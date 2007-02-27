@@ -30,12 +30,12 @@ PCA is a way of creating a model of a matrix, $X$, by defining two
 parameter matrices, the scores, $T$, and the loadings, $P$, which
 together have less values than the original matrix but when multiplied
 with each other well reconstruct the original matrix. I.e.:
-$$X=1\times{}\bar{x} + T'P + E$$
+$$X=1\times{}\bar{x} + TP' + E$$
 where $E$ is the error matrix and $1\times{}\bar{x}$ denotes the
 original variable averages. Now if $X$ contains missing values but we
 still are able to get complete estimates of $P$ and $T$ than we can
 use:
-$$\hat{X}=1\times{}\bar{x} + T'P$$
+$$\hat{X}=1\times{}\bar{x} + TP'$$
 as an estimate for $x_{i,j}$ if $x_{i,j}$ is missing. 
 
 This is can be done as the following example illustrates. First we
