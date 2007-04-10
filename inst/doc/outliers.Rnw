@@ -69,7 +69,7 @@ Then we calculate a PCA solution using standard SVD and robust SVD.
 <<results=hide>>=
 resSvd       <- pca(mdc, method = "svd", nPcs = 5, center = FALSE)
 resSvdOut    <- pca(mdcOut, method = "svd", nPcs = 5, center = FALSE)
-resRobSvd    <- pca(mdc, method = "robustPca", nPcs = 5, center = FALSE)
+resRobSvd    <- pca(mdcOut, method = "robustPca", nPcs = 5, center = FALSE)
 @
 Now we use \texttt{PPCA} to estimate the PCA solution, 
 but set the outliers NA before.
