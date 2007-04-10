@@ -59,7 +59,7 @@
 ## Load a complete sample metabolite data set and mean center the data
 data(metaboliteDataComplete)
 mdc <- scale(metaboliteDataComplete, center=TRUE, scale=FALSE)
-## Now create 5% of outliers.
+## Now create 5\% of outliers.
 cond   <- runif(length(mdc)) < 0.05;
 mdcOut <- mdc
 mdcOut[cond] <- 10
