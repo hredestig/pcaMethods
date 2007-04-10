@@ -7,9 +7,9 @@
 \title{The pcaMethods Package}
 \author{Wolfram Stacklies and Henning Redestig\\
 CAS-MPG Partner Institute for Computational Biology (PICB)\\
+Shanghai, P.R. China \\
 and\\
 Max Planck Institute for Molecular Plant Physiology\\
-and\\
 Potsdam, Germany\\
 \url{http://bioinformatics.mpimp-golm.mpg.de/}
 }
@@ -271,7 +271,7 @@ resPPCA  <- pca(md, method="ppca", center=FALSE, nPcs=5)
 resBPCA  <- pca(md, method="bpca", center=FALSE, nPcs=5)
 resSVDI  <- pca(md, method="svdImpute", center=FALSE, nPcs=5)
 resNipals  <- pca(md, method="nipals", center=FALSE, nPcs=5)
-resNLPCA <- pca(md, method="nlpca", center=FALSE, nPcs=5, maxSteps=400)
+resNLPCA <- pca(md, method="nlpca", center=FALSE, nPcs=5, maxSteps=300)
 @
 Figure \ref{fig:eigenvalues} shows a plot of the eigenvalue structure
 (\texttt{pcaRes@sDev}).
@@ -332,8 +332,8 @@ $$Q^2=1 - \mathrm{PRESS}/\mathrm{SSX}$$
 The maximum value for $Q^2$ is thus 1 which means that all variance in
 $X$ is represented in the predictions; $X=\hat{X}$. 
 <<results=hide>>=
-q2BPCA <- Q2(resBPCA, mdC, nPcs=5, nruncv=1, fold=10)
-q2Nipals <- Q2(resNipals, mdC, nPcs=5, nruncv=1, fold=10)
+#q2BPCA <- Q2(resBPCA, mdC, nPcs=5, nruncv=1, fold=10)
+#q2Nipals <- Q2(resNipals, mdC, nPcs=5, nruncv=1, fold=10)
 q2SVDI <- Q2(resSVDI, mdC, nPcs=5, nruncv=1, fold=10)
 q2PPCA <- Q2(resPPCA, mdC, nPcs=5, nruncv=1, fold=10)
 <<results=hide, echo=false>>=
@@ -349,9 +349,11 @@ while( sum((abs(q2PPCA)) > 1) >= 1 ) {
 @
 \begin{figure}[!ht]
   \centering
-<<fig=true, width=12, height=12, results=hide, echo=false>>=
-q2 <- data.frame(Q2=c(drop(q2BPCA), drop(q2Nipals), drop(q2PPCA), drop(q2SVDI)), 
-                 method=c("BPCA", "Nipals", "PPCA", "SVD-Impute")[gl(4, 5)], PC=rep(1:5, 4))
+<<fig=true, width=12, height=7, results=hide, echo=false>>=
+#q2 <- data.frame(Q2=c(drop(q2BPCA), drop(q2Nipals), drop(q2PPCA), drop(q2SVDI)), 
+#                 method=c("BPCA", "Nipals", "PPCA", "SVD-Impute")[gl(4, 5)], PC=rep(1:5, 4))
+q2 <- data.frame(Q2=c(drop(q2PPCA), drop(q2SVDI)), 
+                 method=c("PPCA", "SVD-Impute")[gl(2, 5)], PC=rep(1:5, 2))
 print(xyplot(Q2~PC|method, q2, ylab=expression(Q^2), type="h", lwd=4))
 @
 \caption{Boxplot of the \texttt{Q2} results for BPCA, Nipals PCA,

@@ -7,9 +7,9 @@
 \title{Imputing missing values using the pcaMethods package}
 \author{Wolfram Stacklies and Henning Redestig\\
 CAS-MPG Partner Institute for Computational Biology (PICB)\\
+Shanghai, P.R. China \\
 and\\
 Max Planck Institute for Molecular Plant Physiology\\
-and\\
 Potsdam, Germany\\
 \url{http://bioinformatics.mpimp-golm.mpg.de/}
 }
