@@ -1,7 +1,5 @@
 ##########################################################################################
 ##
-## ppca <- function(Matrix, nPcs, center = TRUE, completeObs = TRUE, seed = NA, ... )
-##
 ## Implements probabilistic PCA for data with missing values,
 ## using a factorizing distribution over hidden states and hidden
 ## observations.
@@ -188,10 +186,10 @@ ppca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, seed = NA,
 
     ## Calculate R2cum
     R2cum <- NULL
-    scaled  <- scale(Matrix, center = TRUE, scale = FALSE)
+    centered  <- scale(Matrix, center = TRUE, scale = FALSE)
     for (i in 1:ncol(C)) {
-      difference <- scaled - ( X[,1:i, drop=FALSE] %*% t(C[,1:i, drop=FALSE]) )
-      R2cum <- cbind( R2cum, 1 - ( sum(difference^2, na.rm=TRUE) / sum(scaled^2, na.rm=TRUE) ) )
+      difference <- centered - ( X[,1:i, drop=FALSE] %*% t(C[,1:i, drop=FALSE]) )
+      R2cum <- cbind( R2cum, 1 - ( sum(difference^2, na.rm=TRUE) / sum(centered^2, na.rm=TRUE) ) )
     }
 
     ## Calculate R2

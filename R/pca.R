@@ -1,4 +1,4 @@
-pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute", "nlpca"),
+pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute", "nlpca", "robustPca"),
                 subset=numeric(),...) {
   
   isExprSet <- FALSE
@@ -42,16 +42,13 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute", "
          svdImpute = {
            res <- svdImpute(as.matrix(object),...)
          },
+         robustPca = {
+           res <- robustPca(as.matrix(object), ...)
+         },
          nlpca = {
            res <- nlpca(as.matrix(object),...)
          })
 
-  ## If the input was an exprSet we also return an exprSet object
-## We do not do this anymore, use asExprSet instead
-#  if (isExprSet) {
-#      set@exprs <- t(res@completeObs)
-#      return(list(res, set))
-#  } else
    return(res)
 }
 
@@ -166,6 +163,30 @@ setMethod("print", "pcaRes",
             }
           })
 
+
+## Biplot for pcaRes, uses biplot.default provided by
+## package stats. This is basically a copy of the
+## biplot.prcomp() function, adapted for a pcaRes object.
+##
+#biplot.pcaRes <- function(x, choices=1:2, scale=1, pc.biplot=FALSE, ...) {
+#           # Based on biplot.prcomp, modified by Kevin Wright
+#           if(length(choices)!=2)
+#             stop("length of choices must be 2")
+#           scores <- x@scores
+#           n <- nrow(scores)
+#           lam <- x@sDev[choices] * sqrt(n)
+#           if(scale < 0 || scale > 1)
+#             warning("'scale' is outside [0,1]")
+#           if(scale != 0) lam <- lam^scale
+#           else lam <- 1
+#           if(pc.biplot) lam <- lam/sqrt(n)
+#           biplot.default(t(t(scores[,choices])/lam),
+#                          t(t(x@loadings[, choices]) * lam), , ...)
+#           invisible()
+#           }
+#
+#setMethod("biplot", "pcaRes", biplot.pcaRes)
+
 setMethod("print", "nniRes",
           function(x, ...) {
             summary(x)
@@ -199,6 +220,8 @@ setMethod("summary", "pcaRes",
             print(r, digits=4)
             invisible(r)
           })
+
+
 
 fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs, ...) {
 
@@ -264,7 +287,9 @@ fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs, ...) {
      )
   return(recData)
 }
+
 setMethod("fitted", "pcaRes", fitted.pcaRes)
+
 
 plotR2 <- function(object, nPcs=object@nPcs, type = c("barplot", "lines"), main = deparse(substitute(x)), ...) {
   main <- main    #this is not a typo! the deparse(subsitute(x)) later
@@ -498,7 +523,7 @@ svdPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = FALSE, varLimit=
   } else
     object <- Matrix
 
-  pcs <- prcomp(object, center=FALSE, scale.=FALSE)
+  pcs <- prcomp(object, center=FALSE, scale.=FALSE, ...)
   imp <- summary(pcs)$importance
   if(varLimit < 1)
     nPcs <- sum(imp[3,] < varLimit) + 1

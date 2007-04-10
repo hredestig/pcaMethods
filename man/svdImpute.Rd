@@ -80,7 +80,7 @@ scores <- result@scores
 cObs <- result@completeObs
 
 ## Now plot the scores
-plotPcs(result, scoresLoadings=c(TRUE,FALSE))
+plotPcs(result, type = "scores")
 
 }
 \keyword{multivariate}
