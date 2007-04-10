@@ -5,7 +5,7 @@
 \description{Can be used for computing PCA on a numeric
   matrix for visualisation, information extraction and missing value imputation.}
 \usage{pca(object, method=c("svd", "nipals", "bpca", "ppca",
-"svdImpute", "nlpca"), subset=numeric(),...)}
+"svdImpute", "nlpca", "robustPca"), subset=numeric(),...)}
 \arguments{
   \item{object}{Numerical matrix  with (or an object coercible to such) with
     samples in rows and variables as columns. Also takes \code{exprSet} in

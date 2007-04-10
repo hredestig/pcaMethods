@@ -48,6 +48,7 @@
     \item{summary}{Extract information about PC relevance}
     \item{screeplot}{Plot a barplot of standard deviations for PCs}
     \item{slplot}{Make a side by side score and loadings plot}
+    \item{biplot}{Make a scores / loadings biplot}
   }
 }
 \keyword{classes}
