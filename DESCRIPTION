@@ -1,6 +1,6 @@
 Package: pcaMethods
-Version: 1.11.0
-Date: 2007-02-21
+Version: 1.11.1
+Date: 2007-04-13
 Author: Wolfram Stacklies, Henning Redestig
 Maintainer: Wolfram Stacklies <wolfram.stacklies@gmail.com> 
 Title: A collection of PCA methods.
@@ -20,6 +20,6 @@ biocViews: Statistics
 Collate: derrorHierarchic.R errorHierarchic.R classes.R generic.R
   pca.R BPCA_dostep.R bpca.R ppca.R BPCA_initmodel.R orth.R repmat.R
   xval.R svdImpute.R checkData.R kEstimate.R llsImpute.R forkNlpcaNet.R
-  lineSearch.R nlpca.R optiAlgCgd.R sortFeatures.R vector2matrices.R kEstimateFast.R
-  robustPca.R
-SaveImage: no
+  lineSearch.R nlpca.R optiAlgCgd.R sortFeatures.R vector2matrices.R 
+  kEstimateFast.R robustPca.R
+SaveImage: yes

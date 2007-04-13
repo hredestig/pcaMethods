@@ -1,3 +1,8 @@
+## Hope the fixes a strange bug during package test on bioconductor...
+.onLoad <- function(libname, pkgname) {
+  require("methods")
+}
+
 pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute", "nlpca", "robustPca"),
                 subset=numeric(),...) {
   
