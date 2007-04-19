@@ -380,7 +380,7 @@ nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimi
     stop("more components than matrix columns selected, exiting")
 
   if (center) {
-    object <- scale(Matrix, center = TRUE)
+    object <- scale(Matrix, center = TRUE, scale = FALSE)
     means <- attr(object, "scaled:center")
   } else
     object <- Matrix
