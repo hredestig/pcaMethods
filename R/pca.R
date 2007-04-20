@@ -536,7 +536,11 @@ svdPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = FALSE, varLimit=
   if (completeObs)
     r@completeObs <- Matrix
   r@scores <- cbind(pcs$x[,1:nPcs])
+    colnames(r@scores) <- paste("PC", 1:nPcs, sep = "")
+    rownames(r@scores) <- rownames(Matrix) 
   r@loadings <- cbind(pcs$rotation[,1:nPcs])
+    colnames(r@loadings) <- paste("PC", 1:nPcs, sep = "")
+    rownames(r@loadings) <- colnames(Matrix) 
   r@R2cum <- imp[3,1:nPcs]
   r@sDev <- pcs$sdev[1:nPcs]
   r@R2 <- imp[2,1:nPcs]

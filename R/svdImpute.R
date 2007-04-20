@@ -1,8 +1,5 @@
 #####################################################################################
 ##
-## svdImpute <- function(Matrix, nPcs = 5, center = TRUE, completeObs = TRUE, threshold = 0.01, 
-##                       maxSteps = 100, verbose = interactive(), ...)
-##
 ## Implements the SVDimpute algorithm as described in Troyanskaya 2001.
 ## Initially all missing values are replaced with 0. The
 ## algorithm then selects the 'nPcs' most significant Eigengenes.
@@ -93,11 +90,12 @@ svdImpute <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, thres
         }
     }
 
-    ## Calculate R2cum
     tmp <- prcomp(Ye, center = FALSE, scale = FALSE, retx = TRUE)
-    loadings <- tmp$rotation
-    scores <- tmp$x
+    loadings <- cbind(tmp$rotation[,1:nPcs])
+    scores <- cbind(tmp$x[,1:nPcs])
 
+    ## Calculate R2cum
+    #
     R2cum <- NULL
     centered  <- scale(Ye, center = TRUE, scale = FALSE)
     for (i in 1:nPcs) {
@@ -129,7 +127,11 @@ svdImpute <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, thres
     result@centered <- center
     result@center <- attr(scale(Matrix, center = TRUE, scale = FALSE), "scaled:center")
     result@scores <- scores
+        colnames(result@scores) <- paste("PC", 1:nPcs, sep = "")
+        rownames(result@scores) <- rownames(Matrix)
     result@loadings <- loadings
+        colnames(result@loadings) <- paste("PC", 1:nPcs, sep = "")
+        rownames(result@loadings) <- colnames(Matrix)
     result@R2cum <- c(R2cum)
     result@R2 <- R2
     result@sDev <- sDev[1:nPcs]
