@@ -70,7 +70,6 @@ robustPca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = FALSE,
     compMat <- mat
     compMat[is.na(compMat)] <- 0
     scores   <- compMat %*% loadings
-    colnames(loadings) <- paste("PC", 1:nPcs)
 
     ## Calculate R2cum (on the complete observations only)
     R2cum <- NULL
@@ -93,6 +92,8 @@ robustPca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = FALSE,
     result@centered <- center
     result@center <- attr(scale(Matrix, center = TRUE, scale = FALSE), "scaled:center")
     result@loadings <- loadings
+        colnames(result@loadings) <- paste("PC", 1:nPcs, sep = "")
+        rownames(result@loadings) <- colnames(Matrix)
     result@sDev <- sDev
     if (completeObs) {
         Ye <- scores %*% t(loadings)
@@ -105,6 +106,8 @@ robustPca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = FALSE,
         result@completeObs <- cObs
     }
     result@scores <- scores
+        colnames(result@scores) <- paste("PC", 1:nPcs, sep = "")
+        rownames(result@scores) <- rownames(Matrix) 
     result@R2cum <- c(R2cum)
     result@R2 <- R2
     result@nObs <- nrow(Matrix)

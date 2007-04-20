@@ -1,8 +1,5 @@
 ###########################################################################################
 ##
-## bpca <- function(Matrix, nPcs = NULL, completeObs = TRUE, maxSteps = 100, 
-##                  verbose = interactive(), ... )
-##
 ## R implementation of a Bayesion PCA missing value estimator.
 ## After the Matlab script of Shigeyuki OBA (2002  May. 5th)
 ## See also: http://hawaii.aist-nara.ac.jp/%7Eshige-o/tools/
@@ -134,7 +131,11 @@ bpca <- function(Matrix, nPcs = 2, completeObs = TRUE, maxSteps = 100,
     result@centered        <- TRUE
     result@center          <- attr(scale(Matrix, center = TRUE, scale = FALSE), "scaled:center")
     result@scores          <- M$scores 
+        colnames(result@scores) <- paste("PC", 1:nPcs, sep = "")
+        rownames(result@scores) <- rownames(Matrix)
     result@loadings        <- M$PA
+        colnames(result@loadings) <- paste("PC", 1:nPcs, sep = "")
+        rownames(result@loadings) <- colnames(Matrix) 
     result@R2cum           <- c(R2cum)
     result@R2              <- R2
     result@sDev            <- apply(M$scores, 2, sd)

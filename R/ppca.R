@@ -208,8 +208,10 @@ ppca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, seed = NA,
     ####################################################################
 
     result                 <- new("pcaRes")
-    colnames(C) <- paste("PC", 1:nPcs)
-    colnames(X) <- paste("PC", 1:nPcs)
+    colnames(C)            <- paste("PC", 1:nPcs, sep = "")
+    rownames(C)            <- colnames(Matrix) 
+    colnames(X)            <- paste("PC", 1:nPcs, sep = "")
+    rownames(X)            <- rownames(Matrix)
     if (completeObs)
         result@completeObs <- cObs
     result@centered        <- center

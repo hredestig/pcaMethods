@@ -1,6 +1,4 @@
 ####################################################################################################
-## LLSimpute <- function(Matrix, k = 10, center = TRUE, completeObs = TRUE, correlation = "pearson", 
-##                      allVariables = FALSE, maxSteps = 100, verbose = interactive(), ...) {
 ##
 ## Missing value estimation using local least sqares (LLS).
 ## First k genes are selected by pearson or spearman correlation coefficients.

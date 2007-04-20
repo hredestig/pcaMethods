@@ -67,7 +67,7 @@ svdImpute(Matrix, nPcs = 2, center=TRUE, completeObs=TRUE, threshold = 0.01,
 ## Load a sample metabolite dataset with 5\% missing values (metaboliteData)
 data(metaboliteData)
 
-## Perform probabilistic PCA using the 3 largest components
+## Perform svdImpute using the 3 largest components
 result <- pca(metaboliteData, method="svdImpute", nPcs=3, center = TRUE)
 
 ## Get the estimated principal axes (loadings)
