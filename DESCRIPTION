@@ -22,4 +22,4 @@ Collate: derrorHierarchic.R errorHierarchic.R classes.R generic.R
   xval.R svdImpute.R checkData.R kEstimate.R llsImpute.R forkNlpcaNet.R
   lineSearch.R nlpca.R optiAlgCgd.R sortFeatures.R vector2matrices.R 
   kEstimateFast.R robustPca.R
-SaveImage: yes
+LazyLoad: yes
