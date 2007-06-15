@@ -405,7 +405,10 @@ nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimi
     }
   }
 
-  scaledobject <- object
+  # sum(c(NA, NA), na.rm=TRUE) is 0, but we want NA
+  sum.na <- function(x){ ifelse(all(is.na(x)), NA, sum(x, na.rm=TRUE))}
+
+  TotalSS <- sum(object*object, na.rm=TRUE)
 
   ph <- rep(0, nVar)
   R2cum <- NULL
@@ -425,25 +428,16 @@ nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimi
       ph <- rep(0, nVar)
 
       ##Calculate loadings through LS regression
-      for (i in 1:nVar) {
-        ph[i] <- sum(object[,i] * th, na.rm=TRUE) / sum(th^2, na.rm=TRUE)
-        ##if the whole column is NA the loading of that variable should also be NA
-        if (length(na.omit(object[,i])) == 0) { 
-          ph[i] <- NA
-        }
-      }
+      ##Note: object*th is column-wise multiplication
+      ph <- apply(object*th, 2, sum.na)
       ##normalize ph based on the available values.
-      ph <- ph / sqrt(sum(na.omit(ph)^2))
+      ph <- ph / sqrt(sum(ph*ph, na.rm=TRUE))
 
       ##Calculate scores through LS regression
+      ##Trick: To get row-wise multiplication, use t(object)*ph, then
+      ##be sure to use apply(,2,) and NOT apply(,1,)!
       th.old <- th
-      th <- rep(0, nObs)
-      for (i in 1:nObs) {
-        th[i] <- sum(object[i,] * ph, na.rm=TRUE) / sum(ph^2, na.rm=TRUE)
-        if (length(na.omit(object[i,])) == 0) {
-          th[i] <- NA
-        }
-      }
+      th <- apply(t(object)*ph, 2, sum.na)
       
       ##Round up by calculating if convergence condition is met and
       ##checking if it seems to be an neverending loop.
@@ -461,27 +455,20 @@ nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimi
     loadings <- cbind(loadings, ph)
     
     ##cumulative proportion of variance
-    R2cum <- cbind(R2cum, 1 - (sum(object^2,na.rm=TRUE) / sum(scaledobject^2, na.rm=TRUE)))
+    R2cum <- cbind(R2cum, 1 - (sum(object*object,na.rm=TRUE) / TotalSS))
     l <- l + 1
     if (R2cum[1,l - 1] >= varLimit || l > nPcs) {
       anotherPc <- FALSE
       nPcs <- l - 1
     }
   }
-  R2 <- vector(length=length(R2cum), mode="numeric")
-  R2[1] <- R2cum[1]
-  if (length(R2cum) > 1) {
-    for (i in 2:length(R2)) {
-      R2[i] <- R2cum[i] - R2cum[i-1]
-    }
-  }
+  R2 <- R2cum[1]
+  if(length(R2cum) > 1) R2 <- c(R2, diff(R2cum[1,]))
 
   if (completeObs) {
     Ye <- scores %*% t(loadings)
     if (center) {
-      for(i in 1:ncol(Ye)) {
-        Ye[,i] <- Ye[,i] + means[i]
-      }
+      Ye <- Ye + rep(means, each=nrow(Ye)) # Addition is column-wise
     }
     cObs <- Matrix
     cObs[missing] <- Ye[missing]
