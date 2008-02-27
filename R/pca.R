@@ -7,7 +7,7 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute", "
                 subset=numeric(),...) {
   
   isExprSet <- FALSE
-  if(inherits(object, "exprSet")) {
+  if(inherits(object, "ExpressionSet")) {
     set <- object
     isExprSet <- TRUE
     object <- t(exprs(object))
@@ -64,7 +64,7 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute", "
 nni <- function(object, method=c("llsImpute"), subset=numeric(), ...) {
 
   isExprSet <- FALSE
-  if(inherits(object, "exprSet")) {
+  if(inherits(object, "ExpressionSet")) {
     set <- object
     isExprSet <- TRUE
     object <- t(exprs(object))
@@ -90,20 +90,20 @@ nni <- function(object, method=c("llsImpute"), subset=numeric(), ...) {
 
 ##
 ## This basically copies object@completeObs into the slot
-## exprSet@exprs of an expression set object
+## exprs(ExpressionSet) of an expression set object
 ##
 asExprSet <- function(object, exprSet) {
-  if(!inherits(exprSet, "exprSet"))
-    stop("Parameter exprSet must be of type exprSet")
+  if(!inherits(exprSet, "ExpressionSet"))
+    stop("Parameter exprSet must be of type ExpressionSet")
   if(!inherits(object, "pcaRes") && !inherits(object, "nniRes"))
     stop("Parameter object must be either of type pcaRes or nniRes")
   if (is.null(object@completeObs))
     stop("object@completeObs is NULL, exiting")
-  if(length(exprSet@exprs) != length(object@completeObs))
-    stop("Size of exprSet@exprs and object@completeObs differ. 
-Did you really do missing value estimation using this exprSet object?")
+  if(length(exprs(exprSet)) != length(object@completeObs))
+    stop("Size of exprs(exprSet) and object@completeObs differ. 
+Did you really do missing value estimation using this ExpressionSet object?")
   
-  exprSet@exprs <- t(object@completeObs) 
+  exprs(exprSet) <- t(object@completeObs) 
   return(exprSet)
 }
 
@@ -545,7 +545,7 @@ svdPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = FALSE, varLimit=
 prep <- function(object, scale=c("none", "pareto", "vector", "UV"), center=TRUE, ...) {
   scale <- match.arg(scale)
 
-  if(inherits(object, "exprSet"))
+  if(inherits(object, "ExpressionSet"))
     object <- t(exprs(object))
 
   object <- as.matrix(object)
