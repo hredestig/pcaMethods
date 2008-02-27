@@ -8,8 +8,8 @@
 "svdImpute", "nlpca", "robustPca"), subset=numeric(),...)}
 \arguments{
   \item{object}{Numerical matrix  with (or an object coercible to such) with
-    samples in rows and variables as columns. Also takes \code{exprSet} in
-    which case the transposed \code{exprs} slot is used.}
+    samples in rows and variables as columns. Also takes \code{ExpressionSet} in
+    which case the transposed expression matrix is used.}
   \item{subset}{For convenience one can pass a large matrix but only
     use the variable specified as subset. Can be colnames or indices.}
   \item{method}{One of "svd", "nipals", "bpca", "nlpca" or "ppca".}
@@ -33,7 +33,7 @@
 
 \value{
   A \code{pcaRes} object. Or a list containing a pcaRes object as first and an
-  exprSet object as second entry if the input was of type exprSet.
+  ExpressionSet object as second entry if the input was of type ExpressionSet.
 }
 \references{
   Wold, H. (1966) Estimation of principal components and related models by

@@ -6,8 +6,8 @@
 \usage{prep(object, scale=c("none", "pareto", "vector", "UV"), center=TRUE, ...)}
 \arguments{
   \item{object}{Numerical matrix  with (or an object coercible to such) with
-    samples in rows and variables as columns. Also takes \code{exprSet} in
-    which case the transposed \code{exprs} slot is used.}
+    samples in rows and variables as columns. Also takes \code{ExpressionSet} in
+    which case the transposed expression matrix is used.}
   \item{center}{Indicates if the matrix should be mean centred or not.}
   \item{scale}{One of "UV" (unit variance \eqn{a=a/\sigma_{a}})
     "vector" (vector normalisation \eqn{b=b/||b||}), "pareto" or "none"

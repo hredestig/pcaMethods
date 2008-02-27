@@ -57,5 +57,4 @@ fittedData <- fitted(helixNipPca)
 plot(fittedData[which(is.na(helixNA))], helix[which(is.na(helixNA))])
 }
 \author{Based on a matlab script by Matthias Scholz <matthias.scholz[at]uni-greifswald.de> and ported to R by HenningRedestig <redestig[at]mpimp-golm.mpg.de>}
-}
 \keyword{multivariate}

@@ -60,16 +60,16 @@ mdComp <- metaboliteDataComplete
 sum((mdComp[is.na(mD)] - imputed[is.na(mD)])^2) / sum(mdComp[is.na(mD)]^2)
 @
 If the data we are interested in was gene expression set of class
-'exprSet' we could simply do
+'ExpressionSet' we could simply do
 <<>>= 
 library(Biobase)
-data(sample.exprSet.1)
-exSet <- sample.exprSet.1
+data(sample.ExpressionSet)
+exSet <- sample.ExpressionSet
 exSetNa <- exSet
-exSetNa@exprs[sample(13000, 200)] <- NA
-lost <- is.na(exSetNa@exprs)
+exprs(exSetNa)[sample(13000, 200)] <- NA
+lost <- is.na(exprs(exSetNa))
 impExSet <- asExprSet(pca(exSetNa, nPcs=2, method="ppca"), exSetNa)
-sum((exSet@exprs[lost] - impExSet@exprs[lost])^2) / sum(exSet@exprs[lost]^2)
+sum((exprs(exSet)[lost] - exprs(impExSet)[lost])^2) / sum(exprs(exSet)[lost]^2)
 @ 
 Different results will be obtained with different PCA
 algorithms. Which one to use depends on the general structure of the
