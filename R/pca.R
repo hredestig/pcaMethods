@@ -492,7 +492,7 @@ setMethod("slplot", "pcaRes",
           })
 
 
-nipalsPca2 <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimit=1,
+nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimit=1,
                       maxSteps=5000, 
                       threshold=1e-6, verbose=interactive(), ...) {
 
