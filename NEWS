@@ -1,3 +1,4 @@
+10/27/08 - Improvements to slplot, bugfixes and a show method
 02/27/08 - Replaced usage of exprSet class with ExpressionSet
 04/10/07 - Added robustSVD, a SVD implementation robust to outliers
 01/02/07 - Added a Non-linear PCA algorithm.
