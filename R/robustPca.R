@@ -35,7 +35,7 @@ robustPca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = FALSE,
                       verbose = interactive(), ... ) {
 
     ## Do some basic checks
-    Matrix <- as.matrix(Matrix)
+    Matrix <- as.matrix(Matrix, rownames.force=TRUE)
     if (!checkData(Matrix, verbose = verbose))
         stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
 

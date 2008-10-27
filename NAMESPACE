@@ -11,7 +11,8 @@ exportMethods(
               slplot,
               summary,
               print,
-              fitted
+              fitted,
+              show
               )
 
 export(

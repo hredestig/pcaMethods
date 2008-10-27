@@ -63,7 +63,7 @@ ppca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, seed = NA,
     d <- nPcs
 
     ## If the data is a data frame, convert it into a matrix
-    Matrix <- as.matrix(Matrix)
+    Matrix <- as.matrix(Matrix, rownames.force=TRUE)
     ## And now check if everything is right...
     if ( !checkData(Matrix, verbose = interactive()) ) {
         stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")

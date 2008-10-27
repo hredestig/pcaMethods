@@ -32,7 +32,7 @@
 svdImpute <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, threshold = 0.01, 
                       maxSteps = 100, verbose = interactive(), ...) {
 
-    Matrix <- as.matrix(Matrix)
+    Matrix <- as.matrix(Matrix, rownames.force=TRUE)
 
     if (!checkData(Matrix, verbose = verbose))
         stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")

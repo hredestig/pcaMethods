@@ -45,7 +45,7 @@ kEstimateFast <- function(Matrix, method = "ppca", evalPcs = 1:3,
     error <- array(0, lengthPcs)
 
      ## If the data is a data frame, convert it into a matrix
-    Matrix <- as.matrix(Matrix)
+    Matrix <- as.matrix(Matrix, rownames.force=TRUE)
     if(maxPcs > (ncol(Matrix) - 1))
         stop("maxPcs exceeds matrix size, choose a lower value!")
 

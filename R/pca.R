@@ -15,12 +15,12 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute", "
 
   method <- match.arg(method)
 
-  # Do some basic checks of the data. We exit if the data contains NaN or Inf
-  # values or is not numeric.
+                                        # Do some basic checks of the data. We exit if the data contains NaN or Inf
+                                        # values or is not numeric.
   if ( !checkData(as.matrix(object), verbose=interactive()) )
-	stop("Invalid data format, exiting...\n",
-	     "Run checkData(data, verbose=TRUE) for details\n")
-	
+    stop("Invalid data format, exiting...\n",
+         "Run checkData(data, verbose=TRUE) for details\n")
+  
   missing <- sum(is.na(object))
 
   if(length(subset) > 0)
@@ -54,7 +54,7 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute", "
            res <- nlpca(as.matrix(object),...)
          })
 
-   return(res)
+  return(res)
 }
 
 
@@ -72,11 +72,11 @@ nni <- function(object, method=c("llsImpute"), subset=numeric(), ...) {
 
   method <- match.arg(method)
 
-  # Do some basic checks of the data. We exit if the data contains NaN or Inf
-  # values or is not numeric.
+                                        # Do some basic checks of the data. We exit if the data contains NaN or Inf
+                                        # values or is not numeric.
   if ( !checkData(as.matrix(object), verbose = interactive()) )
-        stop("Invalid data format, exiting...\n",
-             "Run checkData(data, verbose = TRUE) for details\n")
+    stop("Invalid data format, exiting...\n",
+         "Run checkData(data, verbose = TRUE) for details\n")
 
   missing <- sum(is.na(object))
   if(length(subset) > 0)
@@ -148,9 +148,9 @@ setMethod("print", "pcaRes",
             cat(x@missing, "\tNA's\n")
             cat(x@nPcs, "\tCalculated component(s)\n")
             if(x@centered)
-                cat("Data was mean centered before running PCA \n")
+              cat("Data was mean centered before running PCA \n")
             else
-                cat("Data was NOT mean centered before running PCA \n")
+              cat("Data was NOT mean centered before running PCA \n")
             cat("Scores structure:\n")
             print(dim(x@scores))
             cat("Loadings structure:\n")
@@ -169,28 +169,57 @@ setMethod("print", "pcaRes",
           })
 
 
+setMethod("show", "pcaRes",
+          function(object) {
+            summary(object)
+            cat(object@nVar, "\tVariables\n")
+            cat(object@nObs,"\tSamples\n")
+            cat(object@missing, "\tNA's\n")
+            cat(object@nPcs, "\tCalculated component(s)\n")
+            if(object@centered)
+              cat("Data was mean centered before running PCA \n")
+            else
+              cat("Data was NOT mean centered before running PCA \n")
+            cat("Scores structure:\n")
+            print(dim(object@scores))
+            cat("Loadings structure:\n")
+            if(object@method == "nlpca") {
+              cat("Inverse hierarchical neural network architecture\n")
+              cat(drop(object@network@net), "\n")
+              cat("Functions in layers\n")
+              cat(object@network@fct, "\n")
+              cat("hierarchic layer:", object@network@hierarchic$layer, "\n")
+              cat("hierarchic coefficients:", object@network@hierarchic$var, "\n")
+              cat("scaling factor:", object@network@scalingFactor, "\n")
+            }
+            else{
+              print(dim(object@loadings))
+            }
+          })
+
+
 ## Biplot for pcaRes, uses biplot.default provided by
 ## package stats. This is basically a copy of the
 ## biplot.prcomp() function, adapted for a pcaRes object.
 ##
-#biplot.pcaRes <- function(x, choices=1:2, scale=1, pc.biplot=FALSE, ...) {
-#           # Based on biplot.prcomp, modified by Kevin Wright
-#           if(length(choices)!=2)
-#             stop("length of choices must be 2")
-#           scores <- x@scores
-#           n <- nrow(scores)
-#           lam <- x@sDev[choices] * sqrt(n)
-#           if(scale < 0 || scale > 1)
-#             warning("'scale' is outside [0,1]")
-#           if(scale != 0) lam <- lam^scale
-#           else lam <- 1
-#           if(pc.biplot) lam <- lam/sqrt(n)
-#           biplot.default(t(t(scores[,choices])/lam),
-#                          t(t(x@loadings[, choices]) * lam), , ...)
-#           invisible()
-#           }
-#
-#setMethod("biplot", "pcaRes", biplot.pcaRes)
+                                        #biplot.pcaRes <- function(x, choices=1:2, scale=1, pc.biplot=FALSE, ...) {
+                                        #           # Based on biplot.prcomp, modified by Kevin Wright
+                                        #           if(length(choices)!=2)
+                                        #             stop("length of choices must be 2")
+                                        #           scores <- x@scores
+                                        #           n <- nrow(scores)
+                                        #           lam <- x@sDev[choices] * sqrt(n)
+                                        #           if(scale < 0 || scale > 1)
+                                        #             warning("'scale' is outside [0,1]")
+                                        #           if(scale != 0) lam <- lam^scale
+                                        #           else lam <- 1
+                                        #           if(pc.biplot) lam <- lam/sqrt(n)
+                                        #           biplot.default(t(t(scores[,choices])/lam),
+                                        #                          t(t(x@loadings[, choices]) * lam), , ...)
+                                        #           invisible()
+                                        #           }
+                                        #
+                                        #setMethod("biplot", "pcaRes", biplot.pcaRes)
 
 setMethod("print", "nniRes",
           function(x, ...) {
@@ -200,9 +229,9 @@ setMethod("print", "nniRes",
             cat(x@missing, "\tNA's\n")
             cat("k was set to", x@k, "\n")
             if(x@centered)
-                cat("Data was mean centered before running LLSimpute \n")
+              cat("Data was mean centered before running LLSimpute \n")
             else
-                cat("Data was NOT mean centered before running LLSimpute \n")
+              cat("Data was NOT mean centered before running LLSimpute \n")
           })
 
 setMethod("summary", "pcaRes",
@@ -289,15 +318,16 @@ fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs, ...) {
            if(object@centered)
              recData <- t(t(recData) + object@center)
          }
-     )
+         )
   return(recData)
 }
 
 setMethod("fitted", "pcaRes", fitted.pcaRes)
 
 
-plotR2 <- function(object, nPcs=object@nPcs, type = c("barplot", "lines"), main = deparse(substitute(x)), ...) {
-  main <- main    #this is not a typo! the deparse(subsitute(x)) later
+plotR2 <- function(object, nPcs=object@nPcs, type = c("barplot", "lines"),
+                   main = deparse(substitute(object)), ...) {
+  main <- main    #this is not a typo! the deparse(subsitute(object)) later
                                         #fails otherwise (dont ask me)
   names(object@sDev) <- paste("PC", 1:nPcs, sep="")
   newx <- list(sdev=object@R2)
@@ -305,74 +335,170 @@ plotR2 <- function(object, nPcs=object@nPcs, type = c("barplot", "lines"), main 
 }
 
 setMethod("slplot", "pcaRes",
-          function(object, pcs=c(1,2), scoresLoadings=c(TRUE, TRUE), sl=rownames(object@scores),
-                   ll=rownames(object@loadings), hotelling=0.95, rug=TRUE,sub=NULL,...) {
+          function(object, pcs=c(1,2), scoresLoadings=c(TRUE, TRUE),
+                             sl=rownames(object@scores),
+                             ll=rownames(object@loadings), hotelling=0.95, rug=TRUE,
+                             sub=NULL,...) {
+
+            opar <- par(no.readonly=TRUE)
+            cl <- match.call()
+            mainArgs <- c(1,match(c("ll", "sl", "scoresLoadings"), names(cl), 0))
+            scoreArgs <- grep("^s", names(cl)[-mainArgs])
+            loadingArgs <- grep("^l", names(cl)[-mainArgs])
+
+            if(!is.null(ll) & length(ll) != nrow(object@loadings))
+              stop("Loading labels do not match the object dimensions")
+            if(!is.null(sl) & length(sl) != nrow(object@scores))
+              stop("Score labels do not match the object dimensions")
+            if(is.null(sl))
+              sl <- NA
+            if(is.null(ll))
+              ll <- NA
             
+            ## no loadings for non-linear pca
             if(object@method == "nlpca" && scoresLoadings[2])
               scoresLoadings[2] <- FALSE
+            
             if(length(pcs) > 2)
               plotPcs(object, pcs, scoresLoadings=scoresLoadings,...)
-
             else {
               if(is.null(sub))
-                sub <- paste(sprintf("%.2f", object@R2cum[max(pcs)] * 100),
+                sub <- paste(sprintf("%.2f", object@R2cum[min(c(pcs, object@nPcs))]
+                                     * 100),
                              "% of the variance explained", sep="")
 
               if(sum(scoresLoadings) == 2)
                 layout(matrix(c(1,2), 1, 2, TRUE), respect=matrix(c(1,1), 1, 2))
+              ## exception plot if one dimensional
               if (length(pcs) == 1 || object@nPcs == 1) {
                 pcs <- 1
+                
+                ## score plot
                 if(scoresLoadings[1]) {
-                  barplot(object@scores[,pcs], main="Scores",
-                          sub=sub, las=3, names.arg=sl,
-                          ylab=paste("PC", pcs), ...)
+                  newCall <- call("barplot",
+                                  height=object@scores[,pcs],
+                                  main="Scores", las=3, ylab=paste("PC", pcs), sub=sub,
+                                  names.arg=sl)
+                  tmp <- cl[-mainArgs][scoreArgs]
+                  names(tmp) <- gsub("^s", "", names(tmp))
+                  for(i in 1:length(tmp)) {
+                    newCall[[length(newCall) + 1]] <- tmp[[i]]
+                    names(newCall)[length(newCall)] <- names(tmp)[i]
+                  }
+                  eval(newCall)
                 }
-                if(scoresLoadings[2])
-                  barplot(object@loadings[,pcs], main="Loadings", ylab=paste("PC", pcs), las=3, ...)
-                return(TRUE)
+
+                ## loadingplot
+                if(scoresLoadings[2]) {
+                  newCall <- call("barplot",
+                                  height=object@loadings[,pcs],
+                                  main="Loadings", las=3, ylab=paste("PC", pcs), 
+                                  names.arg=ll)
+                  if(length(loadingArgs) > 0) {
+                    tmp <- cl[-mainArgs][loadingArgs]
+                    names(tmp) <- gsub("^l", "", names(tmp))
+                    for(i in 1:length(tmp)) {
+                      newCall[[length(newCall) + 1]] <- tmp[[i]]
+                      names(newCall)[length(newCall)] <- names(tmp)[i]
+                    }
+                  }
+                  eval(newCall)
+                }
+                return(invisible(TRUE))
               }
+              
+              ## the score plot
               if(scoresLoadings[1]) {
-                if (!is.null(sl)) {
-                  plot(object@scores[,pcs], type="n", main="Scores",
-                       sub=sub, ylab=paste("PC", pcs[2]),
-                       xlab=paste("PC", pcs[1]),...)
-                  text(object@scores[,pcs], sl,...)
-                  if(rug)
-                    rug(object@scores[,1])
+                ## setup plot
+                plotCall <- call("plot",
+                                 x=object@scores[,pcs],
+                                 main="Scores", ylab=paste("PC", pcs[2]), 
+                                 sub=sub, xlab=paste("PC", pcs[1]))
+                if(length(scoreArgs) > 0) {
+                  tmp <- cl[-mainArgs][scoreArgs]
+                  names(tmp) <- gsub("^s", "", names(tmp))
+                  for(i in 1:length(tmp)) {
+                    plotCall[[length(plotCall) + 1]] <- tmp[[i]]
+                    names(plotCall)[length(plotCall)] <- names(tmp)[i]
+                  }
                 }
-                else {
-                  plot(object@scores[,pcs], main="Scores",
-                       sub=sub,ylab=paste("PC", pcs[2]),
-                       xlab=paste("PC", pcs[1]),...)
+                ## add text
+                if (!is.null(sl) & !any(is.na(sl))) {
+                  plotCall[[length(plotCall) + 1]] <- "n"
+                  names(plotCall)[length(plotCall)] <- "type"
+                  textCall <- call("text",
+                                   x=object@scores[,pcs], labels=sl)
+                  if(length(scoreArgs) > 0) {
+                    tmp <- cl[-mainArgs][scoreArgs]
+                    names(tmp) <- gsub("^s", "", names(tmp))
+                    for(i in 1:length(tmp)) {
+                      textCall[[length(textCall) + 1]] <- tmp[[i]]
+                      names(textCall)[length(textCall)] <- names(tmp)[i]
+                    }
+                  }
                 }
+                eval(plotCall)
+                if (!is.null(sl) & !any(is.na(sl)))
+                  eval(textCall)
+                if(rug)
+                  rug(object@scores[,1])
                 abline(h=0, v=0)
                 if(!is.null(hotelling)) {
                   A <- length(pcs)
-                  el <- simpleEllipse(object@scores[,pcs[1]], object@scores[,pcs[2]], alfa=hotelling)
+                  el <- simpleEllipse(object@scores[,pcs[1]],
+                                      object@scores[,pcs[2]], alfa=hotelling)
                   lines(el)
                 }
               }
+
+              ## the loading plot
               if(scoresLoadings[2]) {
-                if (!is.null(ll)) {
-                  plot(object@loadings[,pcs], type="n", main="Loadings", ylab=paste("PC", pcs[2]),
-                       xlab=paste("PC", pcs[1]), ...)
-                  text(object@loadings[,pcs], ll,...)
+                ## setup plot
+                plotCall <- call("plot",
+                                 x=object@loadings[,pcs],
+                                 main="Loadings", ylab=paste("PC", pcs[2]), 
+                                 xlab=paste("PC", pcs[1]))
+                if(length(loadingArgs) > 0) {
+                  tmp <- cl[-mainArgs][loadingArgs]
+                  names(tmp) <- gsub("^l", "", names(tmp))
+                  for(i in 1:length(tmp)) {
+                    plotCall[[length(plotCall) + 1]] <- tmp[[i]]
+                    names(plotCall)[length(plotCall)] <- names(tmp)[i]
+                  }
                 }
-                else {
-                  plot(object@loadings[,pcs], main="Loadings",ylab=paste("PC", pcs[1]), ...)
+                ## add text
+                if (!is.null(ll) & !any(is.na(ll))) {
+                  plotCall[[length(plotCall) + 1]] <- "n"
+                  names(plotCall)[length(plotCall)] <- "type"
+                  textCall <- call("text",
+                                   x=object@loadings[,pcs], labels=ll)
+                  if(length(loadingArgs) > 0) {
+                    tmp <- cl[-mainArgs][loadingArgs]
+                    names(tmp) <- gsub("^l", "", names(tmp))
+                    for(i in 1:length(tmp)) {
+                      textCall[[length(textCall) + 1]] <- tmp[[i]]
+                      names(textCall)[length(textCall)] <- names(tmp)[i]
+                    }
+                  }
                 }
+                eval(plotCall)
+                if (!is.null(ll) & !any(is.na(ll)))
+                  eval(textCall)
                 abline(h=0, v=0)
               }
+              
+              par(opar)
             }
           })
 
-  
-nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimit=1, maxSteps=5000, 
+
+nipalsPca2 <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimit=1,
+                      maxSteps=5000, 
                       threshold=1e-6, verbose=interactive(), ...) {
 
   ## Convert the object into a matrix (just in case we got a data frame) and do some
   ## basic checks
-  Matrix <- as.matrix(Matrix)
+  Matrix <- as.matrix(Matrix, rownames.force=TRUE)
   if (!checkData(Matrix, verbose = verbose))
     stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
 
@@ -383,29 +509,16 @@ nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimi
     object <- scale(Matrix, center = TRUE, scale = FALSE)
     means <- attr(object, "scaled:center")
   } else
-    object <- Matrix
+  object <- Matrix
 
   missing <- is.na(Matrix)
   nObs <- nrow(object)
   nVar <- ncol(object)
 
-  ##Find a good starting column
-  ##(one where not all values are NA) and do some initial checking
-  for (i in 1:nVar) {         
-    if (length(na.omit(object[,i])) != 0) {
-      startingColumn <- i
-    }
-    else {
-      warning("Whole column was found NA in original matrix")
-    }
-  }
-  for (i in 1:nObs) {
-    if (length(na.omit(object[i,])) == 0) {
-      warning("Whole row was found NA in original matrix")
-    }
-  }
+  ##Find a good? starting column -- better way?
+  startingColumn <- 1
 
-  # sum(c(NA, NA), na.rm=TRUE) is 0, but we want NA
+  ## sum(c(NA, NA), na.rm=TRUE) is 0, but we want NA
   sum.na <- function(x){ ifelse(all(is.na(x)), NA, sum(x, na.rm=TRUE))}
 
   TotalSS <- sum(object*object, na.rm=TRUE)
@@ -429,15 +542,17 @@ nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimi
 
       ##Calculate loadings through LS regression
       ##Note: object*th is column-wise multiplication
-      ph <- apply(object*th, 2, sum.na)
+      tsize <- sum(th * th, na.rm=TRUE)
+      ph <- apply(object * (th / tsize), 2, sum.na)
       ##normalize ph based on the available values.
-      ph <- ph / sqrt(sum(ph*ph, na.rm=TRUE))
-
+      psize <- sum(ph*ph, na.rm=TRUE)
+      ph <- ph / sqrt(psize)
+      
       ##Calculate scores through LS regression
       ##Trick: To get row-wise multiplication, use t(object)*ph, then
       ##be sure to use apply(,2,) and NOT apply(,1,)!
       th.old <- th
-      th <- apply(t(object)*ph, 2, sum.na)
+      th <- apply(t(object) * ph, 2, sum.na)
       
       ##Round up by calculating if convergence condition is met and
       ##checking if it seems to be an neverending loop.
@@ -501,7 +616,7 @@ nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimi
 svdPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = FALSE, varLimit=1, ...) {
   
   ## Do some basic checks
-  Matrix <- as.matrix(Matrix)
+  Matrix <- as.matrix(Matrix, rownames.force=TRUE)
   if (!checkData(Matrix, verbose = verbose))
     stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
   if (nPcs > ncol(Matrix))
@@ -513,7 +628,7 @@ svdPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = FALSE, varLimit=
   if (center) {
     object <- scale(Matrix, center = TRUE, scale = FALSE)
   } else
-    object <- Matrix
+  object <- Matrix
 
   pcs <- prcomp(object, center=FALSE, scale.=FALSE, ...)
   imp <- summary(pcs)$importance
@@ -523,11 +638,11 @@ svdPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = FALSE, varLimit=
   if (completeObs)
     r@completeObs <- Matrix
   r@scores <- cbind(pcs$x[,1:nPcs])
-    colnames(r@scores) <- paste("PC", 1:nPcs, sep = "")
-    rownames(r@scores) <- rownames(Matrix) 
+  colnames(r@scores) <- paste("PC", 1:nPcs, sep = "")
+  rownames(r@scores) <- rownames(Matrix) 
   r@loadings <- cbind(pcs$rotation[,1:nPcs])
-    colnames(r@loadings) <- paste("PC", 1:nPcs, sep = "")
-    rownames(r@loadings) <- colnames(Matrix) 
+  colnames(r@loadings) <- paste("PC", 1:nPcs, sep = "")
+  rownames(r@loadings) <- colnames(Matrix) 
   r@R2cum <- imp[3,1:nPcs]
   r@sDev <- pcs$sdev[1:nPcs]
   r@R2 <- imp[2,1:nPcs]

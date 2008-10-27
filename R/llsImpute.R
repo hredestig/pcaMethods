@@ -50,7 +50,7 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correl
     correlation <- match.arg(correlation, c("pearson", "kendall", "spearman"))
 
     ## If the data is a data frame, convert it into a matrix
-    Matrix <- as.matrix(Matrix)
+    Matrix <- as.matrix(Matrix, rownames.force=TRUE)
     ## And now check if everything is right...
     if ( !checkData(Matrix, verbose = interactive()) ) {
         stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
