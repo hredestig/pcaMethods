@@ -20,10 +20,11 @@ Potsdam, Germany\\
 @
 \maketitle
 \section*{Overview}
-The \texttt{pcaMethods} package provides a set of different PCA implementations,
-together with tools for cross validation and visualisation of the results.
-The methods basically allow to perform PCA on incomplete data and thus may
-also be used for missing value estimation.
+The \texttt{pcaMethods} package \cite{stacklies07} provides a set of
+different PCA implementations, together with tools for cross
+validation and visualisation of the results.  The methods basically
+allow to perform PCA on incomplete data and thus may also be used for
+missing value estimation.
 
 When doing PCA one assumes that the data is restricted to a subspace
 of lower dimensionality, e.g. correlation patterns between jointly regulated
@@ -433,20 +434,23 @@ xlab="Incomplete variable Index", ylab="NRMSEP", cex.lab=2, cex.axis=1.5)
 \end{figure}
 
 \newpage
-\section{Visualisation of the results}
+\section{Visualization of the results}
 Some methods for display of scores and loadings are also provided.
-\texttt{slplot()} is a convenient way to present a PCA result for two
-scores / loadings.
+The function \texttt{slplot()} aims to be a simple way to quickly
+visualize scores and loadings in an intuitive way, see Figure
+\ref{fig:slplot}. Barplots are provided when plotting only one PC and
+colors can be specified differently for the scores and loadings
+plots. For a more specific scatter plot it is however recommended to
+access scores and loadings slots and define own plot functions.
 
-%An example is shown in Figure \ref{fig:slplot}.
-%\begin{figure}[!h]
-%  \centering
-%<<fig=true, width=11, height=7, results=hide, echo=false>>=
-%slplot(resSVDI, pcs=c(1,2))
-%@
-%\caption{\texttt{slplot} for scores and loadings obtained with
-%  SVDimpute. \label{fig:slplot}}
-%\end{figure}
+\begin{figure}[!h]
+ \centering
+<<fig=true, width=11, height=7, results=hide, echo=false>>=
+slplot(resPCA)
+@
+\caption{\texttt{slplot} for scores and loadings obtained with
+ classical SVD based PCA. \label{fig:slplot}}
+\end{figure}
 
 \noindent Another method called \texttt{plotPcs()} allows to visualise many
 PCs plotted against each other, see Figure \ref{fig:plotPcs}.
@@ -460,6 +464,12 @@ plotPcs(resPPCA, pc=1:3, scoresLoadings=c(TRUE, FALSE))
 \end{figure}
 \cleardoublepage
 \begin{thebibliography}{2006}
+\bibitem{stacklies07} Stacklies W., Redestig H., Scholz M., and
+  Walther D., and Selbig J. {\sl pcaMethods -- a Bioconductor package
+    providing PCA methods for incomplete data}
+Bioinformatics. 2007, 23, 1164-1167.
+{\sl Non-linear PCA: a missing data approach.}
+Bioinformatics. 2005, 21, 3887-3895.
 \bibitem{scholz05} Scholz, M. , Kaplan, F., Guy, C.L., Kopka, J. and Selbig, J.
 {\sl Non-linear pca: a missing data approach.}
 Bioinformatics. 2005, 21, 3887-3895.

@@ -153,7 +153,7 @@ The package is available at www.bioconductor.org")
 
     ## Do some basic checks
     x <- as.matrix(x)
-    if (!checkData(x, verbose = verbose))
+    if (!checkData(x))
       stop("Invalid data format! Use checkData(x, verbose = TRUE) for details.\n")
 
     ## Define a couple of helper functions

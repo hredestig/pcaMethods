@@ -8,7 +8,8 @@
   It is not recommended to use this function directely but rather to use
   the pca() wrapper function.
 }
-\usage{svdPca(Matrix, nPcs=2, center=TRUE, completeObs=FALSE, varLimit=1,...)}
+\usage{svdPca(Matrix, nPcs=2, center=TRUE, completeObs=FALSE,
+  varLimit=1, verbose=interactive(), ...)}
 \arguments{
   \item{Matrix}{Numerical matrix samples in rows and variables as columns.}
   \item{nPcs}{Number of components that should be extracted.}
@@ -18,6 +19,7 @@
   in the \code{completeObs} field.}
   \item{varLimit}{Optionally the ratio of variance that should be
     explained. \code{nPcs} is ignored if varLimit < 1}
+  \item{verbose}{Verbose complaints to matrix structure}
   \item{...}{Only used for passing through arguments.}
 }
 \details{

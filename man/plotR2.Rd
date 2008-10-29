@@ -8,7 +8,7 @@
   the PC's and is thus applicable for any PCA method rather than just
   SVD based PCA.}
 \usage{
-plotR2(object, nPcs=object@nPcs, type = c("barplot", "lines"), main = deparse(substitute(x)), ...)
+plotR2(object, nPcs=object@nPcs, type = c("barplot", "lines"), main = deparse(substitute(object)), ...)
 }
 \arguments{
   \item{object}{\code{pcaRes} The pcaRes object.}

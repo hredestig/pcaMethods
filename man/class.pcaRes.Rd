@@ -3,6 +3,7 @@
 \alias{pcaRes}
 \alias{pcaRes-class}
 \alias{print,pcaRes-method}
+\alias{show,pcaRes-method}
 \alias{summary,pcaRes-method}
 \alias{slplot,pcaRes-method}
 \alias{completeObs,pcaRes-method}

@@ -1,6 +1,5 @@
 importFrom(stats, fitted)
 
-
 exportClasses(
               pcaRes,
               nniRes,
