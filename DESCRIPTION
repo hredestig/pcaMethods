@@ -1,10 +1,10 @@
 Package: pcaMethods
-Version: 1.19.1
+Version: 1.19.2
 Date: 2007-04-20
 Author: Wolfram Stacklies, Henning Redestig, Thanks to Kevin Wright for improvements to nipalsPca
 Maintainer: Wolfram Stacklies <wolfram.stacklies@gmail.com> 
 Title: A collection of PCA methods.
-Depends: MASS, pls, methods
+Depends: Biobase, MASS, pls, methods
 Suggests: aroma.light
 Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA,
   Inverse Non-Linear PCA and the conventional SVD PCA. A cluster 

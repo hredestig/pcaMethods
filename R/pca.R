@@ -341,8 +341,10 @@ setMethod("slplot", "pcaRes",
                              sub=NULL,...) {
 
             opar <- par(no.readonly=TRUE)
+
             cl <- match.call()
-            mainArgs <- c(1,match(c("ll", "sl", "scoresLoadings"), names(cl), 0))
+            mainArgs <- c(1,match(c("ll", "sl", "scoresLoadings", "sub"),
+                                  names(cl), 0))
             scoreArgs <- grep("^s", names(cl)[-mainArgs])
             loadingArgs <- grep("^l", names(cl)[-mainArgs])
 
@@ -423,7 +425,7 @@ setMethod("slplot", "pcaRes",
                   }
                 }
                 ## add text
-                if (!is.null(sl) & !any(is.na(sl))) {
+                if (!is.null(sl) & !all(is.na(sl))) {
                   plotCall[[length(plotCall) + 1]] <- "n"
                   names(plotCall)[length(plotCall)] <- "type"
                   textCall <- call("text",
@@ -438,7 +440,7 @@ setMethod("slplot", "pcaRes",
                   }
                 }
                 eval(plotCall)
-                if (!is.null(sl) & !any(is.na(sl)))
+                if (!is.null(sl) & !all(is.na(sl)))
                   eval(textCall)
                 if(rug)
                   rug(object@scores[,1])
@@ -467,7 +469,7 @@ setMethod("slplot", "pcaRes",
                   }
                 }
                 ## add text
-                if (!is.null(ll) & !any(is.na(ll))) {
+                if (!is.null(ll) & !all(is.na(ll))) {
                   plotCall[[length(plotCall) + 1]] <- "n"
                   names(plotCall)[length(plotCall)] <- "type"
                   textCall <- call("text",
@@ -482,13 +484,12 @@ setMethod("slplot", "pcaRes",
                   }
                 }
                 eval(plotCall)
-                if (!is.null(ll) & !any(is.na(ll)))
+                if (!is.null(ll) & !all(is.na(ll)))
                   eval(textCall)
                 abline(h=0, v=0)
               }
-              
-              par(opar)
             }
+            par(opar)
           })
 
 
@@ -613,7 +614,7 @@ nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimi
 }
 
 
-svdPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = FALSE, varLimit=1, ...) {
+svdPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = FALSE, varLimit=1, verbose=interactive(), ...) {
   
   ## Do some basic checks
   Matrix <- as.matrix(Matrix, rownames.force=TRUE)

@@ -35,7 +35,8 @@
 ##########################################################################################
 
 kEstimateFast <- function(Matrix, method = "ppca", evalPcs = 1:3,
-                          em = "nrmsep", verbose = interactive(), ...) {
+                          em = "nrmsep", allVariables = FALSE,
+                          verbose = interactive(), ...) {
 
     method <- match.arg(method, c("ppca", "bpca", "svdImpute", "nipals", "nlpca"))
     em <- match.arg(em, c("nrmsep", "q2"))
