@@ -26,10 +26,10 @@
   the current estimate as input for the regression until the change between new
   and old estimate falls below a threshold (0.001).
 
-  \bold{Complexity:} Each step the generalized inverse of a \code{miss} x {k}
-  matrix is calculated. Where \code{miss} is the number of missing values in
-  variable j and \code{k} the number of neighbours. This may be slow for large values of
-  k and / or many missing values. See also help("ginv").
+  \bold{Complexity:} Each step the generalized inverse of a \code{miss} x
+  k matrix is calculated. Where \code{miss} is the number of missing values in 
+  variable j and \code{k} the number of neighbours. This may be slow for large
+  values of k and / or many missing values. See also help("ginv").
 }
 \usage{
   llsImpute(Matrix, k = 10, center = FALSE, completeObs = TRUE, correlation = "pearson",
