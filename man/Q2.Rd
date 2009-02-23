@@ -10,7 +10,8 @@ segments=NULL, verbose=interactive(), ...)}
 \arguments{
 \item{object}{A \code{pcaRes} object (result from previous PCA
 analysis.)}
-\item{originalData}{The matrix used to obtain the pcaRes object}
+\item{originalData}{The matrix (or ExpressionSet) that used to
+  obtain the pcaRes object. Must not contain any missing values.}
 \item{nPcs}{The amount of principal components to estimate Q2 for.}
 \item{fold}{The amount of groups to divide the data in.}
 \item{nruncv}{The amount of times to repeat the whole cross-validation}

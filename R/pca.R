@@ -3,7 +3,8 @@
   require("methods")
 }
 
-pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute", "nlpca", "robustPca"),
+pca <- function(object, method=c("svd", "nipals", "bpca", "ppca",
+                          "svdImpute", "nlpca", "robustPca"),
                 subset=numeric(),...) {
   
   isExprSet <- FALSE
@@ -15,8 +16,8 @@ pca <- function(object, method=c("svd", "nipals", "bpca", "ppca", "svdImpute", "
 
   method <- match.arg(method)
 
-                                        # Do some basic checks of the data. We exit if the data contains NaN or Inf
-                                        # values or is not numeric.
+  ## Do some basic checks of the data. We exit if the data contains
+  ## NaN or Inf values or is not numeric.
   if ( !checkData(as.matrix(object), verbose=interactive()) )
     stop("Invalid data format, exiting...\n",
          "Run checkData(data, verbose=TRUE) for details\n")
@@ -72,8 +73,8 @@ nni <- function(object, method=c("llsImpute"), subset=numeric(), ...) {
 
   method <- match.arg(method)
 
-                                        # Do some basic checks of the data. We exit if the data contains NaN or Inf
-                                        # values or is not numeric.
+                                        ## Do some basic checks of the data. We exit if the data contains NaN or Inf
+                                        ## values or is not numeric.
   if ( !checkData(as.matrix(object), verbose = interactive()) )
     stop("Invalid data format, exiting...\n",
          "Run checkData(data, verbose = TRUE) for details\n")
@@ -202,24 +203,24 @@ setMethod("show", "pcaRes",
 ## package stats. This is basically a copy of the
 ## biplot.prcomp() function, adapted for a pcaRes object.
 ##
-                                        #biplot.pcaRes <- function(x, choices=1:2, scale=1, pc.biplot=FALSE, ...) {
-                                        #           # Based on biplot.prcomp, modified by Kevin Wright
-                                        #           if(length(choices)!=2)
-                                        #             stop("length of choices must be 2")
-                                        #           scores <- x@scores
-                                        #           n <- nrow(scores)
-                                        #           lam <- x@sDev[choices] * sqrt(n)
-                                        #           if(scale < 0 || scale > 1)
-                                        #             warning("'scale' is outside [0,1]")
-                                        #           if(scale != 0) lam <- lam^scale
-                                        #           else lam <- 1
-                                        #           if(pc.biplot) lam <- lam/sqrt(n)
-                                        #           biplot.default(t(t(scores[,choices])/lam),
-                                        #                          t(t(x@loadings[, choices]) * lam), , ...)
-                                        #           invisible()
-                                        #           }
-                                        #
-                                        #setMethod("biplot", "pcaRes", biplot.pcaRes)
+                                        ##biplot.pcaRes <- function(x, choices=1:2, scale=1, pc.biplot=FALSE, ...) {
+                                        ##           # Based on biplot.prcomp, modified by Kevin Wright
+                                        ##           if(length(choices)!=2)
+                                        ##             stop("length of choices must be 2")
+                                        ##           scores <- x@scores
+                                        ##           n <- nrow(scores)
+                                        ##           lam <- x@sDev[choices] * sqrt(n)
+                                        ##           if(scale < 0 || scale > 1)
+                                        ##             warning("'scale' is outside [0,1]")
+                                        ##           if(scale != 0) lam <- lam^scale
+                                        ##           else lam <- 1
+                                        ##           if(pc.biplot) lam <- lam/sqrt(n)
+                                        ##           biplot.default(t(t(scores[,choices])/lam),
+                                        ##                          t(t(x@loadings[, choices]) * lam), , ...)
+                                        ##           invisible()
+                                        ##           }
+                                        ##
+                                        ##setMethod("biplot", "pcaRes", biplot.pcaRes)
 
 setMethod("print", "nniRes",
           function(x, ...) {
@@ -256,6 +257,29 @@ setMethod("summary", "pcaRes",
           })
 
 
+
+predict.pcaRes <- function(object, newdata, nPcs=object@nPcs,...) {
+
+  if(!object@method %in% c("ppca", "svd", "nipals", "bpca"))
+    stop("predict method not implemented for that type of PCA")
+
+  if(object@centered)  
+    newdata <- scale(newdata, object@center, scale=FALSE)
+
+  tnew <- newdata %*% object@loadings[,1:nPcs,drop=FALSE]
+  xhat <- tcrossprod(tnew,  object@loadings[,1:nPcs,drop=FALSE])
+  if(object@centered)  
+    xhat <- sweep(xhat, 2, object@center, "+")
+  list(scores=tnew, x=xhat)
+}
+
+residuals.pcaRes <- function(object, data, nPcs=object@nPcs, ...) {
+
+  if(!object@method %in% c("ppca", "svd", "nipals", "bpca"))
+    stop("resid method not implemented for that type of PCA")
+
+  data - fitted.pcaRes(object, nPcs=nPcs)
+}
 
 fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs, ...) {
 
@@ -328,7 +352,7 @@ setMethod("fitted", "pcaRes", fitted.pcaRes)
 plotR2 <- function(object, nPcs=object@nPcs, type = c("barplot", "lines"),
                    main = deparse(substitute(object)), ...) {
   main <- main    #this is not a typo! the deparse(subsitute(object)) later
-                                        #fails otherwise (dont ask me)
+                                        ##fails otherwise (dont ask me)
   names(object@sDev) <- paste("PC", 1:nPcs, sep="")
   newx <- list(sdev=object@R2)
   screeplot(newx, nPcs, type, main,...)

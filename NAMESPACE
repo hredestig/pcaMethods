@@ -1,4 +1,6 @@
 importFrom(stats, fitted)
+importFrom(stats, predict)
+importFrom(stats, resid)
 
 exportClasses(
               pcaRes,
@@ -34,5 +36,7 @@ export(
        kEstimateFast,
        asExprSet,
        robustSvd,
-       robustPca
+       robustPca,
+       predict.pcaRes,
+       residuals.pcaRes
        )

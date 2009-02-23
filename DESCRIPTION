@@ -1,5 +1,5 @@
 Package: pcaMethods
-Version: 1.19.3
+Version: 1.20.0
 Author: Wolfram Stacklies, Henning Redestig, Thanks to Kevin Wright for improvements to nipalsPca
 Maintainer: Wolfram Stacklies <wolfram.stacklies@gmail.com> 
 Title: A collection of PCA methods.

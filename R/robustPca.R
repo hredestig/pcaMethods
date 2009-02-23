@@ -2,14 +2,15 @@
 #####################################################################################
 ##
 ## PCA using robustSVD.
-## This is a PCA implementation robust to outliers in a data set. It can also handle
-## missing values, it is however NOT intended to be used for missing value estimation.
-## As it is based on robustSVD we will get an accurate estimation for the loadings also
-## on incomplete data or data with outliers.
-## If the data show missing values, scores are caluclated by just setting all NA - values 
-## to zero. This is not expected to produce  accurate results. As scores are just
-## calculated using Matrix %*% loadings they are of course affected by outliers. 
-## Use one of the other methods coming with this package
+## This is a PCA implementation robust to outliers in a data set. It
+## can also handle missing values, it is however NOT intended to be
+## used for missing value estimation.  As it is based on robustSVD we
+## will get an accurate estimation for the loadings also on incomplete
+## data or data with outliers.  If the data show missing values,
+## scores are caluclated by just setting all NA - values to zero. This
+## is not expected to produce accurate results. As scores are just
+## calculated using Matrix %*% loadings they are of course affected by
+## outliers.  Use one of the other methods coming with this package
 ## (like PPCA or BPCA) if you want to do missing value estimation.
 ##
 ## Parameters:
