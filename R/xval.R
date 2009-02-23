@@ -1,5 +1,10 @@
 Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10, segments=NULL, verbose=interactive(),...) {
 
+  if(inherits(originalData, "ExpressionSet")) {
+    set <- originalData
+    isExprSet <- TRUE
+    originalData <- t(exprs(originalData))
+  }
   originalData <- as.matrix(originalData)
   originalData <- prep(originalData, center=object@centered)
   if(any(is.na(originalData)))

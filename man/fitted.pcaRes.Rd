@@ -19,5 +19,10 @@
   \item{...}{Not passed on anywhere, included for S3 consistency.}
 }
 \value{A matrix with the fitted values.}
+\examples{
+data(iris)
+pcIr <- pca(iris[,1:4])
+head(fitted(pcIr, nPcs=1))
+}
 \keyword{multivariate}
 \author{Henning Redestig <redestig[at]mpimp-golm.mpg.de>}
