@@ -275,10 +275,7 @@ predict.pcaRes <- function(object, newdata, nPcs=object@nPcs,...) {
 
 residuals.pcaRes <- function(object, data, nPcs=object@nPcs, ...) {
 
-  if(!object@method %in% c("ppca", "svd", "nipals", "bpca"))
-    stop("resid method not implemented for that type of PCA")
-
-  data - fitted.pcaRes(object, nPcs=nPcs)
+  data - predict(object, data, nPcs=nPcs)$x
 }
 
 fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs, ...) {
