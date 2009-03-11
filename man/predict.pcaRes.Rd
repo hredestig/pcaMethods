@@ -12,14 +12,17 @@
 
   \eqn{\hat{X}_{new}=\hat{T}P'}{Xhat=ThatP'}
 
+  Missing values are set to zero before matrix multiplication to achieve
+  NIPALS like treatment of missing values. 
+
 }
 
-\usage{predict.pcaRes(object, newdata, nPcs=object@nPcs, ...)}
+\usage{predict.pcaRes(object, newdata, pcs=nPcs(object), ...)}
 \arguments{
   \item{object}{\code{pcaRes} the \code{pcaRes} object of interest.}
   \item{newdata}{\code{matrix} new data with same number of columns as
     the used to compute \code{object}.} 
-  \item{nPcs}{\code{numeric} The amount of PC's to consider}
+  \item{pcs}{\code{numeric} The number of PC's to consider}
   \item{...}{Not passed on anywhere, included for S3 consistency.}
 }
 \value{A list with the following components:
@@ -33,6 +36,6 @@ hidden <- sample(nrow(iris), 50)
 pcIr <- pca(iris[-hidden,1:4])
 pcFull <- pca(iris[,1:4])
 irisHat <- predict(pcIr, iris[hidden,1:4])
-cor(irisHat$scores[,1], pcFull@scores[hidden,1])
+cor(irisHat$scores[,1], scores(pcFull)[hidden,1])
 }
-\author{Henning Redestig <redestig[at]psc.riken.jp>}
+\author{Henning Redestig <henning[at]psc.riken.jp>}
