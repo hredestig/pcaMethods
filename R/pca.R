@@ -98,9 +98,9 @@ asExprSet <- function(object, exprSet) {
     stop("Parameter exprSet must be of type ExpressionSet")
   if(!inherits(object, "pcaRes") && !inherits(object, "nniRes"))
     stop("Parameter object must be either of type pcaRes or nniRes")
-  if (is.null(object@completeObs))
+  if (is.null(completeObs(object)))
     stop("object@completeObs is NULL, exiting")
-  if(length(exprs(exprSet)) != length(object@completeObs))
+  if(length(exprs(exprSet)) != length(completeObs(object)))
     stop("Size of exprs(exprSet) and object@completeObs differ. 
 Did you really do missing value estimation using this ExpressionSet object?")
   
@@ -169,22 +169,27 @@ setMethod("print", "pcaRes",
             }
           })
 
+setMethod("leverage", "pcaRes",
+          function(object) {
+            diag(scores(object) %*%
+                 solve(crossprod(scores(object)))  %*% t(scores(object)))
+          })
 
 setMethod("show", "pcaRes",
           function(object) {
             summary(object)
-            cat(object@nVar, "\tVariables\n")
-            cat(object@nObs,"\tSamples\n")
+            cat(dim(object)["nVar"], "\tVariables\n")
+            cat(dim(object)["nObs"],"\tSamples\n")
             cat(object@missing, "\tNA's\n")
-            cat(object@nPcs, "\tCalculated component(s)\n")
-            if(object@centered)
+            cat(nPcs(object), "\tCalculated component(s)\n")
+            if(centered(object))
               cat("Data was mean centered before running PCA \n")
             else
               cat("Data was NOT mean centered before running PCA \n")
             cat("Scores structure:\n")
-            print(dim(object@scores))
+            print(dim(scores(object)))
             cat("Loadings structure:\n")
-            if(object@method == "nlpca") {
+            if(method(object) == "nlpca") {
               cat("Inverse hierarchical neural network architecture\n")
               cat(drop(object@network@net), "\n")
               cat("Functions in layers\n")
@@ -194,7 +199,7 @@ setMethod("show", "pcaRes",
               cat("scaling factor:", object@network@scalingFactor, "\n")
             }
             else{
-              print(dim(object@loadings))
+              print(dim(loadings(object)))
             }
           })
 
@@ -202,34 +207,32 @@ setMethod("show", "pcaRes",
 ## Biplot for pcaRes, uses biplot.default provided by
 ## package stats. This is basically a copy of the
 ## biplot.prcomp() function, adapted for a pcaRes object.
-##
-                                        ##biplot.pcaRes <- function(x, choices=1:2, scale=1, pc.biplot=FALSE, ...) {
-                                        ##           # Based on biplot.prcomp, modified by Kevin Wright
-                                        ##           if(length(choices)!=2)
-                                        ##             stop("length of choices must be 2")
-                                        ##           scores <- x@scores
-                                        ##           n <- nrow(scores)
-                                        ##           lam <- x@sDev[choices] * sqrt(n)
-                                        ##           if(scale < 0 || scale > 1)
-                                        ##             warning("'scale' is outside [0,1]")
-                                        ##           if(scale != 0) lam <- lam^scale
-                                        ##           else lam <- 1
-                                        ##           if(pc.biplot) lam <- lam/sqrt(n)
-                                        ##           biplot.default(t(t(scores[,choices])/lam),
-                                        ##                          t(t(x@loadings[, choices]) * lam), , ...)
-                                        ##           invisible()
-                                        ##           }
-                                        ##
-                                        ##setMethod("biplot", "pcaRes", biplot.pcaRes)
+## by Kevin Wright
+biplot.pcaRes <- function(x, choices=1:2, scale=1, pc.biplot=FALSE, ...) {
+  if(length(choices)!=2)
+    stop("length of choices must be 2")
+  scores <- scores(x)
+  n <- nrow(scores)
+  lam <- sDev(x)[choices] * sqrt(n)
+  if(scale < 0 || scale > 1)
+    warning("'scale' is outside [0,1]")
+  if(scale != 0) lam <- lam^scale
+  else lam <- 1
+  if(pc.biplot) lam <- lam/sqrt(n)
+  biplot(t(t(scores[,choices])/lam),
+         t(t(loadings(x)[, choices]) * lam), , ...)
+  invisible()
+}
+setMethod("biplot", "pcaRes", biplot.pcaRes)
 
 setMethod("print", "nniRes",
           function(x, ...) {
             summary(x)
-            cat(x@nVar, "\tVariables\n")
-            cat(x@nObs,"\tSamples\n")
+            cat(dim(x)["nVar"], "\tVariables\n")
+            cat(dim(x)["nObs"],"\tSamples\n")
             cat(x@missing, "\tNA's\n")
             cat("k was set to", x@k, "\n")
-            if(x@centered)
+            if(centered(x))
               cat("Data was mean centered before running LLSimpute \n")
             else
               cat("Data was NOT mean centered before running LLSimpute \n")
@@ -258,17 +261,19 @@ setMethod("summary", "pcaRes",
 
 
 
-predict.pcaRes <- function(object, newdata, nPcs=object@nPcs,...) {
+predict.pcaRes <- function(object, newdata, pcs=nPcs(object),...) {
 
   if(!object@method %in% c("ppca", "svd", "nipals", "bpca"))
     stop("predict method not implemented for that type of PCA")
 
-  if(object@centered)  
+  if(centered(object))  
     newdata <- scale(newdata, object@center, scale=FALSE)
-
-  tnew <- newdata %*% object@loadings[,1:nPcs,drop=FALSE]
-  xhat <- tcrossprod(tnew,  object@loadings[,1:nPcs,drop=FALSE])
-  if(object@centered)  
+  ## set na's to zero to achieve NIPALS like prediction
+  newdata[is.na(newdata)] <- 0
+  
+  tnew <- newdata %*% loadings(object)[,1:pcs,drop=FALSE]
+  xhat <- tcrossprod(tnew,  loadings(object)[,1:pcs,drop=FALSE])
+  if(centered(object))  
     xhat <- sweep(xhat, 2, object@center, "+")
   list(scores=tnew, x=xhat)
 }
@@ -763,3 +768,44 @@ simpleEllipse <- function(x, y, alfa=0.95, len=200) {
   r2 <- sqrt(var(y) * qf(alfa, 2, N - 2) * (2*(N^2 - 1)/(N * (N - 2))))
   cbind(r1 * cos(mypi) + mean(x), r2 * sin(mypi) + mean(y))
 }
+
+
+## #############
+## some getters
+
+## S3 for those already have been defined as such
+scores.pcaRes <- function(object,...) 
+  object@scores
+
+loadings.pcaRes <- function(object,...) 
+  object@loadings
+
+dim.pcaRes <- function(x)  {
+  res <-  c(x@nObs, x@nVar, x@nPcs)
+  names(res) <- c("nObs", "nVar", "nPcs")
+  res
+}
+
+## S4 for new ones
+setMethod("nPcs", "pcaRes", function(object, ...) {
+  object@nPcs
+  })
+setMethod("nObs", "pcaRes", function(object, ...) {
+  object@nObs
+  })
+setMethod("nVar", "pcaRes", function(object, ...) {
+  object@nVar
+  })
+setMethod("centered", "pcaRes", function(object, ...) {
+  object@centered
+  })
+setMethod("completeObs", "pcaRes", function(object, ...) {
+  object@completeObs
+  })
+setMethod("method", "pcaRes", function(object, ...) {
+  object@method
+  })
+setMethod("sDev", "pcaRes", function(object, ...) {
+  object@sDev
+  })
+

@@ -1,6 +1,7 @@
 importFrom(stats, fitted)
 importFrom(stats, predict)
 importFrom(stats, resid)
+importFrom(stats, biplot)
 
 exportClasses(
               pcaRes,
@@ -13,7 +14,16 @@ exportMethods(
               summary,
               print,
               fitted,
-              show
+              show,
+
+              sDev,
+              nPcs,
+              nVar,
+              nObs,
+              centered,
+              method,
+              leverage,
+              completeObs
               )
 
 export(
@@ -38,5 +48,9 @@ export(
        robustSvd,
        robustPca,
        predict.pcaRes,
-       residuals.pcaRes
+       residuals.pcaRes,
+       biplot.pcaRes,
+       scores.pcaRes,
+       loadings.pcaRes,
+       dim.pcaRes
        )

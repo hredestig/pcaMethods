@@ -6,7 +6,24 @@
 \alias{show,pcaRes-method}
 \alias{summary,pcaRes-method}
 \alias{slplot,pcaRes-method}
+\alias{leverage,pcaRes-method}
 \alias{completeObs,pcaRes-method}
+\alias{completeObs}
+\alias{scores.pcaRes}
+\alias{loadings.pcaRes}
+\alias{nPcs,pcaRes-method}
+\alias{nPcs}
+\alias{nVar,pcaRes-method}
+\alias{nVar}
+\alias{nObs,pcaRes-method}
+\alias{nObs}
+\alias{dim.pcaRes}
+\alias{centered,pcaRes-method}
+\alias{centered}
+\alias{method,pcaRes-method}
+\alias{method}
+\alias{sDev,pcaRes-method}
+\alias{sDev}
 
 \title{Class for representing a PCA result}
 
@@ -49,7 +66,18 @@
     \item{summary}{Extract information about PC relevance}
     \item{screeplot}{Plot a barplot of standard deviations for PCs}
     \item{slplot}{Make a side by side score and loadings plot}
-    \item{biplot}{Make a scores / loadings biplot}
+    \item{nPcs}{Get the number of PCs}
+    \item{nObs}{Get the number of observations}
+    \item{nVar}{Get the number of variables}
+    \item{loadings}{Get the loadings}
+    \item{scores}{Get the scores}
+    \item{dim}{Get the dimensions (number of observations, number of
+      features)}
+    \item{centered}{Get a logical indicating if centering was done as
+      part of the model}
+    \item{completeObs}{Get the imputed data set}
+    \item{method}{Get a string naming the used PCA method}
+    \item{sDev}{Get the standard deviations of the PCs}
   }
 }
 \keyword{classes}

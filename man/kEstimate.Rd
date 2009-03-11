@@ -3,55 +3,72 @@
 \alias{kEstimate}
 \title{Estimate best number of Components for missing value estimation}
 \description{
-  Perform cross validation to estimate the optimal number of components for missing
-  value estimation.
-  Cross validation is done for the complete subset of a variable.
-  The assumption hereby is that variables that are highly correlated in a 
-  distinct region (here the non-missing observations) are also correlated in another 
-  (here the missing observations).
-  This also implies that the complete subset must be large enough to be representative.
-  For each incomplete variable, the available values are divided into a user defined
-  number of cv-segments. The segments have equal size, but are chosen from a random
-  equal distribution. The non-missing values of the variable are covered completely.
-  PPCA, BPCA, SVDimpute, Nipals PCA, llsImpute an NLPCA may be used for imputation. \cr
-  The whole cross validation is repeated several times so, depending on
-  the parameters, the calculations can take very long time.
-  As error measure the NRMSEP (see Feten et. al, 2005) or the Q2 distance is used.
-  The NRMSEP basically
-  normalises the RMSD between original data and estimate by the variable-wise
-  variance. The reason for this is that a higher variance will generally lead to a
-  higher estimation error.
-  If the number of samples is small, the variable - wise variance may become an unstable
-  criterion and the Q2 distance should be used instead. Also if variance normalisation
-  was applied previously.\cr
-  The method proceeds variable - wise, the NRMSEP / Q2 distance is calculated for
-  each incomplete variable and averaged afterwards. This allows to easily see for
-  wich set of variables missing value imputation makes senes and for wich set no
-  imputation or something like mean-imputation should be used.\cr
-  Use \code{kEstimateFast} or \code{Q2} if you are not interested in variable wise
-  values.
+
+  Perform cross validation to estimate the optimal number of components
+  for missing value estimation.
+
+  Cross validation is done for the
+  complete subset of a variable.  The assumption hereby is that
+  variables that are highly correlated in a distinct region (here the
+  non-missing observations) are also correlated in another (here the
+  missing observations).  This also implies that the complete subset
+  must be large enough to be representative.  For each incomplete
+  variable, the available values are divided into a user defined number
+  of cv-segments. The segments have equal size, but are chosen from a
+  random equal distribution. The non-missing values of the variable are
+  covered completely.  PPCA, BPCA, SVDimpute, Nipals PCA, llsImpute an
+  NLPCA may be used for imputation.
+
+  The whole cross validation is repeated several times so, depending
+  on the parameters, the calculations can take very long time.  As error
+  measure the NRMSEP (see Feten et. al, 2005) or the Q2 distance is
+  used.  The NRMSEP basically normalises the RMSD between original data
+  and estimate by the variable-wise variance. The reason for this is
+  that a higher variance will generally lead to a higher estimation
+  error.  If the number of samples is small, the variable - wise
+  variance may become an unstable criterion and the Q2 distance should
+  be used instead. Also if variance normalisation was applied
+  previously.
+
+  The method proceeds variable - wise, the NRMSEP / Q2 distance is
+  calculated for each incomplete variable and averaged afterwards. This
+  allows to easily see for wich set of variables missing value
+  imputation makes senes and for wich set no imputation or something
+  like mean-imputation should be used.
+
+  Use \code{kEstimateFast} or \code{Q2} if you are not interested in
+  variable wise values.
+
 }
 \details{
-  Run time may be very high on large data sets. Especially when used with
-  complex methods like BPCA or Nipals PCA.
-  For PPCA, BPCA, Nipals PCA and NLPCA the estimation method is called
-  \eqn{(v_{miss} \cdot segs \cdot nruncv \cdot)}{(v\_miss * segs * nruncv)}
-  times as the error for all numbers of principal components can be calculated at once.
-  For LLSimpute and SVDimpute this is not possible, and the method is called
-  \eqn{(v_{miss} \cdot segs \cdot nruncv \cdot length(evalPcs))}{(v\_miss * segs * 
-  nruncv * length(evalPcs))} times. This should still be fast for LLSimpute because
-  the method allows to choose to only do the estimation for one particular variable.
-  This saves a lot of iterations.
-  Here, \eqn{v_{miss}}{v\_miss}
-  is the number of variables showing missing values.\cr
+
+  Run time may be very high on large data sets. Especially when used
+  with complex methods like BPCA or Nipals PCA.  For PPCA, BPCA, Nipals
+  PCA and NLPCA the estimation method is called \eqn{(v_{miss} \cdot
+  segs \cdot nruncv \cdot)}{(v\_miss * segs * nruncv)} times as the
+  error for all numbers of principal components can be calculated at
+  once.  For LLSimpute and SVDimpute this is not possible, and the
+  method is called \eqn{(v_{miss} \cdot segs \cdot nruncv \cdot
+  length(evalPcs))}{(v\_miss * segs * nruncv * length(evalPcs))}
+  times. This should still be fast for LLSimpute because the method
+  allows to choose to only do the estimation for one particular
+  variable.  This saves a lot of iterations.  Here,
+  \eqn{v_{miss}}{v\_miss} is the number of variables showing missing
+  values.
+
+  
   As cross validation is done variable-wise, in this function Q2 is
-  defined on single variables, not on the entire data set. This is Q2 is calculated as
-  as \eqn{\frac{\sum(x - xe)^2}{\sum(x^2)}}{sum(x - xe)^2 \ sum(x^2)},
-  where x is the currently used variable and xe it's estimate. The values are then averaged
-  over all variables. The NRMSEP is already defined variable-wise. For a single variable
-  it is then \eqn{\sqrt(\frac{\sum(x - xe)^2}{(n \cdot var(x))})}{sqrt(sum(x - xe)^2 \ (n * var(x)))}, 
-  where x is the variable and xe it's estimate, n is the length of x.
-  The variable wise estimation errors are returned in parameter variableWiseError.
+  defined on single variables, not on the entire data set. This is Q2 is
+  calculated as as \eqn{\frac{\sum(x - xe)^2}{\sum(x^2)}}{sum(x - xe)^2
+  \ sum(x^2)}, where x is the currently used variable and xe it's
+  estimate. The values are then averaged over all variables. The NRMSEP
+  is already defined variable-wise. For a single variable it is then
+  \eqn{\sqrt(\frac{\sum(x - xe)^2}{(n \cdot var(x))})}{sqrt(sum(x -
+  xe)^2 \ (n * var(x)))}, where x is the variable and xe it's estimate,
+  n is the length of x.  The variable wise estimation errors are
+  returned in parameter variableWiseError.
+
+  
 }
 \usage{
 kEstimate(Matrix, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 5,

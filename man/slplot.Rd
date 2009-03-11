@@ -16,11 +16,7 @@ sl="def", ll="def", hotelling=0.95, rug=TRUE, sub=NULL,...)}
   \item{rug}{logical, rug x axis or not}
   \item{sub}{Subtitle, defaults to annotate with
     amount of explained variance.}
-  \item{...}{Further arguments to plot functions, arguments to the score
-  plot must be prefixed with 's' and arguments to loading plot must be
-  prefixed with 'l'. For example, to have pch=19 in the score plot and
-  blue text in the loading plot give
-  the argument spch=19 and lcol="blue".}
+  \item{...}{Further arguments to plot functions}
 }
 
 \details{Uses layout instead of par to provide side-by-side so it works
@@ -34,6 +30,6 @@ sl="def", ll="def", hotelling=0.95, rug=TRUE, sub=NULL,...)}
 \examples{
 data(iris)
 pcIr <- pca(iris[,1:4], scale="UV", method="svd")
-slplot(pcIr, sl=NULL, spch=5, scol=as.integer(iris[,5]), lcol="brown")
+slplot(pcIr, sl=NULL, pch=5, col=as.integer(iris[,5]))
 }
 \keyword{multivariate}
