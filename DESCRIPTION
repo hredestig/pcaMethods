@@ -1,5 +1,5 @@
 Package: pcaMethods
-Version: 1.20.2
+Version: 1.20.3
 Author: Wolfram Stacklies, Henning Redestig, Kevin Wright
 Maintainer: Wolfram Stacklies <wolfram.stacklies@gmail.com> 
 Title: A collection of PCA methods.
@@ -15,7 +15,7 @@ Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA,
   a unique interface to the PCA results. Developed at the Max-Planck
   Institute for Molecular Plant Physiology, Golm, Germany.
 License: GPL version 2 (or later)
-biocViews: Statistics
+biocViews: Bioinformatics
 Collate: derrorHierarchic.R errorHierarchic.R classes.R generic.R
   pca.R BPCA_dostep.R bpca.R ppca.R BPCA_initmodel.R orth.R repmat.R
   xval.R svdImpute.R checkData.R kEstimate.R llsImpute.R forkNlpcaNet.R
