@@ -174,7 +174,7 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correl
     result@nObs            <- nrow(Matrix)
     result@nVar            <- ncol(Matrix)
     result@method          <- "llsImpute"
-    result@correlation     <- "correlation"
+    result@correlation     <- correlation
     result@k               <- k
     result@missing         <- sum(is.na(Matrix))
 
