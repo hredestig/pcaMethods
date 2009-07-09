@@ -58,6 +58,7 @@
     \item{missing}{"numeric", the total amount of missing values in
       original data}
     \item{completeObs}{"matrix", the estimated complete observations}
+    \item{network}{"nlpcaNet", the network used by non-linear PCA}
   }
 }
 \section{Methods}{

@@ -24,6 +24,7 @@
     \item{completeObs}{"matrix", the estimated complete observations}
     \item{nObs}{"numeric", amount of observations}
     \item{nVar}{"numeric", amount of variables}
+    \item{correlation}{"character", the correlation method used (pearson | kendall | spearman)}
     \item{centered}{"logical", data was centered or not}
     \item{center}{"numeric", the original variable centers}
     \item{k}{"numeric", cluster size}
