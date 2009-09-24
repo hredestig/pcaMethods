@@ -64,7 +64,7 @@
   note that a larger eigen value may follow a smaller one.
 }
 
-\seealso{\code{\link{svd}}, \code{\link[kw]{nipals}} for an alternating
+\seealso{\code{\link{svd}}, \code{\link[ade4:nipals]{nipals}} for an alternating
   L2 norm method that also accommodates missing data.}
  
 \examples{
