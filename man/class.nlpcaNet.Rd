@@ -1,4 +1,4 @@
-\name{pcaRes}
+\name{pcaNet}
 \docType{class}
 \alias{nlpcaNet}
 \alias{nlpcaNet-class}
