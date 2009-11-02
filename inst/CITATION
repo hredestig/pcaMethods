@@ -2,7 +2,7 @@ citHeader("The pcaMethods package implement algorithms found in several differen
 
 citEntry(entry="article",
     title = "pcaMethods -- a Bioconductor package providing PCA methods for incomplete	data",
-    author = "Wolfram Stacklies and Henning Redestig and Matthias Scholz and Dirk Walther and Joachime Selbig"
+    author = "Wolfram Stacklies and Henning Redestig and Matthias Scholz and Dirk Walther and Joachime Selbig",
     journal = "Bioinformatics",
     year = 2007,
     pages ="1164--1167",
