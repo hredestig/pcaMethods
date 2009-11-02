@@ -9,7 +9,7 @@ citEntry(entry="article",
     volume = "23",
     textVersion = 
     paste("Stacklies, W., Redestig, H., Scholz, M., Walther, D. and Selbig, J. ",
-          "pcaMethods -- a Bioconductor package providing PCA methods for incomplete"
+          "pcaMethods -- a Bioconductor package providing PCA methods for incomplete",
           "data. Bioinformatics, 2007, 23, 1164-1167")
     )
 
