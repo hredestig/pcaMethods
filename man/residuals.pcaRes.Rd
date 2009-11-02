@@ -22,4 +22,4 @@ data(iris)
 pcIr <- pca(iris[,1:4])
 head(residuals(pcIr, iris[,1:4]))
 }
-\author{Henning Redestig <redestig[at]psc.riken.jp>}
+\author{Henning Redestig <henning[at]psc.riken.jp>}
