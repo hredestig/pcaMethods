@@ -519,7 +519,8 @@ setMethod("slplot", "pcaRes",
           })
 
 
-nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimit=1,
+nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE,
+                      varLimit=1,
                       maxSteps=5000, 
                       threshold=1e-6, verbose=interactive(), ...) {
 
@@ -599,7 +600,7 @@ nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE, varLimi
     ##cumulative proportion of variance
     R2cum <- cbind(R2cum, 1 - (sum(object*object,na.rm=TRUE) / TotalSS))
     l <- l + 1
-    if (R2cum[1,l - 1] >= varLimit || l > nPcs) {
+    if((!abs(varLimit - 1) < 1e-4 & R2cum[1,l - 1] >= varLimit)| l > nPcs) {
       anotherPc <- FALSE
       nPcs <- l - 1
     }

@@ -121,8 +121,9 @@ kEstimate <- function(Matrix, method = "ppca", evalPcs = 1:3, segs = 3, nruncv =
                 } else
                     segments <- ceiling(nObs / 2)
 
-                ## We assume normal distributed missing values when choosing the segments
-                cvsegs <- cvsegments(nObs, segments)
+                ## We assume uniformly distributed missing values when choosing the segments
+                tt <- gl(segments, ceiling(nObs / segments))[1:nObs]
+                cvsegs <- split(sample(nObs), tt)
                 set <- Matrix[compObs,]
                 if (fastKE) {
                     nrmsep <- array(0, length(evalPcs))

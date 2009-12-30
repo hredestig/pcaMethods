@@ -1,124 +1,198 @@
-Q2 <- function(object, originalData, nPcs=object@nPcs, fold=5, nruncv=10, segments=NULL, verbose=interactive(),...) {
+##' Internal cross-validation can be used for estimating the
+##' level of structure in a data set and to optimise the choice of number
+##' of principal components.
+##'
+##' This method calculates \eqn{Q^2} for a PCA model. This is the predictory
+##' version of \eqn{R^2} and can be interpreted as the ratio of
+##' variance that can be predicted independetly by the PCA  model. Poor (low) \eqn{Q^2}
+##' indicates that the PCA model only describes noise
+##' and that the model is unrelated to the true data structure. The
+##' definition of \eqn{Q^2} is:
+##' \deqn{Q^2 = 1 - \frac{\sum_{i}^{k}\sum_{j}^{n}(x -
+##' \hat{x})^2}{\sum_{i}^{k}\sum_{j}^{n}x^2}}{Q^2 = 1 - sum_i^k sum_j^n (x -
+##' \hat{x})^2 / \sum_i^k \sum_j^n(x^2)}
+##' for the matrix \eqn{x} which has \eqn{n} rows and \eqn{k}
+##' columns. For a given amount of PC's x is estimated as \eqn{\hat{x} =
+##' TP'} (T are scores and P are loadings). Although this defines the
+##' leave-one-out cross-validation this is 
+##' not what is performed if fold is less than the amount of rows and/or
+##' columns.
+##' In 'impute' type CV, diagonal rows of elements in the matrix are deleted and the
+##' re-estimated. 
+##' In 'krzanowski' type CV, rows are sequentially left out to build fold PCA models
+##' which give the loadings. Then, columns are sequentially left out to build
+##' fold models for scores. By combining scores and loadings from different models,
+##' we can estimate completely left out values.
+##' The two types may seem similar but can give very different results,
+##' krzanowski typically yields more stable and reliable result for estimating data structure
+##' whereas impute is better for evaluating missing value imputation performance.
+##' @title Cross-validation for PCA
+##' @param object A \code{pcaRes} object (result from previous PCA analysis.)
+##' @param originalData The matrix (or ExpressionSet) that used to obtain the pcaRes object. 
+##' @param fold The number of groups to divide the data in.
+##' @param nruncv The number of times to repeat the whole cross-validation
+##' @param type krzanowski or imputation type cross-validation
+##' @param verbose \code{boolean} If TRUE Q2 outputs a primitive progress bar.
+##' @param Further arguments passed to the pca() function called within Q2.
+##' @return A matrix or vector with \eqn{Q^2} estimates.
+##' @export
+##' @examples
+##' data(iris)
+##' pcIr <- pca(iris[,1:4], nPcs=3)
+##' q2 <- Q2(pcIr, iris[,1:4], nruncv=2)
+##' barplot(q2, xlab="Amount of PC's", ylab=expression(Q^2))
+##' @author Henning Redestig
+##' @keywords multivariate
+Q2 <- function(object, originalData, fold=5, nruncv=1,
+               type=c("krzanowski", "impute"),
+               verbose=interactive(), ...) {
+  type <- match.arg(type)
 
   if(inherits(originalData, "ExpressionSet")) {
     set <- originalData
-    isExprSet <- TRUE
     originalData <- t(exprs(originalData))
   }
   originalData <- as.matrix(originalData)
-  originalData <- prep(originalData, center=object@centered)
-  if(any(is.na(originalData)))
-    stop("Q2 is intended for comparison with complete data. If you do not have a complete data set you can first impute the missing values and then run Q2 on the estimated data set.")
+  originalData <- prep(originalData, center=centered(object))
 
-  nR <- nrow(originalData)
-  nC <- ncol(originalData)
+  nR <- nObs(object)
+  nC <- nVar(object)
+  nP <- nPcs(object)
+  if(nR != nrow(originalData) | nC != ncol(originalData))
+    stop("data and model dimensions do not match")
+  if(fold > max(nR, nC))
+    stop("fold must be equal or less to max dimension of original data")
+  if(method(object) %in% c("svd") & type != "krzanowski")
+    stop("Chosen PCA method must use krzanowski type cv")
+  if(method(object) %in% c("llsImpute") & type != "impute")
+    stop("Chosen PCA method must use impute type cv")
 
   ssx <- sum(originalData^2, na.rm=TRUE)
   
-  if(object@method %in% c("svd"))
-    stop("Chosen PCA method can not handle missing values and missing value free cross validation is not supported")
-  result <- matrix(NA, nPcs, ncol=nruncv)
+  result <- matrix(NA, nP, ncol=nruncv)
   for(nr in 1:nruncv) {
-    seg <- segments
-    if(is.null(seg)) {
 
-      nDiag <- max(dim(originalData))
+    press <- rep(0, nP)
+    ## --- impute ---
+    if(type == "impute") {
+      seg <- list()
+      nDiag <- max(nR, nC)
       diagPerFold <- floor(nDiag / fold)
       suppressWarnings(diags <- matrix(1:nDiag, nrow=diagPerFold, ncol=fold, byrow=TRUE))
       if(diagPerFold == 0 || diagPerFold > (nDiag / 2))
-        stop("Matrix could not be safely divided into ", fold, " segment(s). Choose a different fold or provide the desired segments")
+        stop("Matrix could not be safely divided into ", fold,
+             " segment(s). Choose a different fold or provide the desired segments")
       if(nDiag %% fold > 0)
-        warning("Validation incomplete: ", (nDiag %% fold) * min(dim(originalData)), " value(s) were left out of from cross validation, Q2 estimate will be biased.")
-
-      ## not get the indices of those diagonals
+        warning("Validation incomplete: ",
+                (nDiag %% fold) * min(dim(originalData)),
+                " value(s) were left out of from cross validation, Q2 estimate will be biased.")
       for(i in 1:ncol(diags)) 
         seg[[i]] <- which(is.na(deletediagonals(originalData, diags[,i])))
-
-      ## <to remove later>
-      ## check that we didnt make a mistake
-      for(i in 1:length(seg)) {
-        tmp <- originalData
-        tmp[seg[[i]]] <- NA
-        if(any(apply(tmp, 1, function(x) sum(is.na(x))) == ncol(tmp)) ||
-           any(apply(tmp, 2, function(x) sum(is.na(x))) == nrow(tmp)))
-          stop("ooops! a column or row was completely lost. this should not have happened, please consider contacting the maintainer.")
-      }
-      ## </to remove later>
       
-    }
-    
-    press <- rep(0, nPcs)
       if(verbose)
         message("Doing ", length(seg), " fold ", "cross validation")
-    for(i in seg) {
+      for(i in seg) {
+        if(verbose)
+          cat(".")
+        test <- originalData
+        test[i] <- NA
+        test <- tempFixNas(test)
+        if (method(object)!= "llsImpute") {
+          pc <- pca(test, nPcs=nP, method=method(object), verbose=FALSE,
+                    center=centered(object), scale=object@scaled,...)
+        }
+        
+        for(np in 1:nP) {
+          if(method(object) == "llsImpute") {
+            fittedData <- llsImpute(test, k = np, verbose = FALSE,
+                                    allVariables = TRUE, center = FALSE)@completeObs
+          }
+          else {
+            if(method(object) == "nlpca")
+              fittedData <- fitted(pc, data=test, nPcs=np)
+            else
+              fittedData <- fitted(pc, data=NULL, nPcs=np)
+          }
+          press[np] <- press[np] +
+            sum((originalData[i] - fittedData[i])^2, na.rm=TRUE)
+        }
+      }
       if(verbose)
-        cat(".")
-      test <- originalData
-      test[i] <- NA
-      if (object@method != "llsImpute") {
-        pc <- pca(test, nPcs=nPcs, method=object@method, verbose=FALSE,
-                  center=object@centered, scale=object@scaled,...)
+        cat("\nDone\n")
+    }
+    ## ---- krzanowski ----
+    if(type == "krzanowski") {
+      rseg <- split(sample(1:nR), rep(1:fold, ceiling(nR / fold))[1:nR])
+      cseg <- split(sample(1:nC), rep(1:fold, ceiling(nC / fold))[1:nC])
+      foldC <- length(cseg)
+      foldR <- length(rseg)
+      tcv <- array(0, dim=c(foldC, nR, nP))
+      pcv <- array(0, dim=c(foldR, nC, nP))
+      for(f in 1:foldC) {
+        test <- tempFixNas(originalData[,-cseg[[f]]])
+        tcv[f,,] <- scores(pca(test, nPcs=nP,
+                               method=method(object), verbose=FALSE,
+                               center=centered(object),
+                               scale=object@scaled, ...))
+        for(p in 1:nP) 
+          if(cor(tcv[f,,p], scores(object)[,p]) < 0) 
+            tcv[f,,p] <- tcv[f,,p] * -1
+      }
+      for(f in 1:foldR) {
+        test <- tempFixNas(originalData[-rseg[[f]],])
+        pcv[f,,] <- loadings(pca(test, nPcs=nP,
+                                 method=method(object), verbose=FALSE,
+                                 center=centered(object),
+                                 scale=object@scaled, ...))
+        for(p in 1:nP) 
+          if(cor(pcv[f,,p], loadings(object)[,p]) < 0) 
+            pcv[f,,p] <- pcv[f,,p] * -1
       }
       
-      ## add up to the press estimate
-      for(np in 1:nPcs) {
-        if(object@method == "llsImpute") {
-          fittedData <- llsImpute(test, k = np, verbose = FALSE,
-                                  allVariables = TRUE, center = FALSE)@completeObs
-        }
-        else {
-          if(object@method == "nlpca")
-            fittedData <- fitted(pc, data=test, nPcs=np)
-          else
-            fittedData <- fitted(pc, data=NULL, nPcs=np)
-        }
-        press[np] <- press[np] +
-          sum((originalData[i] - fittedData[i])^2, na.rm=TRUE)
-      }
+      press <- rep(0, nP)
+      for(p in 1:nP) 
+        for(fr in 1:foldR)
+          for(fc in 1:foldC) 
+            press[p] <- press[p] +
+              sum((originalData[rseg[[fr]],cseg[[fc]]] - 
+                   (tcv[fc,,][,1:p,drop=FALSE] %*% t(pcv[fr,,][,1:p,drop=FALSE]))[rseg[[fr]],cseg[[fc]]])^2,
+                  na.rm=TRUE)
     }
-    if(verbose)
-      cat("\nDone\n")
-    ## now calculate the q2 estimate for each pc
     result[,nr] <- 1 - press / ssx
   }
   rownames(result) <- paste("PC", 1:nrow(result))
-  result
+  drop(result)
 }
 
-deletediagonals <- function(x, diagonals=1) {
+##' Simply replace complelet missing rows or cols with zeroes.
+##'
+##' @title Temporary fix for missing values
+##' @param mat a matrix
+##' @return The original matrix with completely missing rows/cols filled with zeroes.
+##' @examples deletediagonals(iris[,1:4], 1)
+##' @author Henning Redestig 
+tempFixNas <- function(mat) {
+  badRows <- apply(mat, 1, function(x) all(is.na(x)))
+  badCols <- apply(mat, 2, function(x) all(is.na(x)))
+  mat[ badRows,] <- 0
+  mat[,badCols ] <- 0
+  mat
+}
 
-  ##<..Beg Rdocu..>
-  ## ~name~
-  ##   deletediagonals
-  ## ~title~
-  ##   Replace a diagonal of elements of a matrix with NA
-  ## ~description~
-  ##   Used for creating artifical missing values in matrices without
-  ##   causing any full row or column to be completely missing
-  ## ~usage~
-  ##   deletediagonals(x, diagonals=1)
-  ## ~arguments~
-  ##   ~-x~
-  ##     The matrix
-  ##   ~-diagonals~
-  ##     The diagonal to be replaced, i.e. the first, second and so on
-  ##     when looking at the fat version of the matrix (transposed or
-  ##     not) counting from the bottom. Can be a vector to delete more
-  ##     than one diagonal.
-  ## ~details~
-  ##   
-  ## ~value~
-  ##   The original matrix with some values missing
-  ## ~seealso~
-  ##   cvsegments from pls
-  ## ~examples~
-  ##   deletediagonals(iris[,1:4], 1)
-  ## ~keywords~
-  ##   
-  ## ~author~
-  ##   Henning Redestig <redestig[at]mpimp-golm.mpg.de>
-  ##>..End Rdocu..<
-  
+##' Replace a diagonal of elements of a matrix with NA
+##'
+##' Used for creating artifical missing values in matrices without
+##' causing any full row or column to be completely missing
+##' @title Delete diagonals
+##' @param x The matrix 
+##' @param diagonals The diagonal to be replaced, i.e. the first,
+##' second and so on when looking at the fat version of the matrix
+##' (transposed or not) counting from the bottom.
+##' Can be a vector to delete more than one diagonal.
+##' @return The original matrix with some values missing
+##' @examples deletediagonals(iris[,1:4], 1)
+##' @author Henning Redestig 
+deletediagonals <- function(x, diagonals=1) {
   wastransposed <- FALSE
   if (dim(x)[1] > dim(x)[2]) {          # matrix must be lying down
     x <- t(x)
