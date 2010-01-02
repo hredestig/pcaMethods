@@ -6,4 +6,3 @@
 \value{The original matrix with completely missing rows/cols filled with zeroes.}
 \author{Henning Redestig}
 \arguments{\item{mat}{a matrix}}
-\examples{deletediagonals(iris[,1:4], 1)}

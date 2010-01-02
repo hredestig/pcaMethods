@@ -24,6 +24,10 @@
 \alias{method}
 \alias{sDev,pcaRes-method}
 \alias{sDev}
+\alias{scaled,pcaRes-method}
+\alias{scaled}
+\alias{center,pcaRes-method}
+\alias{center}
 
 \title{Class for representing a PCA result}
 
@@ -79,6 +83,9 @@
     \item{completeObs}{Get the imputed data set}
     \item{method}{Get a string naming the used PCA method}
     \item{sDev}{Get the standard deviations of the PCs}
+    \item{scaled}{Get a logical indicating if scaling was done as
+      part of the model}
+    \item{center}{Get the averages of the original variables.}
   }
 }
 \keyword{classes}

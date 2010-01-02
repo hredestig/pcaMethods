@@ -33,14 +33,18 @@
 ##' @param nruncv The number of times to repeat the whole cross-validation
 ##' @param type krzanowski or imputation type cross-validation
 ##' @param verbose \code{boolean} If TRUE Q2 outputs a primitive progress bar.
-##' @param Further arguments passed to the pca() function called within Q2.
+##' @param ... Further arguments passed to the pca() function called within Q2.
 ##' @return A matrix or vector with \eqn{Q^2} estimates.
 ##' @export
 ##' @examples
 ##' data(iris)
-##' pcIr <- pca(iris[,1:4], nPcs=3)
-##' q2 <- Q2(pcIr, iris[,1:4], nruncv=2)
-##' barplot(q2, xlab="Amount of PC's", ylab=expression(Q^2))
+##' x <- iris[,1:4]
+##' pcIr <- pca(x, nPcs=3)
+##' q2 <- Q2(pcIr, x)
+##' barplot(q2, main="Krzanowski CV", xlab="Amount of PC's", ylab=expression(Q^2))
+##' pcIr <- pca(x, nPcs=3, method="nipals")
+##' q2 <- Q2(pcIr, x, type="impute")
+##' barplot(q2, main="Imputation CV", xlab="Amount of PC's", ylab=expression(Q^2))
 ##' @author Henning Redestig
 ##' @keywords multivariate
 Q2 <- function(object, originalData, fold=5, nruncv=1,
@@ -81,11 +85,11 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
       suppressWarnings(diags <- matrix(1:nDiag, nrow=diagPerFold, ncol=fold, byrow=TRUE))
       if(diagPerFold == 0 || diagPerFold > (nDiag / 2))
         stop("Matrix could not be safely divided into ", fold,
-             " segment(s). Choose a different fold or provide the desired segments")
+             " segments. Choose a different fold or provide the desired segments")
       if(nDiag %% fold > 0)
         warning("Validation incomplete: ",
                 (nDiag %% fold) * min(dim(originalData)),
-                " value(s) were left out of from cross validation, Q2 estimate will be biased.")
+                " values were left out of from cross validation, Q2 estimate will be biased.")
       for(i in 1:ncol(diags)) 
         seg[[i]] <- which(is.na(deletediagonals(originalData, diags[,i])))
       
@@ -164,12 +168,11 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
   drop(result)
 }
 
-##' Simply replace complelet missing rows or cols with zeroes.
+##' Simply replace completely missing rows or cols with zeroes.
 ##'
 ##' @title Temporary fix for missing values
 ##' @param mat a matrix
 ##' @return The original matrix with completely missing rows/cols filled with zeroes.
-##' @examples deletediagonals(iris[,1:4], 1)
 ##' @author Henning Redestig 
 tempFixNas <- function(mat) {
   badRows <- apply(mat, 1, function(x) all(is.na(x)))
@@ -184,13 +187,12 @@ tempFixNas <- function(mat) {
 ##' Used for creating artifical missing values in matrices without
 ##' causing any full row or column to be completely missing
 ##' @title Delete diagonals
-##' @param x The matrix 
+##' @param x The matrix  
 ##' @param diagonals The diagonal to be replaced, i.e. the first,
 ##' second and so on when looking at the fat version of the matrix
 ##' (transposed or not) counting from the bottom.
 ##' Can be a vector to delete more than one diagonal.
 ##' @return The original matrix with some values missing
-##' @examples deletediagonals(iris[,1:4], 1)
 ##' @author Henning Redestig 
 deletediagonals <- function(x, diagonals=1) {
   wastransposed <- FALSE

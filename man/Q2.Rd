@@ -39,8 +39,12 @@ whereas impute is better for evaluating missing value imputation performance.}
 \item{nruncv}{The number of times to repeat the whole cross-validation}
 \item{type}{krzanowski or imputation type cross-validation}
 \item{verbose}{\code{boolean} If TRUE Q2 outputs a primitive progress bar.}
-\item{Further}{arguments passed to the pca() function called within Q2.}}
+\item{...}{Further arguments passed to the pca() function called within Q2.}}
 \examples{data(iris)
-pcIr <- pca(iris[,1:4], nPcs=3)
-q2 <- Q2(pcIr, iris[,1:4], nruncv=2)
-barplot(q2, xlab="Amount of PC's", ylab=expression(Q^2))}
+x <- iris[,1:4]
+pcIr <- pca(x, nPcs=3)
+q2 <- Q2(pcIr, x)
+barplot(q2, main="Krzanowski CV", xlab="Amount of PC's", ylab=expression(Q^2))
+pcIr <- pca(x, nPcs=3, method="nipals")
+q2 <- Q2(pcIr, x, type="impute")
+barplot(q2, main="Imputation CV", xlab="Amount of PC's", ylab=expression(Q^2))}

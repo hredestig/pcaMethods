@@ -35,14 +35,6 @@
 robustPca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = FALSE, 
                       verbose = interactive(), ... ) {
 
-    ## Do some basic checks
-    Matrix <- as.matrix(Matrix, rownames.force=TRUE)
-    if (!checkData(Matrix, verbose = verbose))
-        stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
-
-    if (nPcs > ncol(Matrix)) 
-        stop("more components than matrix columns selected, exiting.\n")
-
     if (center) {
         mat <- scale(Matrix, center = TRUE, scale = FALSE)
         means <- attr(mat, "scaled:center")
@@ -152,16 +144,11 @@ robustSvd <- function(x) {
         stop("The aroma.light package is required in order to use this function.
 The package is available at www.bioconductor.org")
 
-    ## Do some basic checks
-    x <- as.matrix(x)
-    if (!checkData(x))
-      stop("Invalid data format! Use checkData(x, verbose = TRUE) for details.\n")
-
     ## Define a couple of helper functions
     L1RegCoef <- function(x,a){
       keep <- (a!=0) & (!is.na(x))
       a <- a[keep]
-    return ( weightedMedian(x[keep]/a,abs(a), interpolate = FALSE) )
+      return ( weightedMedian(x[keep]/a,abs(a), interpolate = FALSE) )
     }
 
     L1Eigen <- function(x,a,b){

@@ -48,13 +48,13 @@
 data(helix)
 helixNA <- helix
 helixNA <- t(apply(helix, 1, function(x) { x[sample(1:3, 1)] <- NA; x})) # not a single complete observation
-helixNlPca <- pca(helixNA, nPcs=1, method="nlpca", maxSteps=1000)
+helixNlPca <- pca(helixNA, nPcs=1, method="nlpca", maxSteps=500)
 fittedData <- fitted(helixNlPca, helixNA)
 plot(fittedData[which(is.na(helixNA))], helix[which(is.na(helixNA))])
 # compared to solution by Nipals PCA that cannot extract non-linear patterns
-helixNipPca <- pca(helixNA, nPcs=2, method="nipals")
+helixNipPca <- pca(helixNA, nPcs=2)
 fittedData <- fitted(helixNipPca)
 plot(fittedData[which(is.na(helixNA))], helix[which(is.na(helixNA))])
 }
-\author{Based on a matlab script by Matthias Scholz <matthias.scholz[at]uni-greifswald.de> and ported to R by HenningRedestig <redestig[at]mpimp-golm.mpg.de>}
+\author{Based on a matlab script by Matthias Scholz and ported to R by Henning Redestig}
 \keyword{multivariate}

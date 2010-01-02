@@ -14,6 +14,8 @@ setGeneric("completeObs", function(object, ...) standardGeneric("completeObs"))
 setGeneric("centered", function(object, ...) standardGeneric("centered"))
 setGeneric("method", function(object, ...) standardGeneric("method"))
 setGeneric("sDev", function(object, ...) standardGeneric("sDev"))
+setGeneric("scaled", function(object, ...) standardGeneric("scaled"))
+setGeneric("center", function(object, ...) standardGeneric("center"))
 
 
 ##setGeneric("biplot", function(x, ...) standardGeneric("biplot"))
