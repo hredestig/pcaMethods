@@ -83,10 +83,6 @@ nlpca <- function(Matrix, nPcs=2, center=TRUE, completeObs=TRUE, maxSteps=2 * pr
   ## }
 
   ## do some basic checks
-  if (!checkData(Matrix, verbose=verbose))
-    stop("Invalid data format, use checkData(Matrix, verbose = TRUE) for details.\n")
-  if (nPcs > ncol(Matrix))
-    stop("more components than matrix columns selected, exiting")
 
   if (center) {
     object <- scale(Matrix, center = TRUE, scale = FALSE)

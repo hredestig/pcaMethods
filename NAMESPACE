@@ -3,6 +3,8 @@ importFrom(stats, predict)
 importFrom(stats, resid)
 importFrom(stats, biplot)
 
+useDynLib(pcaMethods)
+
 exportClasses(
               pcaRes,
               nniRes,
@@ -15,7 +17,8 @@ exportMethods(
               print,
               fitted,
               show,
-
+              center,
+              scaled,
               sDev,
               nPcs,
               nVar,
@@ -33,6 +36,7 @@ export(
        ppca,
        bpca,
        nipalsPca,
+       RnipalsPca,
        svdPca,
        prep,
        Q2,

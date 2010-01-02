@@ -1,0 +1,3 @@
+# We need to know where libRcpp.so and Rcpp.h reside
+PKG_CPPFLAGS = $(shell Rscript.exe -e "Rcpp:::CxxFlags()")
+PKG_LIBS = $(shell Rscript.exe -e "Rcpp:::LdFlags()")

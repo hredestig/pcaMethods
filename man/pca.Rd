@@ -4,15 +4,16 @@
 \title{Perform principal component analysis}
 \description{Can be used for computing PCA on a numeric
   matrix for visualisation, information extraction and missing value imputation.}
-\usage{pca(object, method=c("svd", "nipals", "bpca", "ppca",
-"svdImpute", "nlpca", "robustPca"), subset=numeric(),...)}
+\usage{pca(object, method=c("svd", "nipals", "rnipals", "bpca", "ppca",
+"svdImpute", "nlpca", "robustPca"), subset=numeric(), nPcs=2,...)}
 \arguments{
   \item{object}{Numerical matrix  with (or an object coercible to such) with
     samples in rows and variables as columns. Also takes \code{ExpressionSet} in
     which case the transposed expression matrix is used.}
   \item{subset}{For convenience one can pass a large matrix but only
     use the variable specified as subset. Can be colnames or indices.}
-  \item{method}{One of "svd", "nipals", "bpca", "nlpca" or "ppca".}
+  \item{method}{One of "svd", "nipals", "rnipals", "bpca", "nlpca" or "ppca".}
+  \item{nPcs}{Number of principal components to calculate.}
   \item{...}{Further arguments to the chosen pca method.}
 }
 \details{
@@ -21,6 +22,7 @@
     \item{svd:}{Uses classical \code{prcomp}. See documentation for \code{\link{svdPca}}.}
     \item{nipals:}{An iterative method capable of handling small amounts
       of missing values. See documentation for \code{\link{nipalsPca}}.}
+    \item{rnipals:}{Same as nipals but implemented in R.}
     \item{bpca:}{An iterative method using a Bayesian model to handle missing values. See documentation for \code{\link{bpca}}.}
     \item{ppca:}{An iterative method using a probabilistic model to handle missing values. See documentation for \code{\link{ppca}}.}
     \item{svdImpute:}{Uses expectation maximation to perform SVD PCA on incomplete data. See documentation for \code{\link{svdImpute}}.}
@@ -32,8 +34,7 @@
 }
 
 \value{
-  A \code{pcaRes} object. Or a list containing a pcaRes object as first and an
-  ExpressionSet object as second entry if the input was of type ExpressionSet.
+  A \code{pcaRes} object. 
 }
 \references{
   Wold, H. (1966) Estimation of principal components and related models by

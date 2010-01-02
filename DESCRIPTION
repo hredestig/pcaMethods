@@ -1,9 +1,9 @@
 Package: pcaMethods
-Version: 1.26.0
+Version: 1.27.0
 Author: Wolfram Stacklies, Henning Redestig, Kevin Wright
 Maintainer: Wolfram Stacklies <wolfram.stacklies@gmail.com> 
 Title: A collection of PCA methods.
-Depends: Biobase, MASS, methods, Rcpp (>= 0.6.4)
+Depends: Biobase, MASS, pls, methods, Rcpp (>= 0.6.4)
 SystemRequirements: Rcpp
 Suggests: aroma.light 
 Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA,
@@ -21,5 +21,5 @@ Collate: derrorHierarchic.R errorHierarchic.R classes.R generic.R
   pca.R BPCA_dostep.R bpca.R ppca.R BPCA_initmodel.R orth.R repmat.R
   xval.R svdImpute.R checkData.R kEstimate.R llsImpute.R forkNlpcaNet.R
   lineSearch.R nlpca.R optiAlgCgd.R sortFeatures.R vector2matrices.R 
-  kEstimateFast.R robustPca.R
-LazyLoad: yes
+  kEstimateFast.R robustPca.R nipalsPca.R
+LazyLoad: Yes

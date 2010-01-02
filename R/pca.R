@@ -3,56 +3,66 @@
   require("methods")
 }
 
-pca <- function(object, method=c("svd", "nipals", "bpca", "ppca",
+pca <- function(object, method=c("svd", "nipals", "rnipals", "bpca", "ppca",
                           "svdImpute", "nlpca", "robustPca"),
-                subset=numeric(),...) {
+                subset=numeric(), nPcs=2, ...) {
   
-  isExprSet <- FALSE
   if(inherits(object, "ExpressionSet")) {
     set <- object
-    isExprSet <- TRUE
     object <- t(exprs(object))
   }
 
   method <- match.arg(method)
+
+  if (nPcs > ncol(object)) {
+    warning("more components than matrix columns requested")
+    nPcs = min(dim(object))
+  }
+  if (nPcs > nrow(object)) {
+    warning("more components than matrix rows requested")
+    nPcs = min(dim(object))
+  }
 
   ## Do some basic checks of the data. We exit if the data contains
   ## NaN or Inf values or is not numeric.
   if ( !checkData(as.matrix(object), verbose=interactive()) )
     stop("Invalid data format, exiting...\n",
          "Run checkData(data, verbose=TRUE) for details\n")
+
+  object <- as.matrix(object, rownames.force=TRUE)
   
   missing <- sum(is.na(object))
 
   if(length(subset) > 0)
     object <- object[,subset]
 
-  if(missing > 0 & method == "svd") {
-    warning("Found missing values, using the nipals method instead of requested svd")
+  if(missing > 0 & method == "svd") 
     method <- "nipals"
-  }
   
   switch(method,
          svd = {
-           res <- svdPca(object, ...)
+           res <- svdPca(object, nPcs=nPcs,...)   
          },
          nipals = {
-           res <- nipalsPca(object, ...)
+           res <- nipalsPca(object, nPcs=nPcs, ...) 
+         },
+         rnipals = {
+           res <- RnipalsPca(object,  nPcs=nPcs, ...) 
          },
          bpca = {
-           res <- bpca(as.matrix(object),...)
+           res <- bpca(as.matrix(object), nPcs=nPcs, ...) 
          },
          ppca = {
-           res <- ppca(as.matrix(object),...)
+           res <- ppca(as.matrix(object), nPcs=nPcs, ...) 
          },
          svdImpute = {
-           res <- svdImpute(as.matrix(object),...)
+           res <- svdImpute(as.matrix(object), nPcs=nPcs, ...) 
          },
          robustPca = {
-           res <- robustPca(as.matrix(object), ...)
+           res <- robustPca(as.matrix(object),  nPcs=nPcs, ...) 
          },
          nlpca = {
-           res <- nlpca(as.matrix(object),...)
+           res <- nlpca(as.matrix(object), nPcs=nPcs, ...)
          })
 
   return(res)
@@ -73,8 +83,8 @@ nni <- function(object, method=c("llsImpute"), subset=numeric(), ...) {
 
   method <- match.arg(method)
 
-                                        ## Do some basic checks of the data. We exit if the data contains NaN or Inf
-                                        ## values or is not numeric.
+  ## Do some basic checks of the data. We exit if the data contains NaN or Inf
+  ## values or is not numeric.
   if ( !checkData(as.matrix(object), verbose = interactive()) )
     stop("Invalid data format, exiting...\n",
          "Run checkData(data, verbose = TRUE) for details\n")
@@ -263,7 +273,7 @@ setMethod("summary", "pcaRes",
 
 predict.pcaRes <- function(object, newdata, pcs=nPcs(object),...) {
 
-  if(!object@method %in% c("ppca", "svd", "nipals", "bpca"))
+  if(!method(object) %in% c("ppca", "svd", "nipals", "bpca"))
     stop("predict method not implemented for that type of PCA")
 
   if(centered(object))  
@@ -283,497 +293,369 @@ residuals.pcaRes <- function(object, data, nPcs=object@nPcs, ...) {
   data - predict(object, data, nPcs=nPcs)$x
 }
 
+##' Fitted values of a PCA
+##' 
+##' This function extracts the fitted values from a pcaResobject. For
+##' PCA methods like SVD, Nipals, PPCA etc this is basically just the
+##' scores multipled by the loadings, for non-linear PCA the original
+##' data is propagated through the network to obtain the approximated
+##' data.
+##' @title Extract fitted values from PCA.
+##' @param object the \code{pcaRes} object of interest.
+##' @param data For standard PCA methods this can safely be left null to
+##' get scores x loadings but if set then the scores are obtained
+##' by projecting provided data onto the loadings.  If data contains NA
+##' values the result will be all NA. Non-linear PCA is
+##' an exception, here if data is NULL then data is set to the
+##' completeObs and propaged through the network.
+##' @param nPcs The number of PC's to consider
+##' @param A matrix representing the fitted data
+##' @keywords multivariate
+##' @export
+##' @author Henning Redestig
 fitted.pcaRes <- function(object, data=NULL, nPcs=object@nPcs, ...) {
-
-  ##<..Beg Rdocu..>
-  ## ~name~
-  ##   fitted.pcaRes
-  ## ~title~
-  ##   Extract fitted values from PCA.
-  ## ~description~
-  ##   This function extracts the fitted values from a
-  ##   pcaResobject. For PCA methods like SVD, Nipals, PPCA etc this
-  ##   is basically just the scores multipled by the loadings,
-  ##   forNon-linear PCA the original data is propagated through
-  ##   the network to obtain the approximated data.
-  ## ~usage~
-  ##   fitted.pcaRes(object, data=NULL, nPcs=object@nPcs)
-  ## ~arguments~
-  ##   ~-object~
-  ##     the \code{pcaRes} object of interest.
-  ##   ~-data~
-  ##     For standard PCA methods this can safely be left null to
-  ##     getscores x loadings but if set then the scores are obtained
-  ##     byprojecting provided data onto the loadings. 
-  ##     If data contains NA values the result will be all NA!!!! (fix this?)
-  ##     Non-linear PCA is an exception, here if data is NULL then data is set to
-  ##     the completeObs and propaged through the network.
-  ##   ~-nPcs~
-  ##     The amount of PC's to consider
-  ## ~value~
-  ##   A matrix with the fitted values.
-  ## ~keywords~
-  ##   multivariate
-  ## ~author~
-  ##   Henning Redestig <redestig[at]mpimp-golm.mpg.de>
-  ##>..End Rdocu..<
-
-  switch(object@method,
-         nlpca = {
-           if(is.null(data) & is.null(object@completeObs))
-             stop("completeObs slot is empty -- provide the training data")
-           if(is.null(data))
-             data <- object@completeObs
-           data <- t(data)
-           if(object@centered)
-             data <- sweep(data, 1, object@center)
-           recData <- errorHierarchic(object@network, t(object@scores), data)$out[,,nPcs]
-           recData <- t(recData / object@network@scalingFactor)
-           if(object@centered) 
-             recData <- recData + object@center
-         },
-         {                              #default method
-           if(!is.null(data)) {
-             if(object@centered)
-               data <- sweep(data, 2, object@center)
-             scores <- data %*% object@loadings[,1:nPcs, drop=FALSE]
-           }
-           if(is.null(data))
-             scores <- object@scores[,1:nPcs, drop=FALSE]
-           recData <- tcrossprod(scores, object@loadings[,1:nPcs, drop=FALSE])
-           if(object@centered)
-             recData <- t(t(recData) + object@center)
-         }
-         )
+  if(method(object) == "nlpca") {
+    if(is.null(data) & is.null(completeObs(object)))
+      stop("completeObs slot is empty -- provide the training data")
+    if(is.null(data))
+      data <- completeObs(object)
+    data <- t(data)
+    if(centered(object))
+      data <- sweep(data, 1, center(object))
+    recData <- errorHierarchic(object@network, t(scores(object)), data)$out[,,nPcs]
+    recData <- t(recData / object@network@scalingFactor)
+    if(centered(object)) 
+      recData <- recData + center(object)
+  }
+  else  {
+    if(!is.null(data)) {
+      if(centered(object))
+        data <- sweep(data, 2, center(object))
+      tt <- data %*% loadings(object)[,1:nPcs, drop=FALSE]
+    }
+    if(is.null(data))
+      tt <- scores(object)[,1:nPcs, drop=FALSE]
+    recData <- tcrossprod(tt, loadings(object)[,1:nPcs, drop=FALSE])
+    if(centered(object))
+      recData <- t(t(recData) + center(object))
+  }
   return(recData)
 }
-
 setMethod("fitted", "pcaRes", fitted.pcaRes)
 
 
 plotR2 <- function(object, nPcs=object@nPcs, type = c("barplot", "lines"),
-                   main = deparse(substitute(object)), ...) {
-  main <- main    #this is not a typo! the deparse(subsitute(object)) later
-                                        ##fails otherwise (dont ask me)
-  names(object@sDev) <- paste("PC", 1:nPcs, sep="")
-  newx <- list(sdev=object@R2)
-  screeplot(newx, nPcs, type, main,...)
+main = deparse(substitute(object)), ...) {
+main <- main    #this is not a typo! the deparse(subsitute(object)) later
+##fails otherwise (dont ask me)
+names(object@sDev) <- paste("PC", 1:nPcs, sep="")
+newx <- list(sdev=object@R2)
+screeplot(newx, nPcs, type, main,...)
 }
 
 setMethod("slplot", "pcaRes",
-          function(object, pcs=c(1,2), scoresLoadings=c(TRUE, TRUE),
-                             sl=rownames(object@scores),
-                             ll=rownames(object@loadings), hotelling=0.95, rug=TRUE,
-                             sub=NULL,...) {
+function(object, pcs=c(1,2), scoresLoadings=c(TRUE, TRUE),
+         sl=rownames(object@scores),
+         ll=rownames(object@loadings), hotelling=0.95, rug=TRUE,
+         sub=NULL,...) {
 
-            opar <- par(no.readonly=TRUE)
+  opar <- par(no.readonly=TRUE)
 
-            cl <- match.call()
-            mainArgs <- c(1,match(c("ll", "sl", "scoresLoadings", "sub"),
-                                  names(cl), 0))
-            scoreArgs <- grep("^s", names(cl)[-mainArgs])
-            loadingArgs <- grep("^l", names(cl)[-mainArgs])
+  cl <- match.call()
+  mainArgs <- c(1,match(c("ll", "sl", "scoresLoadings", "sub"),
+                        names(cl), 0))
+  scoreArgs <- grep("^s", names(cl)[-mainArgs])
+  loadingArgs <- grep("^l", names(cl)[-mainArgs])
 
-            if(!is.null(ll) & length(ll) != nrow(object@loadings))
-              stop("Loading labels do not match the object dimensions")
-            if(!is.null(sl) & length(sl) != nrow(object@scores))
-              stop("Score labels do not match the object dimensions")
-            if(is.null(sl))
-              sl <- NA
-            if(is.null(ll))
-              ll <- NA
-            
-            ## no loadings for non-linear pca
-            if(object@method == "nlpca" && scoresLoadings[2])
-              scoresLoadings[2] <- FALSE
-            
-            if(length(pcs) > 2)
-              plotPcs(object, pcs, scoresLoadings=scoresLoadings,...)
-            else {
-              if(is.null(sub))
-                sub <- paste(sprintf("%.2f", object@R2cum[min(c(pcs, object@nPcs))]
-                                     * 100),
-                             "% of the variance explained", sep="")
-
-              if(sum(scoresLoadings) == 2)
-                layout(matrix(c(1,2), 1, 2, TRUE), respect=matrix(c(1,1), 1, 2))
-              ## exception plot if one dimensional
-              if (length(pcs) == 1 || object@nPcs == 1) {
-                pcs <- 1
-                
-                ## score plot
-                if(scoresLoadings[1]) {
-                  newCall <- call("barplot",
-                                  height=object@scores[,pcs],
-                                  main="Scores", las=3, ylab=paste("PC", pcs), sub=sub,
-                                  names.arg=sl)
-                  tmp <- cl[-mainArgs][scoreArgs]
-                  names(tmp) <- gsub("^s", "", names(tmp))
-                  for(i in 1:length(tmp)) {
-                    newCall[[length(newCall) + 1]] <- tmp[[i]]
-                    names(newCall)[length(newCall)] <- names(tmp)[i]
-                  }
-                  eval(newCall)
-                }
-
-                ## loadingplot
-                if(scoresLoadings[2]) {
-                  newCall <- call("barplot",
-                                  height=object@loadings[,pcs],
-                                  main="Loadings", las=3, ylab=paste("PC", pcs), 
-                                  names.arg=ll)
-                  if(length(loadingArgs) > 0) {
-                    tmp <- cl[-mainArgs][loadingArgs]
-                    names(tmp) <- gsub("^l", "", names(tmp))
-                    for(i in 1:length(tmp)) {
-                      newCall[[length(newCall) + 1]] <- tmp[[i]]
-                      names(newCall)[length(newCall)] <- names(tmp)[i]
-                    }
-                  }
-                  eval(newCall)
-                }
-                return(invisible(TRUE))
-              }
-              
-              ## the score plot
-              if(scoresLoadings[1]) {
-                ## setup plot
-                plotCall <- call("plot",
-                                 x=object@scores[,pcs],
-                                 main="Scores", ylab=paste("PC", pcs[2]), 
-                                 sub=sub, xlab=paste("PC", pcs[1]))
-                if(length(scoreArgs) > 0) {
-                  tmp <- cl[-mainArgs][scoreArgs]
-                  names(tmp) <- gsub("^s", "", names(tmp))
-                  for(i in 1:length(tmp)) {
-                    plotCall[[length(plotCall) + 1]] <- tmp[[i]]
-                    names(plotCall)[length(plotCall)] <- names(tmp)[i]
-                  }
-                }
-                ## add text
-                if (!is.null(sl) & !all(is.na(sl))) {
-                  plotCall[[length(plotCall) + 1]] <- "n"
-                  names(plotCall)[length(plotCall)] <- "type"
-                  textCall <- call("text",
-                                   x=object@scores[,pcs], labels=sl)
-                  if(length(scoreArgs) > 0) {
-                    tmp <- cl[-mainArgs][scoreArgs]
-                    names(tmp) <- gsub("^s", "", names(tmp))
-                    for(i in 1:length(tmp)) {
-                      textCall[[length(textCall) + 1]] <- tmp[[i]]
-                      names(textCall)[length(textCall)] <- names(tmp)[i]
-                    }
-                  }
-                }
-                eval(plotCall)
-                if (!is.null(sl) & !all(is.na(sl)))
-                  eval(textCall)
-                if(rug)
-                  rug(object@scores[,1])
-                abline(h=0, v=0)
-                if(!is.null(hotelling)) {
-                  A <- length(pcs)
-                  el <- simpleEllipse(object@scores[,pcs[1]],
-                                      object@scores[,pcs[2]], alfa=hotelling)
-                  lines(el)
-                }
-              }
-
-              ## the loading plot
-              if(scoresLoadings[2]) {
-                ## setup plot
-                plotCall <- call("plot",
-                                 x=object@loadings[,pcs],
-                                 main="Loadings", ylab=paste("PC", pcs[2]), 
-                                 xlab=paste("PC", pcs[1]))
-                if(length(loadingArgs) > 0) {
-                  tmp <- cl[-mainArgs][loadingArgs]
-                  names(tmp) <- gsub("^l", "", names(tmp))
-                  for(i in 1:length(tmp)) {
-                    plotCall[[length(plotCall) + 1]] <- tmp[[i]]
-                    names(plotCall)[length(plotCall)] <- names(tmp)[i]
-                  }
-                }
-                ## add text
-                if (!is.null(ll) & !all(is.na(ll))) {
-                  plotCall[[length(plotCall) + 1]] <- "n"
-                  names(plotCall)[length(plotCall)] <- "type"
-                  textCall <- call("text",
-                                   x=object@loadings[,pcs], labels=ll)
-                  if(length(loadingArgs) > 0) {
-                    tmp <- cl[-mainArgs][loadingArgs]
-                    names(tmp) <- gsub("^l", "", names(tmp))
-                    for(i in 1:length(tmp)) {
-                      textCall[[length(textCall) + 1]] <- tmp[[i]]
-                      names(textCall)[length(textCall)] <- names(tmp)[i]
-                    }
-                  }
-                }
-                eval(plotCall)
-                if (!is.null(ll) & !all(is.na(ll)))
-                  eval(textCall)
-                abline(h=0, v=0)
-              }
-            }
-            par(opar)
-          })
-
-
-nipalsPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = TRUE,
-                      varLimit=1,
-                      maxSteps=5000, 
-                      threshold=1e-6, verbose=interactive(), ...) {
-
-  ## Convert the object into a matrix (just in case we got a data frame) and do some
-  ## basic checks
-  Matrix <- as.matrix(Matrix, rownames.force=TRUE)
-  if (!checkData(Matrix, verbose = verbose))
-    stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
-
-  if (nPcs > ncol(Matrix))
-    stop("more components than matrix columns selected, exiting")
-
-  if (center) {
-    object <- scale(Matrix, center = TRUE, scale = FALSE)
-    means <- attr(object, "scaled:center")
-  } else
-  object <- Matrix
-
-  missing <- is.na(Matrix)
-  nObs <- nrow(object)
-  nVar <- ncol(object)
-
-  ##Find a good? starting column -- better way?
-  startingColumn <- 1
-
-  ## sum(c(NA, NA), na.rm=TRUE) is 0, but we want NA
-  sum.na <- function(x){ ifelse(all(is.na(x)), NA, sum(x, na.rm=TRUE))}
-
-  TotalSS <- sum(object*object, na.rm=TRUE)
-
-  ph <- rep(0, nVar)
-  R2cum <- NULL
-  scores <- NULL
-  loadings <- NULL
-  anotherPc <- TRUE
-  l <- 1
+  if(!is.null(ll) & length(ll) != nrow(object@loadings))
+    stop("Loading labels do not match the object dimensions")
+  if(!is.null(sl) & length(sl) != nrow(object@scores))
+    stop("Score labels do not match the object dimensions")
+  if(is.null(sl))
+    sl <- NA
+  if(is.null(ll))
+    ll <- NA
   
-  while(anotherPc) {
-    count <- 0                 #number of iterations done
-    th <- object[,startingColumn]   #first column is starting vector for th
-    continue <- TRUE
-    if(verbose) cat(paste("Calculating PC", l, ": ", sep=""))
-    
-    while(continue) {
-      count <- count+1
-      ph <- rep(0, nVar)
+  ## no loadings for non-linear pca
+  if(object@method == "nlpca" && scoresLoadings[2])
+    scoresLoadings[2] <- FALSE
+  
+  if(length(pcs) > 2)
+    plotPcs(object, pcs, scoresLoadings=scoresLoadings,...)
+  else {
+    if(is.null(sub))
+      sub <- paste(sprintf("%.2f", object@R2cum[min(c(pcs, object@nPcs))]
+                           * 100),
+                   "% of the variance explained", sep="")
 
-      ##Calculate loadings through LS regression
-      ##Note: object*th is column-wise multiplication
-      tsize <- sum(th * th, na.rm=TRUE)
-      ph <- apply(object * (th / tsize), 2, sum.na)
-      ##normalize ph based on the available values.
-      psize <- sum(ph*ph, na.rm=TRUE)
-      ph <- ph / sqrt(psize)
+    if(sum(scoresLoadings) == 2)
+      layout(matrix(c(1,2), 1, 2, TRUE), respect=matrix(c(1,1), 1, 2))
+    ## exception plot if one dimensional
+    if (length(pcs) == 1 || object@nPcs == 1) {
+      pcs <- 1
       
-      ##Calculate scores through LS regression
-      ##Trick: To get row-wise multiplication, use t(object)*ph, then
-      ##be sure to use apply(,2,) and NOT apply(,1,)!
-      th.old <- th
-      th <- apply(t(object) * ph, 2, sum.na)
-      
-      ##Round up by calculating if convergence condition is met and
-      ##checking if it seems to be an neverending loop.
-      if (count > maxSteps) {
-        stop("Too many iterations, quitting")
+      ## score plot
+      if(scoresLoadings[1]) {
+        newCall <- call("barplot",
+                        height=object@scores[,pcs],
+                        main="Scores", las=3, ylab=paste("PC", pcs), sub=sub,
+                        names.arg=sl)
+        tmp <- cl[-mainArgs][scoreArgs]
+        names(tmp) <- gsub("^s", "", names(tmp))
+        for(i in 1:length(tmp)) {
+          newCall[[length(newCall) + 1]] <- tmp[[i]]
+          names(newCall)[length(newCall)] <- names(tmp)[i]
+        }
+        eval(newCall)
       }
-      if (t(na.omit(th.old - th)) %*% (na.omit(th.old - th)) <= threshold) {
-        continue = FALSE
+
+      ## loadingplot
+      if(scoresLoadings[2]) {
+        newCall <- call("barplot",
+                        height=object@loadings[,pcs],
+                        main="Loadings", las=3, ylab=paste("PC", pcs), 
+                        names.arg=ll)
+        if(length(loadingArgs) > 0) {
+          tmp <- cl[-mainArgs][loadingArgs]
+          names(tmp) <- gsub("^l", "", names(tmp))
+          for(i in 1:length(tmp)) {
+            newCall[[length(newCall) + 1]] <- tmp[[i]]
+            names(newCall)[length(newCall)] <- names(tmp)[i]
+          }
+        }
+        eval(newCall)
       }
-      if (verbose)cat("*")
+      return(invisible(TRUE))
     }
-    if (verbose) cat(" Done\n")
-    object <- object - (th %*% t(ph))
-    scores <- cbind(scores, th)
-    loadings <- cbind(loadings, ph)
     
-    ##cumulative proportion of variance
-    R2cum <- cbind(R2cum, 1 - (sum(object*object,na.rm=TRUE) / TotalSS))
-    l <- l + 1
-    if((!abs(varLimit - 1) < 1e-4 & R2cum[1,l - 1] >= varLimit)| l > nPcs) {
-      anotherPc <- FALSE
-      nPcs <- l - 1
+    ## the score plot
+    if(scoresLoadings[1]) {
+      ## setup plot
+      plotCall <- call("plot",
+                       x=object@scores[,pcs],
+                       main="Scores", ylab=paste("PC", pcs[2]), 
+                       sub=sub, xlab=paste("PC", pcs[1]))
+      if(length(scoreArgs) > 0) {
+        tmp <- cl[-mainArgs][scoreArgs]
+        names(tmp) <- gsub("^s", "", names(tmp))
+        for(i in 1:length(tmp)) {
+          plotCall[[length(plotCall) + 1]] <- tmp[[i]]
+          names(plotCall)[length(plotCall)] <- names(tmp)[i]
+        }
+      }
+      ## add text
+      if (!is.null(sl) & !all(is.na(sl))) {
+        plotCall[[length(plotCall) + 1]] <- "n"
+        names(plotCall)[length(plotCall)] <- "type"
+        textCall <- call("text",
+                         x=object@scores[,pcs], labels=sl)
+        if(length(scoreArgs) > 0) {
+          tmp <- cl[-mainArgs][scoreArgs]
+          names(tmp) <- gsub("^s", "", names(tmp))
+          for(i in 1:length(tmp)) {
+            textCall[[length(textCall) + 1]] <- tmp[[i]]
+            names(textCall)[length(textCall)] <- names(tmp)[i]
+          }
+        }
+      }
+      eval(plotCall)
+      if (!is.null(sl) & !all(is.na(sl)))
+        eval(textCall)
+      if(rug)
+        rug(object@scores[,1])
+      abline(h=0, v=0)
+      if(!is.null(hotelling)) {
+        A <- length(pcs)
+        el <- simpleEllipse(object@scores[,pcs[1]],
+                            object@scores[,pcs[2]], alfa=hotelling)
+        lines(el)
+      }
+    }
+
+    ## the loading plot
+    if(scoresLoadings[2]) {
+      ## setup plot
+      plotCall <- call("plot",
+                       x=object@loadings[,pcs],
+                       main="Loadings", ylab=paste("PC", pcs[2]), 
+                       xlab=paste("PC", pcs[1]))
+      if(length(loadingArgs) > 0) {
+        tmp <- cl[-mainArgs][loadingArgs]
+        names(tmp) <- gsub("^l", "", names(tmp))
+        for(i in 1:length(tmp)) {
+          plotCall[[length(plotCall) + 1]] <- tmp[[i]]
+          names(plotCall)[length(plotCall)] <- names(tmp)[i]
+        }
+      }
+      ## add text
+      if (!is.null(ll) & !all(is.na(ll))) {
+        plotCall[[length(plotCall) + 1]] <- "n"
+        names(plotCall)[length(plotCall)] <- "type"
+        textCall <- call("text",
+                         x=object@loadings[,pcs], labels=ll)
+        if(length(loadingArgs) > 0) {
+          tmp <- cl[-mainArgs][loadingArgs]
+          names(tmp) <- gsub("^l", "", names(tmp))
+          for(i in 1:length(tmp)) {
+            textCall[[length(textCall) + 1]] <- tmp[[i]]
+            names(textCall)[length(textCall)] <- names(tmp)[i]
+          }
+        }
+      }
+      eval(plotCall)
+      if (!is.null(ll) & !all(is.na(ll)))
+        eval(textCall)
+      abline(h=0, v=0)
     }
   }
-  R2 <- R2cum[1]
-  if(length(R2cum) > 1) R2 <- c(R2, diff(R2cum[1,]))
-
-  if (completeObs) {
-    Ye <- scores %*% t(loadings)
-    if (center) {
-      Ye <- Ye + rep(means, each=nrow(Ye)) # Addition is column-wise
-    }
-    cObs <- Matrix
-    cObs[missing] <- Ye[missing]
-  }
-
-  rownames(scores) <- rownames(object)
-  colnames(scores) <- paste("PC", 1:nPcs, sep="")
-  rownames(loadings) <- colnames(object)
-  colnames(loadings) <- paste("PC", 1:nPcs, sep="")
-  r <- new("pcaRes")
-  if (completeObs)
-    r@completeObs <- cObs
-  r@scores <- scores
-  r@loadings <- loadings
-  r@R2cum <- c(R2cum)
-  r@sDev <- apply(scores, 2, sd)
-  r@R2 <- R2
-  r@nObs <- nObs
-  r@nVar <- nVar
-  r@varLimit <- varLimit
-  r@nPcs <- nPcs
-  r@centered <- center
-  r@center <- attr(scale(Matrix, center = TRUE, scale = FALSE), "scaled:center")
-  r@method <- "nipals"
-  r@missing <- sum(is.na(Matrix))
-  return(r)
-}
+  par(opar)
+})
 
 
-svdPca <- function(Matrix, nPcs=2, center = TRUE, completeObs = FALSE, varLimit=1, verbose=interactive(), ...) {
-  
-  ## Do some basic checks
-  Matrix <- as.matrix(Matrix, rownames.force=TRUE)
-  if (!checkData(Matrix, verbose = verbose))
-    stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
-  if (nPcs > ncol(Matrix))
-    stop("more components than matrix columns selected, exiting")
+svdPca <- function(Matrix, nPcs=2, center=TRUE,
+completeObs=FALSE, varLimit=1, verbose=interactive(), ...) {
 
-  if (sum(is.na(Matrix)) > 0)
-    stop("SVD PCA cannot handle missing values. Use Nipals PCA, PPCA, BPCA or SVDimpute!")
+## Do some basic checks
+Matrix <- as.matrix(Matrix, rownames.force=TRUE)
+if (!checkData(Matrix, verbose=verbose))
+  stop("Invalid data format! Use checkData(Matrix, verbose=TRUE) for details.\n")
+if (nPcs > ncol(Matrix))
+  stop("more components than matrix columns selected, exiting")
 
-  if (center) {
-    object <- scale(Matrix, center = TRUE, scale = FALSE)
-  } else
-  object <- Matrix
+if (sum(is.na(Matrix)) > 0)
+  stop("SVD PCA cannot handle missing values. Use Nipals PCA, PPCA, BPCA or SVDimpute!")
 
-  pcs <- prcomp(object, center=FALSE, scale.=FALSE, ...)
-  imp <- summary(pcs)$importance
-  if(varLimit < 1)
-    nPcs <- sum(imp[3,] < varLimit) + 1
-  r <- new("pcaRes")
-  if (completeObs)
-    r@completeObs <- Matrix
-  r@scores <- cbind(pcs$x[,1:nPcs])
-  colnames(r@scores) <- paste("PC", 1:nPcs, sep = "")
-  rownames(r@scores) <- rownames(Matrix) 
-  r@loadings <- cbind(pcs$rotation[,1:nPcs])
-  colnames(r@loadings) <- paste("PC", 1:nPcs, sep = "")
-  rownames(r@loadings) <- colnames(Matrix) 
-  r@R2cum <- imp[3,1:nPcs]
-  r@sDev <- pcs$sdev[1:nPcs]
-  r@R2 <- imp[2,1:nPcs]
-  r@nObs <- nrow(object)
-  r@nVar <- ncol(object)
-  r@varLimit <- varLimit
-  r@centered <- center
-  r@center <- attr(scale(Matrix, center = TRUE, scale = FALSE), "scaled:center")
-  r@nPcs <- nPcs
-  r@method <- "svd"
-  r@missing <- 0 
-  return(r)
+if (center) {
+  object <- scale(Matrix, center = TRUE, scale = FALSE)
+} else
+object <- Matrix
+
+pcs <- prcomp(object, center=FALSE, scale.=FALSE, ...)
+imp <- summary(pcs)$importance
+if(varLimit < 1)
+  nPcs <- sum(imp[3,] < varLimit) + 1
+r <- new("pcaRes")
+if (completeObs)
+  r@completeObs <- Matrix
+r@scores <- cbind(pcs$x[,1:nPcs])
+colnames(r@scores) <- paste("PC", 1:nPcs, sep = "")
+rownames(r@scores) <- rownames(Matrix) 
+r@loadings <- cbind(pcs$rotation[,1:nPcs])
+colnames(r@loadings) <- paste("PC", 1:nPcs, sep = "")
+rownames(r@loadings) <- colnames(Matrix) 
+r@R2cum <- imp[3,1:nPcs]
+r@sDev <- pcs$sdev[1:nPcs]
+r@R2 <- imp[2,1:nPcs]
+r@nObs <- nrow(object)
+r@nVar <- ncol(object)
+r@varLimit <- varLimit
+r@centered <- center
+r@center <- attr(scale(Matrix, center = TRUE, scale = FALSE), "scaled:center")
+r@nPcs <- nPcs
+r@method <- "svd"
+r@missing <- 0 
+return(r)
 }
 
 prep <- function(object, scale=c("none", "pareto", "vector", "UV"), center=TRUE, ...) {
-  scale <- match.arg(scale)
+scale <- match.arg(scale)
 
-  if(inherits(object, "ExpressionSet"))
-    object <- t(exprs(object))
+if(inherits(object, "ExpressionSet"))
+  object <- t(exprs(object))
 
-  object <- as.matrix(object)
-  
-  if(center) {
-    object <- scale(object, scale=FALSE, center=TRUE)
-    cent <- attr(object, "scaled:center")
-  }
+object <- as.matrix(object)
 
-  if(scale != "none") {
-    switch(scale,
-           UV = {
-             object <- scale(object, scale=TRUE, center=FALSE)
-           },
-           vector = {
-             vectorNorm <- function(y) {
-               y <- y / sqrt(sum(y^2))
-               return(y)
-             }
-             object <- t(apply(object, 1, vectorNorm))
-           },
-           pareto = {
-             object <- apply(object, 2,
-                             function(object) {
-                               return(object / sqrt(sd(object, na.rm=TRUE)))
-                             })
-           })
-  }
-
-  ## recover the center
-  if(center)
-    attr(object, "scaled:center") <- cent
-
-  attr(object, "scaled") <- scale
-
-  object
+if(center) {
+  object <- scale(object, scale=FALSE, center=TRUE)
+  cent <- attr(object, "scaled:center")
 }
 
+if(scale != "none") {
+  switch(scale,
+         UV = {
+           object <- scale(object, scale=TRUE, center=FALSE)
+         },
+         vector = {
+           vectorNorm <- function(y) {
+             y <- y / sqrt(sum(y^2))
+             return(y)
+           }
+           object <- t(apply(object, 1, vectorNorm))
+         },
+         pareto = {
+           object <- apply(object, 2,
+                           function(object) {
+                             return(object / sqrt(sd(object, na.rm=TRUE)))
+                           })
+         })
+}
 
+## recover the center
+if(center)
+  attr(object, "scaled:center") <- cent
+
+attr(object, "scaled") <- scale
+
+object
+}
+
+##' Get a confidence ellipse for uncorrelated bivariate data
+##'
+##' As described in 'Introduction to multi and megavariate data analysis
+##' using PCA and
+##' PLS' by Eriksson et al. This produces very similar ellipse as
+##' compared to the ellipse function the ellipse package except that
+##' this function assumes that and y are uncorrelated (which they of
+##' are if they are scores or loadings from a PCA). 
+##' @title Hotelling's T^2 Ellipse
+##' @param x first variable
+##' @param y second variable
+##' @param alfa confidence level of the circle
+##' @param len Number of points in the circle
+##' @seealso ellipse
+##' @author Henning Redestig
+##' @return A matrix with X and Y coordinates for the circle
 simpleEllipse <- function(x, y, alfa=0.95, len=200) {
-
-  ##<..Beg Rdocu..>
-  ## ~name~
-  ##   simpleEllipse
-  ## ~title~
-  ##   Hotelling's T^2 Ellipse
-  ## ~description~
-  ##   As described in 'Introduction to multi and megavariate data
-  ##   analysis using PCA and PLS' by Eriksson et al. This produces
-  ##   very similar ellipse as compared to the ellipse function from
-  ##   the ellipse package except that this function assumes that x
-  ##   and y are uncorrelated (which they of course are if they are
-  ##   scores or loadings from a PCA). This function is mainly
-  ##   included to get rid of the dependance on the ellipse package.
-  ## ~usage~
-  ##   simpleEllipse(x, y, alfa=0.95, len=200)
-  ## ~arguments~
-  ##   ~-x~
-  ##     First PC
-  ##   ~-y~
-  ##     Second PC
-  ##   ~-alfa~
-  ##     Significance level of the circle
-  ##   ~-len~
-  ##     Amount of points in the circle
-  ## ~value~
-  ##   A matrix with X and Y coordinates for the circle
-  ## ~seealso~
-  ##   'ellipse'
-  ## ~author~
-  ##   Henning Redestig <redestig[at]mpimp-golm.mpg.de>
-  ##>..End Rdocu..<
-
-  N <- length(x)
-  A <- 2
-  mypi <- seq(0, 2 * pi, length=len)
-  r1 <- sqrt(var(x) * qf(alfa, 2, N - 2) * (2*(N^2 - 1)/(N * (N - 2))))
-  r2 <- sqrt(var(y) * qf(alfa, 2, N - 2) * (2*(N^2 - 1)/(N * (N - 2))))
-  cbind(r1 * cos(mypi) + mean(x), r2 * sin(mypi) + mean(y))
+N <- length(x)
+A <- 2
+mypi <- seq(0, 2 * pi, length=len)
+r1 <- sqrt(var(x) * qf(alfa, 2, N - 2) * (2*(N^2 - 1)/(N * (N - 2))))
+r2 <- sqrt(var(y) * qf(alfa, 2, N - 2) * (2*(N^2 - 1)/(N * (N - 2))))
+cbind(r1 * cos(mypi) + mean(x), r2 * sin(mypi) + mean(y))
 }
 
 
 ## #############
 ## some getters
 
+## S4 for new ones
+setMethod("nPcs", "pcaRes", function(object, ...) {
+  object@nPcs
+})
+setMethod("nObs", "pcaRes", function(object, ...) {
+  object@nObs
+})
+setMethod("nVar", "pcaRes", function(object, ...) {
+  object@nVar
+})
+setMethod("centered", "pcaRes", function(object, ...) {
+  object@centered
+})
+setMethod("completeObs", "pcaRes", function(object, ...) {
+  object@completeObs
+})
+setMethod("method", "pcaRes", function(object, ...) {
+  object@method
+})
+setMethod("sDev", "pcaRes", function(object, ...) {
+  object@sDev
+})
+setMethod("scaled", "pcaRes", function(object, ...) {
+  object@scaled
+})
+setMethod("center", "pcaRes", function(object, ...) {
+  object@center
+})
 ## S3 for those already have been defined as such
 scores.pcaRes <- function(object,...) 
   object@scores
@@ -782,31 +664,7 @@ loadings.pcaRes <- function(object,...)
   object@loadings
 
 dim.pcaRes <- function(x)  {
-  res <-  c(x@nObs, x@nVar, x@nPcs)
-  names(res) <- c("nObs", "nVar", "nPcs")
-  res
+res <-  c(nObs(x), nVar(x), nPcs(x))
+names(res) <- c("nObs", "nVar", "nPcs")
+res
 }
-
-## S4 for new ones
-setMethod("nPcs", "pcaRes", function(object, ...) {
-  object@nPcs
-  })
-setMethod("nObs", "pcaRes", function(object, ...) {
-  object@nObs
-  })
-setMethod("nVar", "pcaRes", function(object, ...) {
-  object@nVar
-  })
-setMethod("centered", "pcaRes", function(object, ...) {
-  object@centered
-  })
-setMethod("completeObs", "pcaRes", function(object, ...) {
-  object@completeObs
-  })
-setMethod("method", "pcaRes", function(object, ...) {
-  object@method
-  })
-setMethod("sDev", "pcaRes", function(object, ...) {
-  object@sDev
-  })
-

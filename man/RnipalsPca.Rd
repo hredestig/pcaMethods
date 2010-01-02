@@ -1,15 +1,15 @@
-\name{nipalsPca}
-\alias{nipalsPca}
-\title{NIPALS PCA}
-\usage{nipalsPca(Matrix, nPcs=2, center=TRUE, completeObs=TRUE, varLimit=1,
-    maxSteps=5000, threshold=1e-06, ...)}
+\name{RnipalsPca}
+\alias{RnipalsPca}
+\title{NIPALS PCA implemented in R}
+\usage{RnipalsPca(Matrix, nPcs=2, center=TRUE, completeObs=TRUE, varLimit=1,
+    maxSteps=5000, threshold=1e-06, verbose=interactive(), ...)}
 \description{PCA by non-linear iterative partial least squares}
 \details{Can be used for computing PCA on a numeric matrix using either the
 NIPALS algorithm which is an iterative approach for estimating the
 principal components extracting them one at a time. NIPALS can
 handle a small amount of missing values. It is not recommended to
 use this function directely but rather to use the pca() wrapper
-function.}
+function. There is a C++ implementation given as \code{nipalsPca} which is faster.}
 \value{A \code{pcaRes} object.}
 \references{Wold, H. (1966) Estimation of principal components and related models by
 iterative least squares. In Multivariate Analysis (Ed.,
@@ -30,7 +30,9 @@ some wrong in the input data).}
 \item{threshold}{The limit condition for judging if the algorithm has
 converged or not, specifically if a new iteration is done if
 \eqn{(T_{old} - T)^T(T_{old} - T) > \code{limit}}.}
+\item{verbose}{Show simple progress information.}
 \item{...}{Only used for passing through arguments.}}
 \examples{data(iris)
 mat <- as.matrix(iris[,1:4])
-pcIr <- nipalsPca(mat, nPcs=2)}
+system.time(pcIr <- RnipalsPca(mat, method="rnipals", nPcs=3))
+system.time(pcIr <- nipalsPca(mat, nPcs=3))}

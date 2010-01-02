@@ -101,11 +101,11 @@ principal subspace may have the same reconstruction error, see Figure
 \ref{fig:pcaSubspace} for explanation.
 <<results=hide, echo=false>>=
 library(pcaMethods)
-x=c(-4,7); y=c(-3,4)
-distX=rnorm(100, sd=0.3)*3
-distY=rnorm(100, sd=0.3) + distX * 0.3
-mat = cbind(distX, distY)
-res=pca(mat, nPcs=2, method="svd", center=F)
+x <- c(-4,7); y <- c(-3,4)
+distX <- rnorm(100, sd=0.3)*3
+distY <- rnorm(100, sd=0.3) + distX * 0.3
+mat <- cbind(distX, distY)
+res <- pca(mat, nPcs=2, method="svd", center=F)
 loading = res@loadings[1,]
 grad = loading[2] / loading[1]
 if (grad < 0)
@@ -180,42 +180,44 @@ NLPCA \cite{scholz05} is especially suitable for data from experiments
 where the studied response is non-linear. Examples of such experiments
 are ubiquitous in biology -- enzyme kinetics are inherently non-linear
 as are gene expression responses influenced by the cell cycle or
-diurnal oscillations.
-NLPCA is based on training an auto-associative neural network composed of a component
-layer which serves as the ``bottle-neck'', a hidden non-linear layer
-and an output layer corresponding to the reconstructed data.
-The loadings can be seen as hidden in the network.
-Missing values in the training data are simply ignored when calculating the
-error during back-propagation. Thus NLPCA can be used to impute missing values
-in the same way as for conventional PCA. The only difference is that the
+diurnal oscillations.  NLPCA is based on training an auto-associative
+neural network composed of a component layer which serves as the
+``bottle-neck'', a hidden non-linear layer and an output layer
+corresponding to the reconstructed data.  The loadings can be seen as
+hidden in the network.  Missing values in the training data are simply
+ignored when calculating the error during back-propagation. Thus NLPCA
+can be used to impute missing values in the same way as for
+conventional PCA. The only difference is that the
 loadings $P$ are now represented by a neural network.\\
-A shortcoming of the current implementation is that there is no reasonable
-stop criterion. The quality of the estimated solution depends on the number of
-iterations. This should in most cases be somewhat between 500 and 1500.
-We recommend to use \texttt{kEstimate} or \texttt{kEstimateFast} to determine
-this parameter.
+A shortcoming of the current implementation is that there is no
+reasonable stop criterion. The quality of the estimated solution
+depends on the number of iterations. This should in most cases be
+somewhat between 500 and 1500.  We recommend to use \texttt{kEstimate}
+or \texttt{kEstimateFast} to determine this parameter.
 
 \subsection*{Nipals PCA}
-Nipals (Nonlinear Estimation by Iterative Partial Least Squares) \cite{wold66}
-is an algorithm at the root of PLS regression which can execute PCA with missing 
-values by simply leaving those out from the appropriate inner products.
-It is tolerant to small amounts (generally not more than 5\%) of missing data.
+Nipals (Nonlinear Estimation by Iterative Partial Least Squares)
+\cite{wold66} is an algorithm at the root of PLS regression which can
+execute PCA with missing values by simply leaving those out from the
+appropriate inner products.  It is tolerant to small amounts
+(generally not more than 5\%) of missing data.
 
 \subsection{Local least squares (LLS) imputation}
-The package provides an algorithm called \texttt{llsImpute} for missing value estimation
-based on a linear combination of the $k$ nearest neighbours of an incomplete variable 
-(in Microarray experiments normally a gene).
-The distance between variables is defined as the absolute
-value of the Pearson, Spearman or Kendall correlation coefficient.
-The optimal linear combination is found by solving a local least squares problem
-as described in \cite{kim05}. In tests performed in the cited paper the llsImpute
-algorithm is able to outperform knnImpute\cite{troyanskaya01} and competes well
-with BPCA.
+The package provides an algorithm called \texttt{llsImpute} for
+missing value estimation based on a linear combination of the $k$
+nearest neighbours of an incomplete variable (in Microarray
+experiments normally a gene).  The distance between variables is
+defined as the absolute value of the Pearson, Spearman or Kendall
+correlation coefficient.  The optimal linear combination is found by
+solving a local least squares problem as described in \cite{kim05}. In
+tests performed in the cited paper the llsImpute algorithm is able to
+outperform knnImpute\cite{troyanskaya01} and competes well with BPCA.
 
-In the current implementation two slightly different ways for missing value estimation
-are provided. The first one is to restrict the neighbour searching to the 
-subset of complete variables.
-This is preferable when the number of incomplete variables is relatively small.
+In the current implementation two slightly different ways for missing
+value estimation are provided. The first one is to restrict the
+neighbour searching to the subset of complete variables.  This is
+preferable when the number of incomplete variables is relatively
+small.
 
 The second way is to consider all variables as candidates.
 Here, missing values are initially replaced by the columns wise mean.
@@ -224,28 +226,28 @@ LLS regression until the change between new and old estimate falls below a
 certain threshold (0.001).
 
 \section{Getting started}
-\paragraph{Installing the package.} To install the package first download
-the appropriate file for your platform from the Bioconductor website
-(\url{http://www.bioconductor.org/}). For Windows, start \texttt{R}
-and select the
-\texttt{Packages} menu, then \texttt{Install package from local zip file}.
-Find and highlight the location of the zip file and click on \texttt{open}.
+\paragraph{Installing the package.} To install the package first
+download the appropriate file for your platform from the Bioconductor
+website (\url{http://www.bioconductor.org/}). For Windows, start
+\texttt{R} and select the \texttt{Packages} menu, then \texttt{Install
+  package from local zip file}.  Find and highlight the location of
+the zip file and click on \texttt{open}.
 
-For Linux/Unix, use the usual command \texttt{R CMD INSTALL}
-or set the option \texttt{CRAN} to your nearest mirror site and use the command
-\texttt{install.packages} from within an \texttt{R} session.
+For Linux/Unix, use the usual command \texttt{R CMD INSTALL} or set
+the option \texttt{CRAN} to your nearest mirror site and use the
+command \texttt{install.packages} from within an \texttt{R} session.
 
-\paragraph{Loading the package:} To load the \texttt{pcaMethods} package in
-your \texttt{R} session, type \texttt{library(pcaMethods)}.
+\paragraph{Loading the package:} To load the \texttt{pcaMethods}
+package in your \texttt{R} session, type \texttt{library(pcaMethods)}.
 
 \paragraph{Help files:} Detailed information on \texttt{pcaMethods}
-package functions can be obtained from the help files.
-For example, to get a description of \texttt{bpca} type \texttt{help("bpca")}.
+package functions can be obtained from the help files.  For example,
+to get a description of \texttt{bpca} type \texttt{help("bpca")}.
 
 \paragraph{Sample data:} Two sample data sets are coming with the
 package. \texttt{metaboliteDataComplete} contains a complete subset
-from a larger metabolite data set. \texttt{metaboliteData}
-is the same data set but with 10 \% values removed from an equal distribution.
+from a larger metabolite data set. \texttt{metaboliteData} is the same
+data set but with 10 \% values removed from an equal distribution.
 
 \section{Some examples}
 <<echo=false, results=hide>>=
@@ -333,10 +335,8 @@ $$Q^2=1 - \mathrm{PRESS}/\mathrm{SSX}$$
 The maximum value for $Q^2$ is thus 1 which means that all variance in
 $X$ is represented in the predictions; $X=\hat{X}$. 
 <<results=hide>>=
-#q2BPCA <- Q2(resBPCA, mdC, nPcs=5, nruncv=1, fold=10)
-#q2Nipals <- Q2(resNipals, mdC, nPcs=5, nruncv=1, fold=10)
-q2SVDI <- Q2(resSVDI, mdC, nPcs=5, nruncv=1, fold=10)
-q2PPCA <- Q2(resPPCA, mdC, nPcs=5, nruncv=1, fold=10)
+q2SVDI <- Q2(resSVDI, mdC, fold=10)
+q2PPCA <- Q2(resPPCA, mdC, fold=10)
 <<results=hide, echo=false>>=
 # PPCA does not converge / misestimate a value in very rare cases.
 # This is a workaround to avoid that such a case will break the
@@ -344,15 +344,14 @@ q2PPCA <- Q2(resPPCA, mdC, nPcs=5, nruncv=1, fold=10)
 # From the 2.0 release of bioconductor on, the convergence threshold
 # for PPCA was lowert to 1e-5, this should make the method much more
 # stable. So this workaround might be obsolete now...
+# [nope it is not, ppca is unstable]
 while( sum((abs(q2PPCA)) > 1) >= 1 ) {
-    q2PPCA <- Q2(resPPCA, mdC, nPcs=5, nruncv=1, fold=10)
+    q2PPCA <- Q2(resPPCA, mdC, fold=10)
 }
 @
 \begin{figure}[!ht]
   \centering
 <<fig=true, width=12, height=7, results=hide, echo=false>>=
-#q2 <- data.frame(Q2=c(drop(q2BPCA), drop(q2Nipals), drop(q2PPCA), drop(q2SVDI)), 
-#                 method=c("BPCA", "Nipals", "PPCA", "SVD-Impute")[gl(4, 5)], PC=rep(1:5, 4))
 q2 <- data.frame(Q2=c(drop(q2PPCA), drop(q2SVDI)), 
                  method=c("PPCA", "SVD-Impute")[gl(2, 5)], PC=rep(1:5, 2))
 print(xyplot(Q2~PC|method, q2, ylab=expression(Q^2), type="h", lwd=4))

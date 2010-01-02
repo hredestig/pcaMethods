@@ -12,4 +12,3 @@ causing any full row or column to be completely missing}
 second and so on when looking at the fat version of the matrix
 (transposed or not) counting from the bottom.
 Can be a vector to delete more than one diagonal.}}
-\examples{deletediagonals(iris[,1:4], 1)}

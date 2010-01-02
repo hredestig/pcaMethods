@@ -53,7 +53,7 @@
 ##
 ##########################################################################################
           
-ppca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, seed = NA, ... ) {
+ppca <- function(Matrix, nPcs=2, center=TRUE, completeObs=TRUE, seed=NA, ...) {
 
     ## Set the seed to the user defined value. This affects the generation
     ## of random values for the initial setup of the loading matrix
@@ -61,13 +61,6 @@ ppca <- function(Matrix, nPcs = 2, center = TRUE, completeObs = TRUE, seed = NA,
         set.seed(seed)
 
     d <- nPcs
-
-    ## If the data is a data frame, convert it into a matrix
-    Matrix <- as.matrix(Matrix, rownames.force=TRUE)
-    ## And now check if everything is right...
-    if ( !checkData(Matrix, verbose = interactive()) ) {
-        stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
-    }
 
     threshold <- 1e-5
 

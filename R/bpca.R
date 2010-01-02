@@ -67,17 +67,6 @@
 bpca <- function(Matrix, nPcs = 2, completeObs = TRUE, maxSteps = 100, 
                  verbose = interactive(), ... ) {
 
-    ## If the data is a data frame, convert it into a matrix
-    Matrix <- as.matrix(Matrix, rownames.force=TRUE)
-    ## And now check if everything is right...
-    if ( !checkData(Matrix, verbose = verbose) ) {
-        stop("Invalid data format! Use checkData(Matrix, verbose = TRUE) for details.\n")
-    }
-
-    if (nPcs > ncol(Matrix)) {
-        stop("more components than matrix columns selected, exiting\n")
-    }
-
     mat <- Matrix
 
     if (is.null(nPcs)) { nPcs <- ncol(Matrix) - 1 }
