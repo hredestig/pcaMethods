@@ -40,11 +40,13 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
     int nPcs = rparams.getIntValue("nPcs");
     double varLimit = rparams.getDoubleValue("varLimit");
     RcppMatrix<double> mat(Mat);
+    RcppMatrix<double> omat(Mat);
     int nr = mat.getDim1();
     int nc = mat.getDim2();
+    RcppMatrix<double> est_mat(nr, nc);
     RcppMatrix<double> tt(nr, nPcs);
     RcppMatrix<double> pp(nc, nPcs);
-    vector<double> r2;
+    vector<double> r2cum;
     vector<double> thold(nr);
     vector<double> th(nr);
     vector<double> phold(nc);
@@ -70,6 +72,7 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
       }
 
       cnt = true;
+      count = 0;
       while(cnt) {
 	count++;
 	for(int c = 0; c < nc; c++) {
@@ -114,13 +117,14 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
 	for(int c = 0; c < nc; c++) {
 	  if(!isnan(mat(r,c))) {
 	    mathat = th[r] * ph[c];
-	    err = mat(r,c) - mathat;
+	    est_mat(r, c) += mathat;
+	    err = omat(r,c) - est_mat(r, c);
 	    sse += err * err;
 	    mat(r,c) -= mathat;
 	  }
 	}
       }
-      r2.push_back(1 - (sse / tss));
+      r2cum.push_back(1 - (sse / tss));
 
       for(int r = 0; r < nr; r++) {
 	tt(r,np) = th[r];
@@ -129,7 +133,7 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
 	pp(c,np) = ph[c];
       }
       if(fabs(varLimit - 1) > 1e-4) {
-	if(r2[np] >= varLimit) {
+	if(r2cum[np] >= varLimit) {
 	  anotherPc = false;
 	}
       } 
@@ -159,7 +163,7 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
       rs.add("scores", tt);
       rs.add("loadings", pp);
     }
-    rs.add("R2", r2);
+    rs.add("R2cum", r2cum);
     rl = rs.getReturnList();
   } catch(int e) {
     if(e == 1) {

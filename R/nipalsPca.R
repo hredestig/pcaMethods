@@ -198,17 +198,17 @@ nipalsPca <- function(Matrix, nPcs=2, center=TRUE, completeObs=TRUE,
   nObs <- nrow(object)
   nVar <- ncol(object)
   
-  nipRes <- .Call("Nipals", Matrix,
-                  params=list(nPcs=nPcs,
-                    varLimit=varLimit,
-                    threshold=threshold,
-                    maxSteps=maxSteps), PACKAGE="pcaMethods")
+  nipRes <- .Call("Nipals", object, params=list(nPcs=nPcs,
+                                      varLimit=varLimit,
+                                      threshold=threshold,
+                                      maxSteps=maxSteps), PACKAGE="pcaMethods")
 
-  R2 <- nipRes$R2
+  R2cum <- nipRes$R2cum
   scores <- nipRes$scores
   loadings <- nipRes$loadings
 
-  R2cum <- cumsum(R2)
+  R2 <- R2cum[1]
+  R2 <- c(R2, diff(R2cum))
 
   if (completeObs) {
     Ye <- scores %*% t(loadings)
