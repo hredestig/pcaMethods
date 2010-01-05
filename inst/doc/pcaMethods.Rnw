@@ -337,6 +337,7 @@ $X$ is represented in the predictions; $X=\hat{X}$.
 <<results=hide>>=
 q2SVDI <- Q2(resSVDI, mdC, fold=10)
 q2PPCA <- Q2(resPPCA, mdC, fold=10)
+@ 
 <<results=hide, echo=false>>=
 # PPCA does not converge / misestimate a value in very rare cases.
 # This is a workaround to avoid that such a case will break the
