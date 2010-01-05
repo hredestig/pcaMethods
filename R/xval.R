@@ -76,12 +76,13 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
 
   ssx <- sum(originalData^2, na.rm=TRUE)
   
-  result <- matrix(NA, nP, ncol=nruncv)
+  
   for(nr in 1:nruncv) {
     ## --- impute ---
     if(type == "impute") {
       nP <- nPcs(object)
       press <- rep(0, nP)
+      q2 <- matrix(NA, nP, ncol=nruncv)
       seg <- list()
       nDiag <- max(nR, nC)
       diagPerFold <- floor(nDiag / fold)
@@ -133,6 +134,7 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
       rseg <- split(sample(1:nR), rep(1:fold, ceiling(nR / fold))[1:nR])
       cseg <- split(sample(1:nC), rep(1:fold, ceiling(nC / fold))[1:nC])
       nP <- min(nR - max(sapply(rseg, length)), nC - max(sapply(cseg, length)))
+      q2 <- matrix(NA, nP, ncol=nruncv)
       press <- rep(0, nP)
       foldC <- length(cseg)
       foldR <- length(rseg)
@@ -168,10 +170,10 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
                    (tcv[fc,,][,1:p,drop=FALSE] %*% t(pcv[fr,,][,1:p,drop=FALSE]))[rseg[[fr]],cseg[[fc]]])^2,
                   na.rm=TRUE)
     }
-    result[,nr] <- 1 - press / ssx
+    q2[,nr] <- 1 - press / ssx
   }
-  rownames(result) <- paste("PC", 1:nrow(result))
-  drop(result)
+  rownames(q2) <- paste("PC", 1:nrow(q2))
+  drop(q2)
 }
 
 ##' Simply replace completely missing rows or cols with zeroes.
