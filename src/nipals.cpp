@@ -55,10 +55,10 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
     double sse = 0;
     int np = 0;
     double anotherPc = true;
-    for (int i = 0; i < nr; i++) {
-      for (int j = 0; j < nc; j++) {
-	if(!isnan(mat(i,j))) {
-	  tss += mat(i,j) * mat(i,j);
+    for (int r = 0; r < nr; r++) {
+      for (int c = 0; c < nc; c++) {
+	if(!isnan(mat(r,c))) {
+	  tss += mat(r,c) * mat(r,c);
 	}
       }
     }
@@ -148,8 +148,8 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
       RcppMatrix<double> ttt(nr, np);
       RcppMatrix<double> ppp(nc, np);
       for(int r = 0; r < nr; r++) {
-	for(int c = 0; c < np; c++) {
-	  ttt(r,c) = tt(r,c);
+	for(int p = 0; p < np; p++) {
+	  ttt(r,p) = tt(r,p);
 	}
       }
       for(int c = 0; c < nc; c++) {

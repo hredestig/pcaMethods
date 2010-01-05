@@ -36,9 +36,9 @@
 ##' system.time(pcIr <- nipalsPca(mat, nPcs=3))
 ##' @keywords multivariate
 RnipalsPca <- function(Matrix, nPcs=2, center=TRUE, completeObs=TRUE,
-                      varLimit=1,
-                      maxSteps=5000, 
-                      threshold=1e-6, verbose=interactive(), ...) {
+                       varLimit=1,
+                       maxSteps=5000, 
+                       threshold=1e-6, verbose=interactive(), ...) {
 
   if (center) {
     object <- scale(Matrix, center = TRUE, scale = FALSE)
