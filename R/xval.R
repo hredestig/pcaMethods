@@ -133,7 +133,8 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
 
       rseg <- split(sample(1:nR), rep(1:fold, ceiling(nR / fold))[1:nR])
       cseg <- split(sample(1:nC), rep(1:fold, ceiling(nC / fold))[1:nC])
-      nP <- min(nR - max(sapply(rseg, length)), nC - max(sapply(cseg, length)))
+      nP <- min(nR - max(sapply(rseg, length)), nC - max(sapply(cseg, length)),
+                nPcs(object))
       q2 <- matrix(NA, nP, ncol=nruncv)
       press <- rep(0, nP)
       foldC <- length(cseg)
@@ -146,9 +147,10 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
                                method=method(object), verbose=FALSE,
                                center=centered(object),
                                scale=object@scaled, ...))
-        for(p in 1:nP) 
+        for(p in 1:nP) {
           if(cor(tcv[f,,p], scores(object)[,p]) < 0) 
             tcv[f,,p] <- tcv[f,,p] * -1
+        }
       }
       for(f in 1:foldR) {
         test <- tempFixNas(originalData[-rseg[[f]],])
@@ -156,9 +158,10 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
                                  method=method(object), verbose=FALSE,
                                  center=centered(object),
                                  scale=object@scaled, ...))
-        for(p in 1:nP) 
+        for(p in 1:nP) {
           if(cor(pcv[f,,p], loadings(object)[,p]) < 0) 
             pcv[f,,p] <- pcv[f,,p] * -1
+        }
       }
       
       press <- rep(0, nP)
