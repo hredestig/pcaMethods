@@ -24,8 +24,11 @@
 ##' fold models for scores. By combining scores and loadings from different models,
 ##' we can estimate completely left out values.
 ##' The two types may seem similar but can give very different results,
-##' krzanowski typically yields more stable and reliable result for estimating data structure
-##' whereas impute is better for evaluating missing value imputation performance.
+##' krzanowski typically yields more stable and reliable result for estimating
+##' data structure whereas impute is better for evaluating missing value imputation
+##' performance. Note that since Krzanowski CV operates on a reduced matrix,
+##' it is not possible estimate Q2 for all components and the result vector may
+##' therefore be shorter than \code{nPcs(object)}.
 ##' @title Cross-validation for PCA
 ##' @param object A \code{pcaRes} object (result from previous PCA analysis.)
 ##' @param originalData The matrix (or ExpressionSet) that used to obtain the pcaRes object. 
@@ -61,7 +64,7 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
 
   nR <- nObs(object)
   nC <- nVar(object)
-  nP <- nPcs(object)
+  
   if(nR != nrow(originalData) | nC != ncol(originalData))
     stop("data and model dimensions do not match")
   if(fold > max(nR, nC))
@@ -75,10 +78,10 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
   
   result <- matrix(NA, nP, ncol=nruncv)
   for(nr in 1:nruncv) {
-
-    press <- rep(0, nP)
     ## --- impute ---
     if(type == "impute") {
+      nP <- nPcs(object)
+      press <- rep(0, nP)
       seg <- list()
       nDiag <- max(nR, nC)
       diagPerFold <- floor(nDiag / fold)
@@ -126,8 +129,11 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
     }
     ## ---- krzanowski ----
     if(type == "krzanowski") {
+
       rseg <- split(sample(1:nR), rep(1:fold, ceiling(nR / fold))[1:nR])
       cseg <- split(sample(1:nC), rep(1:fold, ceiling(nC / fold))[1:nC])
+      nP <- min(nR - max(sapply(rseg, length)), nC - max(sapply(cseg, length)))
+      press <- rep(0, nP)
       foldC <- length(cseg)
       foldR <- length(rseg)
       tcv <- array(0, dim=c(foldC, nR, nP))

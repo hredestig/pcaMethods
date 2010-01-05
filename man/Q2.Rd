@@ -28,8 +28,11 @@ which give the loadings. Then, columns are sequentially left out to build
 fold models for scores. By combining scores and loadings from different models,
 we can estimate completely left out values.
 The two types may seem similar but can give very different results,
-krzanowski typically yields more stable and reliable result for estimating data structure
-whereas impute is better for evaluating missing value imputation performance.}
+krzanowski typically yields more stable and reliable result for estimating
+data structure whereas impute is better for evaluating missing value imputation
+performance. Note that since Krzanowski CV operates on a reduced matrix,
+it is not possible estimate Q2 for all components and the result vector may
+therefore be shorter than \code{nPcs(object)}.}
 \value{A matrix or vector with \eqn{Q^2} estimates.}
 \author{Henning Redestig}
 \keyword{multivariate}

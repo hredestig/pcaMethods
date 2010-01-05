@@ -1,17 +1,19 @@
-02/01/10 - - No warnings anymore when requesting SVD on matrix with missing
-             values, silently switch to nipals.
-           - New C++ implementation of nipals, save old R-version to
-             'rnipals' for reference.
-	   - Dependence on package Rcpp which made C++ implementation
-             much easier.
-	   - Successive introduction of Roxygen style documentation
-             (.Rd files  are generated from the comment sections)
-           - Successive introduction of using getter functions instead
-             of '@'
-           - Remove redundant 'checkData' calls from *pca functions,
-             it is called   from pca()
-           - Introduction of new X-validation approach which is
-             applicable also for SVD.
+05/01/09 - Krzanowski CV changed so to not try to estimate Q2 for more
+           PCs than possible.
+02/01/10 - No warnings anymore when requesting SVD on matrix with missing
+           values, silently switch to nipals.
+         - New C++ implementation of nipals, save old R-version to
+           'rnipals' for reference.
+	 - Dependence on package Rcpp which made C++ implementation
+           much easier.
+	 - Successive introduction of Roxygen style documentation
+           (.Rd files  are generated from the comment sections)
+         - Successive introduction of using getter functions instead
+           of '@'
+         - Remove redundant 'checkData' calls from *pca functions,
+           it is called   from pca()
+         - Introduction of new X-validation approach which is
+           applicable also for SVD.
 10/27/08 - Improvements to slplot, bugfixes and a show method
 02/27/08 - Replaced usage of exprSet class with ExpressionSet
 04/10/07 - Added robustSVD, a SVD implementation robust to outliers
