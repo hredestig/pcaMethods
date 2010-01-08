@@ -1,27 +1,46 @@
-05/01/09 - Krzanowski CV changed so to not try to estimate Q2 for more
-           PCs than possible.
-02/01/10 - No warnings anymore when requesting SVD on matrix with missing
-           values, silently switch to nipals.
-         - New C++ implementation of nipals, save old R-version to
-           'rnipals' for reference.
-	 - Dependence on package Rcpp which made C++ implementation
-           much easier.
-	 - Successive introduction of Roxygen style documentation
-           (.Rd files  are generated from the comment sections)
-         - Successive introduction of using getter functions instead
-           of '@'
-         - Remove redundant 'checkData' calls from *pca functions,
-           it is called   from pca()
-         - Introduction of new X-validation approach which is
-           applicable also for SVD.
-10/27/08 - Improvements to slplot, bugfixes and a show method
-02/27/08 - Replaced usage of exprSet class with ExpressionSet
-04/10/07 - Added robustSVD, a SVD implementation robust to outliers
-01/02/07 - Added a Non-linear PCA algorithm.
-12/11/06 - kEstimate interface has changed. Instead of specifying a
-           single value for the maximum number of pcs it is now possible
-           to specify an array, e.g. c(3,5,7,9.20) or 3:7
-12/11/06 - Added a cluster based imputation method called llsImpute.
-           This is mainly thought for comparison with the other methods.
-           kEstimate may also be used with llsImpute.
-08/27/06 - This is the first revision of our pca package. Enjoy!
+# -*- org -*-
+#+TITLE: NEWS file for the pcaMethods package
+
+* Version 1.27.2 <2010-01-05 Tue> 
+- Krzanowski CV changed so to not try to estimate Q^2 for more
+  PCs than possible.
+* Version 1.27.0 <2010-01-02 Sat> 
+- No warnings anymore when requesting SVD on matrix with missing
+  values, silently switch to nipals.
+- New C++ implementation of nipals, save old R-version to
+  'rnipals' for reference.
+- Dependence on package Rcpp which made C++ implementation
+  much easier.
+- Successive introduction of Roxygen style documentation
+  (.Rd files  are generated from the comment sections)
+- Successive introduction of using getter functions instead
+  of '@'
+- Remove redundant 'checkData' calls from *pca functions,
+  it is called   from pca()
+- Introduction of new X-validation approach which is
+  applicable also for SVD.
+* Version 1.24.0 <2008-10-27 Mon> 
+- Improvements to slplot, bugfixes and a show method
+* Version <2008-02-27 Wed> 
+- Replaced usage of exprSet class with ExpressionSet
+* Version <2007-04-10 Tue> 
+- Added robustSVD, a SVD implementation robust to outliers
+* Version <2007-01-02 Tue> 
+- Added a Non-linear PCA algorithm.
+* Version <2006-12-11 Mon> 
+- kEstimate interface has changed. Instead of specifying a
+  single value for the maximum number of pcs it is now possible
+  to specify an array, e.g. c(3,5,7,9.20) or 3:7
+* Version <2006-12-11 Mon> 
+- Added a cluster based imputation method called llsImpute.
+  This is mainly thought for comparison with the other methods.
+  kEstimate may also be used with llsImpute.
+* Version 1.0.0 <2006-08-27 Sun> 
+- This is the first revision of our pca package. Enjoy!
+* Planned
+** C++ Versions
+of ppca and possibly bpca. Nlpca would be nice and would probably benefit most of being ported to C++..
+*** ppca							    :STARTED:
+using gsl but speed gain so far not so remarkable
+** Proper handling of scaling and centering 			    :STARTED:
+Current version is broken and need full rewrite
