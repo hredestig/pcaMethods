@@ -1,3 +1,9 @@
+##' Later
+##' @param nlnet The nlnet
+##' @param trainIn training data 
+##' @param trainOut  fitted data
+##' @return error
+##' @author Henning Redestig, Matthias Scholz
 errorHierarchic <- function(nlnet, trainIn, trainOut) {
 
   weights <- nlnet@weights$current()

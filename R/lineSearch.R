@@ -1,3 +1,13 @@
+##' Line search for conjugate gradient
+##' @param nlnet The nlnet
+##' @param dw ..
+##' @param e0 ..
+##' @param ttGuess ..
+##' @param trainIn Training data
+##' @param trainOut Fitted data
+##' @param verbose  logical, print messages
+##' @return ...
+##' @author Henning Redestig, Matthias Scholz
 lineSearch <- function(nlnet, dw, e0, ttGuess, trainIn, trainOut, verbose) {
   iterGoldenSectionSearch <- 6
   alpha <- 0.618034
@@ -83,4 +93,8 @@ lineSearch <- function(nlnet, dw, e0, ttGuess, trainIn, trainOut, verbose) {
   return(list(wBest=wBest, eBest=eBest, ttBest=ttBest))
 }
 
+##' Linear kernel
+##' @param x datum
+##' @return Input value
+##' @author Henning Redestig, Matthias Scholz
 linr <- function(x) x

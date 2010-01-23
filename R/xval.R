@@ -1,42 +1,47 @@
-##' Internal cross-validation can be used for estimating the
-##' level of structure in a data set and to optimise the choice of number
-##' of principal components.
+##' Internal cross-validation can be used for estimating the level of
+##' structure in a data set and to optimise the choice of number of
+##' principal components.
 ##'
-##' This method calculates \eqn{Q^2} for a PCA model. This is the predictory
-##' version of \eqn{R^2} and can be interpreted as the ratio of
-##' variance that can be predicted independetly by the PCA  model. Poor (low) \eqn{Q^2}
-##' indicates that the PCA model only describes noise
-##' and that the model is unrelated to the true data structure. The
-##' definition of \eqn{Q^2} is:
-##' \deqn{Q^2 = 1 - \frac{\sum_{i}^{k}\sum_{j}^{n}(x -
-##' \hat{x})^2}{\sum_{i}^{k}\sum_{j}^{n}x^2}}{Q^2 = 1 - sum_i^k sum_j^n (x -
-##' \hat{x})^2 / \sum_i^k \sum_j^n(x^2)}
-##' for the matrix \eqn{x} which has \eqn{n} rows and \eqn{k}
-##' columns. For a given amount of PC's x is estimated as \eqn{\hat{x} =
-##' TP'} (T are scores and P are loadings). Although this defines the
-##' leave-one-out cross-validation this is 
-##' not what is performed if fold is less than the amount of rows and/or
-##' columns.
-##' In 'impute' type CV, diagonal rows of elements in the matrix are deleted and the
-##' re-estimated. 
-##' In 'krzanowski' type CV, rows are sequentially left out to build fold PCA models
-##' which give the loadings. Then, columns are sequentially left out to build
-##' fold models for scores. By combining scores and loadings from different models,
-##' we can estimate completely left out values.
-##' The two types may seem similar but can give very different results,
-##' krzanowski typically yields more stable and reliable result for estimating
-##' data structure whereas impute is better for evaluating missing value imputation
-##' performance. Note that since Krzanowski CV operates on a reduced matrix,
-##' it is not possible estimate Q2 for all components and the result vector may
-##' therefore be shorter than \code{nPcs(object)}.
+##' This method calculates \eqn{Q^2} for a PCA model. This is the
+##' predictory version of \eqn{R^2} and can be interpreted as the
+##' ratio of variance that can be predicted independetly by the PCA
+##' model. Poor (low) \eqn{Q^2} indicates that the PCA model only
+##' describes noise and that the model is unrelated to the true data
+##' structure. The definition of \eqn{Q^2} is: \deqn{Q^2 = 1 -
+##' \frac{\sum_{i}^{k}\sum_{j}^{n}(x -
+##' \hat{x})^2}{\sum_{i}^{k}\sum_{j}^{n}x^2}}{Q^2 = 1 - sum_i^k
+##' sum_j^n (x - \hat{x})^2 / \sum_i^k \sum_j^n(x^2)} for the matrix
+##' \eqn{x} which has \eqn{n} rows and \eqn{k} columns. For a given
+##' number of PC's x is estimated as \eqn{\hat{x} = TP'} (T are scores
+##' and P are loadings). Although this defines the leave-one-out
+##' cross-validation this is  not what is performed if fold is less
+##' than the number of rows and/or columns.  In 'impute' type CV,
+##' diagonal rows of elements in the matrix are deleted and the
+##' re-estimated.  In 'krzanowski' type CV, rows are sequentially left
+##' out to build fold PCA models which give the loadings. Then,
+##' columns are sequentially left out to build fold models for
+##' scores. By combining scores and loadings from different models, we
+##' can estimate completely left out values.  The two types may seem
+##' similar but can give very different results, krzanowski typically
+##' yields more stable and reliable result for estimating data
+##' structure whereas impute is better for evaluating missing value
+##' imputation performance. Note that since Krzanowski CV operates on
+##' a reduced matrix, it is not possible estimate Q2 for all
+##' components and the result vector may therefore be shorter than
+##' \code{nPcs(object)}.
 ##' @title Cross-validation for PCA
-##' @param object A \code{pcaRes} object (result from previous PCA analysis.)
-##' @param originalData The matrix (or ExpressionSet) that used to obtain the pcaRes object. 
+##' @param object A \code{pcaRes} object (result from previous PCA
+##' analysis.)
+##' @param originalData The matrix (or ExpressionSet) that used to
+##' obtain the pcaRes object. 
 ##' @param fold The number of groups to divide the data in.
-##' @param nruncv The number of times to repeat the whole cross-validation
+##' @param nruncv The number of times to repeat the whole
+##' cross-validation
 ##' @param type krzanowski or imputation type cross-validation
-##' @param verbose \code{boolean} If TRUE Q2 outputs a primitive progress bar.
-##' @param ... Further arguments passed to the pca() function called within Q2.
+##' @param verbose \code{boolean} If TRUE Q2 outputs a primitive
+##' progress bar.
+##' @param ... Further arguments passed to the \code{\link{pca}} function called
+##' within Q2.
 ##' @return A matrix or vector with \eqn{Q^2} estimates.
 ##' @export
 ##' @examples
@@ -44,13 +49,13 @@
 ##' x <- iris[,1:4]
 ##' pcIr <- pca(x, nPcs=3)
 ##' q2 <- Q2(pcIr, x)
-##' barplot(q2, main="Krzanowski CV", xlab="Amount of PC's", ylab=expression(Q^2))
+##' barplot(q2, main="Krzanowski CV", xlab="Number of PCs", ylab=expression(Q^2))
 ##' pcIr <- pca(x, nPcs=3, method="nipals")
 ##' q2 <- Q2(pcIr, x, type="impute")
-##' barplot(q2, main="Imputation CV", xlab="Amount of PC's", ylab=expression(Q^2))
+##' barplot(q2, main="Imputation CV", xlab="Number of PCs", ylab=expression(Q^2))
 ##' @author Henning Redestig
 ##' @keywords multivariate
-Q2 <- function(object, originalData, fold=5, nruncv=1,
+Q2 <- function(object, originalData=completeObs(object), fold=5, nruncv=1,
                type=c("krzanowski", "impute"),
                verbose=interactive(), ...) {
   type <- match.arg(type)
@@ -59,8 +64,10 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
     set <- originalData
     originalData <- t(exprs(originalData))
   }
+  if(is.null(originalData))
+    stop("missing data when estimating Q2")
   originalData <- as.matrix(originalData)
-  originalData <- prep(originalData, center=centered(object))
+  originalData <- prep(originalData, scale=scl(object), center=center(object))
 
   nR <- nObs(object)
   nC <- nVar(object)
@@ -76,7 +83,6 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
 
   ssx <- sum(originalData^2, na.rm=TRUE)
   
-  
   for(nr in 1:nruncv) {
     ## --- impute ---
     if(type == "impute") {
@@ -86,7 +92,8 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
       seg <- list()
       nDiag <- max(nR, nC)
       diagPerFold <- floor(nDiag / fold)
-      suppressWarnings(diags <- matrix(1:nDiag, nrow=diagPerFold, ncol=fold, byrow=TRUE))
+      suppressWarnings(diags <- matrix(1:nDiag, nrow=diagPerFold,
+                                       ncol=fold, byrow=TRUE))
       if(diagPerFold == 0 || diagPerFold > (nDiag / 2))
         stop("Matrix could not be safely divided into ", fold,
              " segments. Choose a different fold or provide the desired segments")
@@ -180,10 +187,10 @@ Q2 <- function(object, originalData, fold=5, nruncv=1,
 }
 
 ##' Simply replace completely missing rows or cols with zeroes.
-##'
 ##' @title Temporary fix for missing values
 ##' @param mat a matrix
-##' @return The original matrix with completely missing rows/cols filled with zeroes.
+##' @return The original matrix with completely missing rows/cols
+##' filled with zeroes.
 ##' @author Henning Redestig 
 tempFixNas <- function(mat) {
   badRows <- apply(mat, 1, function(x) all(is.na(x)))

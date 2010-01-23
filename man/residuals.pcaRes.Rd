@@ -1,25 +1,18 @@
 \name{residuals.pcaRes}
-\alias{residuals.pcaRes}
-\alias{residuals,pcaRes-method}
 \title{Residuals values from a PCA model.}
-\description{This function extracts the residuals values from
-  a pcaRes object for the PCA methods SVD, Nipals, PPCA and BPCA
-}
-
-\usage{residuals.pcaRes(object, data, nPcs=object@nPcs, ...)}
-\arguments{
-  \item{object}{\code{pcaRes} the \code{pcaRes} object of interest.}
-  \item{data}{\code{matrix} The data that was used to calculate the PCA
-    model (or a different dataset to e.g. adress its proximity to the model).} 
-  \item{nPcs}{\code{numeric} The amount of PC's to consider}
-  \item{...}{Not passed on anywhere, included for S3 consistency.}
-}
-\value{A \code{matrix} with the residuals
-}
+\usage{residuals.pcaRes(object, data=completeObs(object), ...)}
+\description{This function extracts the residuals values from a pcaRes object
+for the PCA methods SVD, Nipals, PPCA and BPCA}
+\value{A \code{matrix} with the residuals}
+\alias{residuals.pcaRes}
 \keyword{multivariate}
-\examples{
-data(iris)
+\author{Henning Redestig}
+\arguments{\item{object}{\code{pcaRes} the \code{pcaRes} object of interest.}
+\item{data}{\code{matrix} The data that was used to calculate the
+PCA model (or a different dataset to e.g. adress its proximity to
+the model).}
+\item{...}{Passed on to \code{\link{predict.pcaRes}}. E.g. setting
+the number of used components.}}
+\examples{data(iris)
 pcIr <- pca(iris[,1:4])
-head(residuals(pcIr, iris[,1:4]))
-}
-\author{Henning Redestig <henning[at]psc.riken.jp>}
+head(residuals(pcIr, iris[,1:4]))}

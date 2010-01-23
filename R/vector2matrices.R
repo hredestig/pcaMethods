@@ -1,3 +1,8 @@
+##' Tranform the vectors of weights to matrix structure
+##' @param object  an nlpcaNet
+##' @return weights in matrix structure
+##' @author Henning Redestig
+##' @aliases vector2matrices,nlpcaNet-method
 setMethod("vector2matrices", "nlpcaNet",
           function(object) {
             netDim <- dim(object@net)
@@ -7,7 +12,8 @@ setMethod("vector2matrices", "nlpcaNet",
             for(i in 1:(netDim[2] - 1)) {
               wSize <- c(object@net[i + 1], object@net[i] + 1)
               posEnd <- posEnd + prod(wSize)
-              result[[i]] <- matrix(object@weights$current()[posBegin:posEnd], wSize[1], wSize[2])
+              result[[i]] <-
+                matrix(object@weights$current()[posBegin:posEnd], wSize[1], wSize[2])
               posBegin <- posEnd + 1
             }
             
@@ -16,6 +22,11 @@ setMethod("vector2matrices", "nlpcaNet",
             result
           })
 
+##' Tranform the vectors of weights to matrix structure
+##' @param object  an nlpcaNet
+##' @return weights in matrix structure
+##' @author Henning Redestig
+##' @aliases vector2matrices,matrix-method
 setMethod("vector2matrices", "matrix",
           function(object, net) {
             netDim <- dim(net)

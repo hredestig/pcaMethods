@@ -50,7 +50,8 @@ sum(is.na(mD))
 @ 
 Now we get the estimated data set by using PPCA and three principal components.
 <<>>=
-imputed <- pca(mD, nPcs=3, method="ppca")@completeObs
+pc <- pca(mD, nPcs=3, method="ppca")
+imputed <- completeObs(pc)
 @ 
 If we compare with the original values we see  that the error is
 rather low.
@@ -59,6 +60,12 @@ data(metaboliteDataComplete)
 mdComp <- metaboliteDataComplete
 sum((mdComp[is.na(mD)] - imputed[is.na(mD)])^2) / sum(mdComp[is.na(mD)]^2)
 @
+When using a different PCA algorithm, we get different performance.
+<<>>=
+imputedNipals <- completeObs(pca(mD, nPcs=3, method="nipals"))
+sum((mdComp[is.na(mD)] - imputedNipals[is.na(mD)])^2) / sum(mdComp[is.na(mD)]^2)
+@ 
+
 If the data we are interested in was gene expression set of class
 'ExpressionSet' we could simply do
 <<>>= 
@@ -68,7 +75,8 @@ exSet <- sample.ExpressionSet
 exSetNa <- exSet
 exprs(exSetNa)[sample(13000, 200)] <- NA
 lost <- is.na(exprs(exSetNa))
-impExSet <- asExprSet(pca(exSetNa, nPcs=2, method="ppca"), exSetNa)
+pc <- pca(exSetNa, nPcs=2, method="ppca")
+impExSet <- asExprSet(pc, exSetNa)
 sum((exprs(exSet)[lost] - exprs(impExSet)[lost])^2) / sum(exprs(exSet)[lost]^2)
 @ 
 Different results will be obtained with different PCA

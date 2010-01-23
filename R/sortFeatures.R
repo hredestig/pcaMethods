@@ -1,7 +1,10 @@
-sortFeatures <- function(nlnet,
-                         trainIn,
-                         trainOut) {
-  
+##' Sort the features of NLPCA object
+##' @param nlnet The nlnet
+##' @param trainIn Training data in
+##' @param trainOut  Training data after it passed through the net
+##' @return ...
+##' @author Henning Redestig
+sortFeatures <- function(nlnet, trainIn, trainOut) {
   weightsAll <- nlnet@weights$current()
   weights <- weightsAll
   if(nlnet@inverse) {
@@ -10,7 +13,6 @@ sortFeatures <- function(nlnet,
     weights <- weightsAll[(numElements + 1):length(weightsAll),,drop=FALSE]
   }
   
-                         
   netDim <- dim(nlnet@net)
   trainDim <- dim(trainIn)
   bneckNum <- nlnet@net[nlnet@componentLayer]
@@ -45,10 +47,10 @@ sortFeatures <- function(nlnet,
           sOut[idx == 0,] <- 0
         }
         
-        
         nOut[(sum(nlnet@net[1:i]) + 1):sum(nlnet@net[1:(i+1)]),,choice] <- sOut
       }
-      output <- nOut[(sum(nlnet@net[1:(dim(nlnet@net)[2]-1)])+1):dim(nOut)[1], ,choice]
+      output <-
+        nOut[(sum(nlnet@net[1:(dim(nlnet@net)[2]-1)])+1):dim(nOut)[1], ,choice]
       
       Epattern <- (output - trainOut)^2
       Epattern[is.na(Epattern)] <- 0
@@ -61,8 +63,10 @@ sortFeatures <- function(nlnet,
     if(E[1]>E[2]) {                     #change features
       changeIdx <- 1:bneckNum
       changeIdx[(n+1):(n+2)] <- c(n+2, n+1)
-      weightMats[[nlnet@componentLayer - 1]] <- weightMats[[nlnet@componentLayer - 1]][changeIdx,]
-      weightMats[[nlnet@componentLayer]] <- weightMats[[nlnet@componentLayer]][,c(1,changeIdx+1)]
+      weightMats[[nlnet@componentLayer - 1]] <-
+        weightMats[[nlnet@componentLayer - 1]][changeIdx,]
+      weightMats[[nlnet@componentLayer]] <-
+        weightMats[[nlnet@componentLayer]][,c(1,changeIdx+1)]
       switching <- c(n+1, n+2)
       nlnet@fCount <- as.integer(nlnet@fCount + 1)
     }

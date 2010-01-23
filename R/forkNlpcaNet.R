@@ -1,3 +1,7 @@
+##' Complete copy of nlpca net object
+##' @param nlnet a nlnet
+##' @return A copy of the input nlnet
+##' @author Henning Redestig
 forkNlpcaNet <- function(nlnet) {
   res <- new("nlpcaNet")
   res@net <- nlnet@net

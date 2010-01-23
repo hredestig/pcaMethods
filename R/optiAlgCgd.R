@@ -1,3 +1,10 @@
+##' Conjugate gradient optimization
+##' @param nlnet The nlnet
+##' @param trainIn Training data
+##' @param trainOut fitted data
+##' @param verbose logical, print messages
+##' @return ...
+##' @author Henning Redestig, Matthias Scholz
 optiAlgCgd <- function(nlnet,
                        trainIn,
                        trainOut,

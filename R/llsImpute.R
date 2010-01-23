@@ -1,49 +1,83 @@
-####################################################################################################
-##
-## Missing value estimation using local least sqares (LLS).
-## First k genes are selected by pearson or spearman correlation coefficients.
-## Then missing values are imputed by regression against the k selected
-## genes.
-## The method was first described in Kim et al, Bioinformatics, 21(2),2005.
-## The allVariables option allows to choose if either only complete genes or all
-## genes may be used for estimation. If all genes are used, initially the missing
-## values are replaced by the columns wise mean. The method then iterates, using
-## the current estimate as input for the regression until the change between new
-## and old estimate falls below a threshold.
-##
-## The method considers columns as variables (genes) and rows as 
-## observations (samples)
-##
-## Parameters:
-## Matrix      - A numeric matrix or data frame. Missing values are denoted
-##               as 'NA'
-## k           - Cluster size, the number of similar genes used for estimation
-## center      - mean center the data if TRUE
-## completeObs - Return estimated complete observations if TRUE
-## correlation - one out of "pearson | kendall | spearman". See also help("cor").
-##               allVariables If FALSE only complete genes are used for the regression, if set
-##               TRUE all genes are considered. Therefore missing values are initially replaced 
-##               by the row wise mean. Then the estimation is repeated with the newly imputed
-##               values until the change falls below a certain threshold (here 0.001).
-## maxSteps    - Maximum number of steps when allVariables = TRUE
-## xval        - For cross validation: Index of the gene to estimate, all other genes will
-##               be ignored if this parameter is set.
-## verbose     - Print step number and relative change if TRUE and allVariables = TRUE
-##
-## Return values:
-## nniRes      - a nearest neighbour imputation (nni) result object
-##
-## Author:    Wolfram Stacklies
-##            MPG/CAS Partner Institute for Computational Biology (PICB)
-##            Shanghai, P.R. China
-## Date:      12/11/2006
-##
-## Contact:    wolfram.stacklies@gmail.com
-##
-####################################################################################################
-
-llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE, correlation = "pearson", 
-                      allVariables = FALSE, maxSteps = 100, xval = NULL, verbose = interactive(), ...) {
+##' Missing value estimation using local least squares (LLS).  First,
+##' k variables (for Microarrya data usually the genes)  are selected
+##' by pearson, spearman or kendall correlation coefficients.  Then
+##' missing values are imputed by a linear combination of the k
+##' selected variables. The optimal combination is found by LLS
+##' regression.  The method was first described by Kim et al,
+##' Bioinformatics, 21(2),2005.
+##'
+##' Missing values are denoted as \code{NA}\cr It is not recommended
+##' to use this function directely but rather to use the nni() wrapper
+##' function. The methods provides two ways for missing value
+##' estimation, selected by the \code{allVariables} option. The first
+##' one is to use only complete variables for the  regression. This is
+##' preferable when the number of incomplete variables is relatively
+##' small.
+##' 
+##' The second way is to consider all variables as candidates for the
+##' regression.  Hereby missing values are initially replaced by the
+##' columns wise mean.  The method then iterates, using the current
+##' estimate as input for the regression until the change between new
+##' and old estimate falls below a threshold (0.001).
+##' 
+##' @title LLSimpute algorithm
+##' @param Matrix \code{matrix} -- Data containing the variables
+##' (genes) in columns and observations (samples) in rows. The data
+##' may contain missing values, denoted as \code{NA}.
+##' @param k \code{numeric} -- Cluster size, this is the number of
+##' similar genes used for regression.
+##' @param center \code{boolean} -- Mean center the data if TRUE
+##' @param completeObs \code{boolean} -- Return the estimated complete
+##' observations if  TRUE. This is the input data with NA values
+##' replaced by the estimated values.
+##' @param correlation \code{character} -- How to calculate the
+##' distance between genes.  One out of pearson | kendall | spearman ,
+##' see also help("cor").
+##' @param allVariables \code{boolean} -- Use only complete genes to
+##' do the regression if TRUE, all genes if FALSE.
+##' @param maxSteps \code{numeric} -- Maximum number of iteration
+##' steps if allGenes = TRUE.
+##' @param xval \code{numeric} Use LLSimpute for cross
+##' validation. xval is the index of the gene to estimate, all other
+##' incomplete genes will be ignored if this parameter is set. We do
+##' not consider them in the cross-validation.
+##' @param verbose \code{boolean} -- Print step number and relative
+##' change if TRUE and  allVariables = TRUE
+##' @param ... Reserved for parameters used in future version of the
+##' algorithm
+##' @note Each step the generalized inverse of a \code{miss} x k
+##' matrix is calculated. Where \code{miss} is the number of missing
+##' values in  variable j and \code{k} the number of neighbours. This
+##' may be slow for large values of k and / or many missing
+##' values. See also help("ginv").
+##' @return   \item{nniRes}{Standard nni (nearest neighbour
+##' imputation) result object of this package. See
+##' \code{\link{nniRes}} for details.}
+##' @seealso \code{\link{pca}, \link{nniRes}, \link{nni}}.
+##' @examples
+##' ## Load a sample metabolite dataset (metaboliteData) with already 5\% of
+##' ## data missing
+##' data(metaboliteData)
+##' ## Perform llsImpute using k = 10
+##' ## Set allVariables TRUE because there are very few complete variables
+##' result <- llsImpute(metaboliteData, k = 10, correlation="pearson", allVariables=TRUE)
+##' ## Get the estimated complete observations
+##' cObs <- completeObs(result)
+##' @keywords multivariate
+##' @export
+##' @references Kim, H. and Golub, G.H. and Park, H.  - Missing value
+##' estimation for DNA microarray gene expression data: local least
+##' squares imputation.  \emph{Bioinformatics, 2005; 21(2):187-198.}
+##' 
+##' Troyanskaya O. and Cantor M. and Sherlock G. and Brown P. and
+##' Hastie T. and Tibshirani R. and Botstein D. and Altman RB.  -
+##' Missing value estimation methods for DNA microarrays.
+##' \emph{Bioinformatics. 2001 Jun;17(6):520-525.}
+##' @author Wolfram Stacklies
+llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE,
+                      correlation = "pearson", 
+                      allVariables = FALSE, maxSteps = 100, xval = NULL,
+                      verbose = interactive(), ...) {
 
     threshold <- 0.001
 
