@@ -1,60 +1,64 @@
 \name{nlpca}
 \alias{nlpca}
 \title{Non-linear PCA}
+\usage{nlpca(Matrix, nPcs=2, maxSteps=2 * prod(dim(Matrix)), unitsPerLayer,
+    functionsPerLayer, weightDecay=0.001, weights,
+    verbose=interactive(), ...)}
 \description{Neural network based non-linear PCA}
-\usage{nlpca(Matrix, nPcs=2, center=TRUE, completeObs=TRUE, maxSteps=2*prod(dim(Matrix)), unitsPerLayer=NULL, functionsPerLayer=NULL, weightDecay=0.001, weights=NULL, verbose=interactive(), ...)}
-\arguments{
-\item{Matrix}{\code{matrix} --- Data containing the variables in columns
-  and observations in rows. The data may contain missing values, denoted as \code{NA}}
-\item{nPcs}{\code{numeric} -- Number of components to estimate. The
-  preciseness of the missing value estimation depends on thenumber of
-  components, which should resemble the internal structure of the data.}
-\item{center}{\code{boolean} Mean center the data if TRUE}
-\item{completeObs}{\code{boolean} Return the complete observations if
-  TRUE. This is the original data with NA values filled with the
-  estimated values.}
-\item{maxSteps}{\code{numeric} -- Number of estimation steps. Default is
-  based on a generous rule of thumb.}
-\item{unitsPerLayer}{The network units, example: c(2,4,6) for two input units 2feature units (principal components), one hidden layer fornon-linearity and three output units (original amount ofvariables).}
-\item{functionsPerLayer}{The function to apply at each layer eg. c("linr", "tanh", "linr") }
+\details{Artificial Neural Network (MLP) for performing non-linear
+PCA. Non-linear PCA is conceptually similar to classical PCA but
+theoretically quite different. Instead of simply decomposing our
+matrix (X) to scores (T) loadings (P) and an error (E) we train a
+neural network (our loadings) to find a curve through the
+multidimensional space of X that describes a much variance as
+possible. Classical ways of interpreting PCA results are thus not
+applicable to NLPCA since the loadings are hidden in the network.
+However, the scores of components that lead to low
+cross-validation errors can still be interpreted via the score
+plot.  Unfortunately this method depend on slow iterations which
+currently are implemented in R only making this method extremely
+slow. Furthermore, the algorithm does not by itself decide when it
+has converged but simply does 'maxSteps' iterations.}
+\value{Standard PCA result object used by all PCA-basedmethods of
+this package. Contains scores, loadings, data meanand more. See
+\code{\link{pcaRes}} for details.}
+\author{Based on a matlab script by Matthias Scholz and ported to
+R by Henning Redestig}
+\references{Matthias Scholz, Fatma Kaplan, Charles L Guy, Joachim
+Kopkaand Joachim Selbig. Non-linear PCA: a missing
+data approach. \emph{Bioinformatics, 21(20):3887-3895, Oct 2005}}
+\arguments{\item{Matrix}{\code{matrix} --- Preprocessed data with the
+variables in columns and observations in rows. The data may
+contain missing values, denoted as \code{NA}}
+\item{nPcs}{\code{numeric} -- Number of components to
+estimate. The preciseness of the missing value estimation depends
+on thenumber of components, which should resemble the internal
+structure of the data.}
+\item{maxSteps}{\code{numeric} -- Number of estimation
+steps. Default is based on a generous rule of thumb.}
+\item{unitsPerLayer}{The network units, example: c(2,4,6) for two
+input units 2feature units (principal components), one hidden
+layer fornon-linearity and three output units (original amount
+ofvariables).}
+\item{functionsPerLayer}{The function to apply at each layer
+eg. c("linr", "tanh", "linr")}
 \item{weightDecay}{Value between 0 and 1.}
-\item{weights}{Starting weights for the network. Defaults to uniform
-  random values but can be set specifically to make algorithm deterministic.}
-\item{verbose}{\code{boolean} -- nlpca prints the number of steps and
-  warning messages if set to TRUE. Default is interactive().}
-\item{...}{Reserved for future use. Not passed on anywhere.}
-}
-\details{Artificial Neural Network (MLP) for performing non-linear PCA. Non-linear PCA is conceptually similar to classical PCA but
-     theoretically quite different. Instead of simply decomposing our
-     matrix (X) to scores (T) loadings (P) and an error (E) we train a
-     neural network (our loadings) to find a curve through the
-     multidimensional space of X that describes a much variance as
-     possible. Classical ways of interpreting PCA results are thus not
-     applicable to NLPCA since the loadings are hidden in the network.
-     However, the scores of components that lead to low
-     cross-validation errors can still be interpreted via the score
-     plot.
-
-     Unfortunately this method depend on slow iterations which
-     currently are implemented in R only making this method extremely
-     slow. Furthermore, the algorithm does not by itself decide when it
-     has converged but simply does 'maxSteps' iterations.
-   }
-\value{\item{pcaRes}{Standard PCA result object used by all PCA-basedmethods of this package. Contains scores, loadings, data meanand more. See \code{\link{pcaRes}} for details.}
-}
-\references{Matthias Scholz, Fatma Kaplan, Charles L Guy, Joachim Kopkaand Joachim Selbig. Non-linear PCA: a missing dataapproach. \emph{Bioinformatics, 21(20):3887-3895, Oct 2005}}
-\examples{
-# Data set with three variables where data points constitute a helix
+\item{weights}{Starting weights for the network. Defaults to
+uniform random values but can be set specifically to make
+algorithm deterministic.}
+\item{verbose}{\code{boolean} -- nlpca prints the number of steps
+and warning messages if set to TRUE. Default is interactive().}
+\item{...}{Reserved for future use. Not passed on anywhere.}}
+\examples{## Data set with three variables where data points constitute a helix
 data(helix)
 helixNA <- helix
-helixNA <- t(apply(helix, 1, function(x) { x[sample(1:3, 1)] <- NA; x})) # not a single complete observation
-helixNlPca <- pca(helixNA, nPcs=1, method="nlpca", maxSteps=500)
+## not a single complete observation
+helixNA <- t(apply(helix, 1, function(x) { x[sample(1:3, 1)] <- NA; x}))
+## 50 steps is not enough, for good estimation use 1000
+helixNlPca <- pca(helixNA, nPcs=1, method="nlpca", maxSteps=50)
 fittedData <- fitted(helixNlPca, helixNA)
 plot(fittedData[which(is.na(helixNA))], helix[which(is.na(helixNA))])
-# compared to solution by Nipals PCA that cannot extract non-linear patterns
+## compared to solution by Nipals PCA which cannot extract non-linear patterns
 helixNipPca <- pca(helixNA, nPcs=2)
 fittedData <- fitted(helixNipPca)
-plot(fittedData[which(is.na(helixNA))], helix[which(is.na(helixNA))])
-}
-\author{Based on a matlab script by Matthias Scholz and ported to R by Henning Redestig}
-\keyword{multivariate}
+plot(fittedData[which(is.na(helixNA))], helix[which(is.na(helixNA))])}

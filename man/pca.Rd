@@ -1,67 +1,77 @@
-\encoding{latin1}
 \name{pca}
 \alias{pca}
 \title{Perform principal component analysis}
-\description{Can be used for computing PCA on a numeric
-  matrix for visualisation, information extraction and missing value imputation.}
-\usage{pca(object, method=c("svd", "nipals", "rnipals", "bpca", "ppca",
-"svdImpute", "nlpca", "robustPca"), subset=numeric(), nPcs=2,...)}
-\arguments{
-  \item{object}{Numerical matrix  with (or an object coercible to such) with
-    samples in rows and variables as columns. Also takes \code{ExpressionSet} in
-    which case the transposed expression matrix is used.}
-  \item{subset}{For convenience one can pass a large matrix but only
-    use the variable specified as subset. Can be colnames or indices.}
-  \item{method}{One of "svd", "nipals", "rnipals", "bpca", "nlpca" or "ppca".}
-  \item{nPcs}{Number of principal components to calculate.}
-  \item{...}{Further arguments to the chosen pca method.}
-}
-\details{
-  This method is wrapper function for the following set of pca methods:
-  \describe{
-    \item{svd:}{Uses classical \code{prcomp}. See documentation for \code{\link{svdPca}}.}
-    \item{nipals:}{An iterative method capable of handling small amounts
-      of missing values. See documentation for \code{\link{nipalsPca}}.}
-    \item{rnipals:}{Same as nipals but implemented in R.}
-    \item{bpca:}{An iterative method using a Bayesian model to handle missing values. See documentation for \code{\link{bpca}}.}
-    \item{ppca:}{An iterative method using a probabilistic model to handle missing values. See documentation for \code{\link{ppca}}.}
-    \item{svdImpute:}{Uses expectation maximation to perform SVD PCA on incomplete data. See documentation for \code{\link{svdImpute}}.}
-  }
-  Extra arguments usually given to this function include:
-  \describe{
-    \item{nPcs:}{The amount of principal components to extract}
-  }
-}
+\usage{pca(object, method=listPcaMethods(), nPcs=2, scale=c("none", "pareto",
+    "vector", "uv"), center=TRUE, completeObs=TRUE, subset,
+    cv=c("none", "q2"), ...)}
+\description{Can be used for computing PCA on a numeric matrix for
+visualisation, information extraction and missing value
+imputation.}
+\details{This method is wrapper function for the following set of pca
+methods:
 
-\value{
-  A \code{pcaRes} object. 
-}
-\references{
-  Wold, H. (1966) Estimation of principal components and related models by
-  iterative least squares. In Multivariate Analysis (Ed.,
-  P.R. Krishnaiah), Academic Press, NY, 391-420.
-  
-  Shigeyuki Oba, Masa-aki Sato, Ichiro Takemasa,
-  Morito Monden, Ken-ichi Matsubara and Shin Ishii.
-  A Bayesian missing value estimation method for gene expression profile
-  data. \emph{Bioinformatics, 19(16):2088-2096, Nov 2003}.
+\describe{\item{svd:}{Uses classical \code{prcomp}.See
+documentation for \code{\link{svdPca}}.}
 
-  Troyanskaya O. and Cantor M. and Sherlock G. and Brown
-  P. and Hastie T. and Tibshirani R. and Botstein D. and Altman RB.
-  - Missing value estimation methods for DNA microarrays.
-  \emph{Bioinformatics. 2001 Jun;17(6):520-5}.
-}
-\author{Wolfram Stacklies, Henning Redestig}
+\item{nipals:}{An iterative method capable of handling small
+amounts of missing values. See documentation for
+\code{\link{nipalsPca}}.}
+
+\item{rnipals:}{Same as nipals but implemented in R.}
+
+\item{bpca:}{An iterative method using a Bayesian model to handle
+missing values. See documentation for \code{\link{bpca}}.}
+
+\item{ppca:}{An iterative method using a probabilistic model to
+handle missing values. See documentation for \code{\link{ppca}}.}
+
+\item{svdImpute:}{Uses expectation maximation to perform SVD PCA
+on incomplete data. See documentation for
+\code{\link{svdImpute}}.}}
+
+Scaling and centering is part of the PCA model and handled by
+\code{\link{prep}}.}
+\value{A \code{pcaRes} object.}
+\references{Wold, H. (1966) Estimation of principal components and
+related models by iterative least squares. In Multivariate
+Analysis (Ed., P.R. Krishnaiah), Academic Press, NY, 391-420.
+
+Shigeyuki Oba, Masa-aki Sato, Ichiro Takemasa, Morito Monden,
+Ken-ichi Matsubara and Shin Ishii.  A Bayesian missing value
+estimation method for gene expression profile
+data. \emph{Bioinformatics, 19(16):2088-2096, Nov 2003}.
+
+Troyanskaya O. and Cantor M. and Sherlock G. and Brown P. and
+Hastie T. and Tibshirani R. and Botstein D. and Altman RB.  -
+Missing value estimation methods for DNA microarrays.
+\emph{Bioinformatics. 2001 Jun;17(6):520-5}.}
 \seealso{\code{\link{prcomp}}, \code{\link{princomp}},
-  \code{\link{nipalsPca}}, \code{\link{svdPca}}}
-\examples{
-data(iris)
-## Usually some kind of scaling is appropriate
-pcIr <- pca(iris[,1:4], nPcs = 2, method="nipals")
-pcIr <- pca(iris[,1:4], nPcs = 2, method="svd")
+\code{\link{nipalsPca}}, \code{\link{svdPca}}}
+\keyword{multivariate}
+\author{Wolfram Stacklies, Henning Redestig}
+\arguments{\item{object}{Numerical matrix with (or an object coercible to
+such) with samples in rows and variables as columns. Also takes
+\code{ExpressionSet} in which case the transposed expression
+matrix is used.}
+\item{method}{One of the methods reported by \code{pcaMethods()}}
+\item{nPcs}{Number of principal components to calculate.}
+\item{scale}{Scaling, see \code{\link{prep}}.}
+\item{center}{Centering, see \code{\link{prep}}.}
+\item{completeObs}{Sets the \code{completeObs} slot on the
+resulting \code{pcaRes} object containing the original data with
+but with all NAs replaced with the estimates.}
+\item{subset}{A subset of variables to use for calculating the
+model. Can be column names or indices.}
+\item{cv}{character naming a the type of cross-validation
+to be performed.}
+\item{...}{Arguments to \code{\link{prep}}, the chosen pca
+method and \code{\link{Q2}}.}}
+\examples{data(iris)
+##  Usually some kind of scaling is appropriate
+pcIr <- pca(iris[,1:4], method="svd", nPcs=2)
+pcIr <- pca(iris[,1:4], method="nipals", nPcs=3, cv="q2")
 ## Get a short summary on the calculated model
 summary(pcIr)
+plot(pcIr)
 ## Scores and loadings plot
-slplot(pcIr, sl=as.character(iris[,5]))
-}
-\keyword{multivariate}
+slplot(pcIr, sl=as.character(iris[,5]))}

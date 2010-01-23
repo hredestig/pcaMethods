@@ -1,7 +1,0 @@
-Add a function for biplots
-
-regarding Q2, removing diagonals are good but there is no
-randomization anymore, this must be fixed. also it would be good if
-you could suggest a percentage of missing values and that the method
-itself would remove the appropriate amount of diagonals.
-

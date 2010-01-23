@@ -1,6 +1,19 @@
 # -*- org -*-
 #+TITLE: NEWS file for the pcaMethods package
 
+* Version 1.29.0 <2010-01-23 Sat>
+** CV 
+Can now be done directly when calling pca and the result is saved withing the pcaRes object to make plotting easier. A new method plot.pcaRes replaces plotR2
+** Migration to roxygen
+The main event in this version is that pcaMethods is now completely documented with roxygen style comment fields. No more editing Rd files, wohoo!
+** Migration to using getter methods
+Should have been done to start with. Obvious advantages.
+** Proper handling of pre-processing
+the prep method has been shaped up and now handles various kind of pre-processing and also post-processing where so that fitted can actually deliver the final fitted data. 
+*** Unification of pre-processing policies
+All pca methods now only set scores, loadings and R2cum (all these may be computed slightly differently within the different methods) all other slots are handled by the pca wrapper method. This way, handling of pre-processing is guaranteed to be the same for all methods and makes for much cleaner code.
+** Clean up
+Major tidying act (still ongoing). Many methods were creating unnecessary copies of large matrices and used poor variable names. This has been amended.
 * Version 1.27.2 <2010-01-05 Tue> 
 - Krzanowski CV changed so to not try to estimate Q^2 for more
   PCs than possible.
@@ -21,17 +34,17 @@
   applicable also for SVD.
 * Version 1.24.0 <2008-10-27 Mon> 
 - Improvements to slplot, bugfixes and a show method
-* Version <2008-02-27 Wed> 
+* Version x.y.z <2008-02-27 Wed> 
 - Replaced usage of exprSet class with ExpressionSet
-* Version <2007-04-10 Tue> 
+* Version x.y.z <2007-04-10 Tue> 
 - Added robustSVD, a SVD implementation robust to outliers
-* Version <2007-01-02 Tue> 
+* Version x.y.z <2007-01-02 Tue> 
 - Added a Non-linear PCA algorithm.
-* Version <2006-12-11 Mon> 
+* Version x.y.z <2006-12-11 Mon> 
 - kEstimate interface has changed. Instead of specifying a
   single value for the maximum number of pcs it is now possible
   to specify an array, e.g. c(3,5,7,9.20) or 3:7
-* Version <2006-12-11 Mon> 
+* Version x.y.z <2006-12-11 Mon> 
 - Added a cluster based imputation method called llsImpute.
   This is mainly thought for comparison with the other methods.
   kEstimate may also be used with llsImpute.
@@ -42,5 +55,9 @@
 of ppca and possibly bpca. Nlpca would be nice and would probably benefit most of being ported to C++..
 *** ppca							    :STARTED:
 using gsl but speed gain so far not so remarkable
-** Proper handling of scaling and centering 			    :STARTED:
+** DONE Proper handling of scaling and centering
+   CLOSED: [2010-01-22 Fri 11:15]
 Current version is broken and need full rewrite
+** DONE Add Q2 as a slot 
+   CLOSED: [2010-01-22 Fri 11:15]
+and a plotting function

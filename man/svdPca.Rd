@@ -1,38 +1,28 @@
 \name{svdPca}
 \alias{svdPca}
-\title{Perform principal component analysis using singular value decomposition}
-\description{A wrapper function for R's standard function \code{prcomp}.
-  Delivers the result as a \code{pcaRes} method for compatibility with
-  the rest of the pcaMethods package.
-
-  It is not recommended to use this function directely but rather to use
-  the pca() wrapper function.
-}
-\usage{svdPca(Matrix, nPcs=2, center=TRUE, completeObs=FALSE,
-  varLimit=1, verbose=interactive(), ...)}
-\arguments{
-  \item{Matrix}{Numerical matrix samples in rows and variables as columns.}
-  \item{nPcs}{Number of components that should be extracted.}
-  \item{center}{Center the data column wise if TRUE}
-  \item{completeObs}{Return the complete observations. This exisits for compatibility
-  only, as svdPca cannot missing values. If set TRUE the input matrix will be returned
-  in the \code{completeObs} field.}
-  \item{varLimit}{Optionally the ratio of variance that should be
-    explained. \code{nPcs} is ignored if varLimit < 1}
-  \item{verbose}{Verbose complaints to matrix structure}
-  \item{...}{Only used for passing through arguments.}
-}
-\details{
-  svdPca can preferrably be called using \code{pca(object, method="svd")}.
-}
-
-\value{
-  A \code{pcaRes} object.
-}
-\author{Henning Redestig}
+\title{Perform principal component analysis using singular value
+decomposition}
+\usage{svdPca(Matrix, nPcs=2, varLimit=1, verbose=interactive(), ...)}
+\description{A wrapper function for \code{prcomp} to deliver the result as a
+\code{pcaRes} method. Supplied for  compatibility with  the rest
+of the pcaMethods package.  It is not recommended to use this
+function directely but rather to use  the \code{pca()} wrapper
+function.}
+\value{A \code{pcaRes} object.}
 \seealso{\code{prcomp}, \code{princomp}, \code{pca}}
-\examples{
-data(iris)
-pcIr <- svdPca(iris[,1:4], nPcs=2)
-}
 \keyword{multivariate}
+\author{Henning Redestig}
+\arguments{\item{Matrix}{Pre-processed (centered and possibly scaled)
+numerical matrix samples in rows and variables as columns. No
+missing values allowed.}
+\item{nPcs}{Number of components that should be extracted.}
+\item{varLimit}{Optionally the ratio of variance that should be
+explained. \code{nPcs} is ignored if varLimit < 1}
+\item{verbose}{Verbose complaints to matrix structure}
+\item{...}{Only used for passing through arguments.}}
+\examples{data(metaboliteDataComplete)
+mat <- prep(t(metaboliteDataComplete))
+pc <- svdPca(mat, nPcs=2)
+## better use pca()
+pc <- pca(t(metaboliteDataComplete), method="svd", nPcs=2)
+\dontshow{stopifnot(sum((fitted(pc) - t(metaboliteDataComplete))^2, na.rm=TRUE) < 200)}}

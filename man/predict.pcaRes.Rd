@@ -1,41 +1,32 @@
 \name{predict.pcaRes}
-\alias{predict.pcaRes}
-\alias{predict,pcaRes-method}
 \title{Predict values from PCA.}
-\description{This function extracts the predict values from
-  a pcaRes object for the PCA methods SVD, Nipals, PPCA and BPCA
-
-  Newdata is first centered if the PCA model was and then scores
-  (\eqn{T}) and data (\eqn{X}) is 'predicted' according to :
-
-  \eqn{\hat{T}=X_{new}P}{That=XnewP}
-
-  \eqn{\hat{X}_{new}=\hat{T}P'}{Xhat=ThatP'}
-
-  Missing values are set to zero before matrix multiplication to achieve
-  NIPALS like treatment of missing values. 
-
-}
-
-\usage{predict.pcaRes(object, newdata, pcs=nPcs(object), ...)}
-\arguments{
-  \item{object}{\code{pcaRes} the \code{pcaRes} object of interest.}
-  \item{newdata}{\code{matrix} new data with same number of columns as
-    the used to compute \code{object}.} 
-  \item{pcs}{\code{numeric} The number of PC's to consider}
-  \item{...}{Not passed on anywhere, included for S3 consistency.}
-}
-\value{A list with the following components:
-  \item{scores}{The predicted scores}
-  \item{x}{The predicted data}
-}
+\usage{predict.pcaRes(object, newdata, pcs=nP(object), pre=TRUE, post=TRUE,
+    ...)}
+\description{Predict data using PCA model}
+\details{This function extracts the predict values from a pcaRes object for
+the PCA methods SVD, Nipals, PPCA and BPCA.  Newdata is first
+centered if the PCA model was and then scores (\eqn{T}) and data
+(\eqn{X}) is 'predicted' according to :
+\eqn{\hat{T}=X_{new}P}{That=XnewP}
+\eqn{\hat{X}_{new}=\hat{T}P'}{Xhat=ThatP'}.  Missing values are
+set to zero before matrix multiplication to achieve NIPALS like
+treatment of missing values.}
+\value{A list with the following components: \item{scores}{The
+predicted scores} \item{x}{The predicted data}}
+\alias{predict.pcaRes}
 \keyword{multivariate}
-\examples{
-data(iris)
+\author{Henning Redestig}
+\arguments{\item{object}{\code{pcaRes} the \code{pcaRes} object of interest.}
+\item{newdata}{\code{matrix} new data with same number of columns
+as the used to compute \code{object}.}
+\item{pcs}{\code{numeric} The number of PC's to consider}
+\item{pre}{pre-process \code{newdata} based on the pre-processing
+chosen for the PCA model}
+\item{post}{unpre-process the final data (add the center back etc)}
+\item{...}{Not passed on anywhere, included for S3 consistency.}}
+\examples{data(iris)
 hidden <- sample(nrow(iris), 50)
 pcIr <- pca(iris[-hidden,1:4])
 pcFull <- pca(iris[,1:4])
 irisHat <- predict(pcIr, iris[hidden,1:4])
-cor(irisHat$scores[,1], scores(pcFull)[hidden,1])
-}
-\author{Henning Redestig <henning[at]psc.riken.jp>}
+cor(irisHat$scores[,1], scores(pcFull)[hidden,1])}

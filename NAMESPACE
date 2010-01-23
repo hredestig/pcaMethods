@@ -1,60 +1,66 @@
-importFrom(stats, fitted)
-importFrom(stats, predict)
-importFrom(stats, resid)
-importFrom(stats, biplot)
-
+export(bpca)
+export(checkData)
+exportClasses(nlpcaNet)
+exportClasses(pcaRes)
+exportClasses(nniRes)
+exportMethods(leverage)
+exportMethods(DModX)
+exportMethods(nP)
+exportMethods(cvstat)
+exportMethods(nPcs)
+exportMethods(nObs)
+exportMethods(nVar)
+exportMethods(centered)
+exportMethods(center)
+exportMethods(completeObs)
+exportMethods(method)
+exportMethods(nmissing)
+exportMethods(wasna)
+exportMethods(sDev)
+exportMethods(scaled)
+exportMethods(scl)
+exportMethods(R2cum)
+export(scores.pcaRes)
+export(loadings.pcaRes)
+export(dim.pcaRes)
+export(kEstimateFast)
+export(kEstimate)
+export(llsImpute)
+export(RnipalsPca)
+export(nipalsPca)
+export(nlpca)
 useDynLib(pcaMethods)
-
-exportClasses(
-              pcaRes,
-              nniRes,
-              nlpcaNet
-              )
-
-exportMethods(
-              slplot,
-              summary,
-              print,
-              fitted,
-              show,
-              center,
-              scaled,
-              sDev,
-              nPcs,
-              nVar,
-              nObs,
-              centered,
-              method,
-              leverage,
-              completeObs
-              )
-
-export(
-       pca,
-       nni,
-       plotPcs,
-       ppca,
-       bpca,
-       nipalsPca,
-       RnipalsPca,
-       svdPca,
-       prep,
-       Q2,
-       svdImpute,
-       checkData,
-       kEstimate,
-       llsImpute,
-       nlpca,
-       plotR2,
-       fitted.pcaRes,
-       kEstimateFast,
-       asExprSet,
-       robustSvd,
-       robustPca,
-       predict.pcaRes,
-       residuals.pcaRes,
-       biplot.pcaRes,
-       scores.pcaRes,
-       loadings.pcaRes,
-       dim.pcaRes
-       )
+export(listPcaMethods)
+export(pca)
+export(nni)
+export(asExprSet)
+export(plotPcs)
+export(showPcaRes)
+export(showNniRes)
+exportMethods(print)
+importFrom(methods,show)
+exportMethods(show)
+export(biplot.pcaRes)
+importFrom(stats,biplot)
+exportMethods(summary)
+export(predict.pcaRes)
+importFrom(stats,predict)
+exportMethods(predict)
+export(residuals.pcaRes)
+importFrom(stats,residuals)
+exportMethods(residuals)
+importFrom(stats,resid)
+exportMethods(resid)
+export(fitted.pcaRes)
+importFrom(stats,fitted)
+exportMethods(fitted)
+export(plot.pcaRes)
+export(plotR2)
+exportMethods(slplot)
+export(svdPca)
+export(ppca)
+export(prep)
+export(robustPca)
+export(robustSvd)
+export(svdImpute)
+export(Q2)

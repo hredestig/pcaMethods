@@ -1,7 +1,13 @@
+##' Later
+##' @param nlnet the nlnet
+##' @param trainIn training data
+##' @param trainOut  fitted data
+##' @return derror
+##' @author Henning Redestig, Matthias Scholz
 derrorHierarchic <- function(nlnet, trainIn, trainOut) {
 
   weights <- nlnet@weights$current()
-  netDim <- dim(nlnet@net)                    #net_dim = netDim[1], net_num = netDim[2]
+  netDim <- dim(nlnet@net) 
   if(nlnet@inverse) {
     numElements <- nlnet@net[1] * dim(trainOut)[2]
     trainIn <- matrix(weights[1:numElements], nrow=nlnet@net[1], ncol=dim(trainOut)[2])
