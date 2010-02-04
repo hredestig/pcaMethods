@@ -7,4 +7,4 @@
 \value{Number of observations}
 \author{Henning Redestig}
 \arguments{\item{object}{pcaRes object}
-\item{...}{}}
+\item{...}{Not used}}
