@@ -137,7 +137,7 @@ setMethod("nPcs", "pcaRes", function(object, ...) {
 setGeneric("nObs", function(object, ...) standardGeneric("nObs"))
 ##' Get the number of observations used to build the PCA model.
 ##' @param object pcaRes object
-##' @param ...
+##' @param ... Not used
 ##' @usage nObs(object, ...)
 ##' @aliases nObs nObs,pcaRes-method
 ##' @return Number of observations
@@ -150,7 +150,7 @@ setMethod("nObs", "pcaRes", function(object, ...) {
 setGeneric("nVar", function(object, ...) standardGeneric("nVar"))
 ##' Get the number of variables used to build the PCA model.
 ##' @param object pcaRes object
-##' @param ...
+##' @param ... Not used
 ##' @usage nVar(object, ...)
 ##' @aliases nVar nVar,pcaRes-method
 ##' @return Number of variables

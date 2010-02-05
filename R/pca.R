@@ -791,14 +791,14 @@ function(object, pcs=c(1,2), scoresLoadings=c(TRUE, TRUE),
     plotPcs(object, pcs, scoresLoadings=scoresLoadings,...)
   else {
     if(is.null(sub))
-      sub <- paste(sprintf("%.2f", R2cum(object)[min(c(pcs, nP(object)))]
+      sub <- paste(sprintf("%.2f", R2cum(object)[max(pcs)]
                            * 100),
                    "% of the variance explained", sep="")
 
     if(sum(scoresLoadings) == 2)
       layout(matrix(c(1,2), 1, 2, TRUE), respect=matrix(c(1,1), 1, 2))
     ## exception plot if one dimensional
-    if (length(pcs) == 1 || nP(object) == 1) {
+    if (length(pcs) == 1 | nP(object) == 1) {
       pcs <- 1
       
       ## score plot
