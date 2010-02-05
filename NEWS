@@ -1,7 +1,10 @@
 # -*- org -*-
 #+TITLE: NEWS file for the pcaMethods package
 
-* Version 1.29.0 <2010-01-23 Sat>
+* Version 1.29.1 
+** Minor corrections
+- Fixed mistake in slplot, now report the explained variance up to the highest chosen pc instead of the minimum. 
+* Version 1.29.0 <2010-01-23 Sat> 
 ** CV 
 Can now be done directly when calling pca and the result is saved withing the pcaRes object to make plotting easier. A new method plot.pcaRes replaces plotR2
 ** Migration to roxygen
