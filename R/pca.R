@@ -129,10 +129,10 @@ pca <- function(object, method=listPcaMethods(), nPcs=2,
     stop("Invalid data format.",
          "Run checkData(data, verbose=TRUE) for details")
 
-  missing <- is.na(Matrix)
-
-  if(!is.null(subset))
+  if(!is.null(subset)) 
     Matrix <- Matrix[,subset]
+  
+  missing <- is.na(Matrix)
 
   if(any(missing) & method == "svd") 
     method <- "nipals"
