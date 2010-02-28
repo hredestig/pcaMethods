@@ -175,6 +175,8 @@ pca <- function(object, method=listPcaMethods(), nPcs=2,
     colnames(res@loadings) <- paste("PC", 1:nPcs, sep = "")
     rownames(res@loadings) <- colnames(Matrix)
   }
+  if(!is.null(subset))
+    res@subset <- subset
   res@missing <- missing
   res@nPcs <- nPcs
   res@nObs <- nrow(Matrix)
