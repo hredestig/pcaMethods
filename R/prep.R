@@ -65,12 +65,12 @@ prep <- function(object, scale=c("none", "pareto", "vector", "uv"),
   
   if(is.character(scale[1])) {
     scale <- match.arg(scale)
-    if(scale == "uv" | scale == "pareto")
+    if(scale == "uv")
       scale <- apply(obj, 2, sd, na.rm=TRUE)
     else if(scale == "none")
       scale <- rep(1, ncol(obj))
     else if(scale == "pareto")
-      scale <- sqrt(scale)
+      scale <- sqrt(apply(obj, 2, sd, na.rm=TRUE))
     else if(scale == "vector")
       scale <- apply(obj, 2, function(x) sqrt(sum(x^2, na.rm=TRUE)))
   }
