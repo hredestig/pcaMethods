@@ -31,10 +31,10 @@ scaled and warning is issued instead.}
 \item{simple}{Logical indicating if only the data should be
 returned or a list with the pre-processing statistics as well.}
 \item{reverse}{Logical indicating  if matrix should be
-'un-preprocessed' instead by multiplying each column with its
-scale and adding the center. In this case, center and scale should
-be vectors with the statistics (no warning is issued if not,
-instead output becomes the same as input).}
+'post-processed' instead by multiplying each column with its scale
+and adding the center. In this case, center and scale should be
+vectors with the statistics (no warning is issued if not, instead
+output becomes the same as input).}
 \item{...}{Only used for passing through arguments.}}
 \examples{object <- matrix(rnorm(50), nrow=10)
 res <- prep(object, scale="uv", center=TRUE, simple=FALSE)

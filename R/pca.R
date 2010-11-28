@@ -112,6 +112,9 @@ pca <- function(object, method=listPcaMethods(), nPcs=2,
   } else
   Matrix <- as.matrix(object, rownames.force=TRUE)
 
+  if(!is.null(subset)) 
+    Matrix <- Matrix[,subset]
+  
   method <- match.arg(method)
   cv <- match.arg(cv)
   scale <- match.arg(scale)
@@ -129,9 +132,6 @@ pca <- function(object, method=listPcaMethods(), nPcs=2,
     stop("Invalid data format.",
          "Run checkData(data, verbose=TRUE) for details")
 
-  if(!is.null(subset)) 
-    Matrix <- Matrix[,subset]
-  
   missing <- is.na(Matrix)
 
   if(any(missing) & method == "svd") 
@@ -165,6 +165,7 @@ pca <- function(object, method=listPcaMethods(), nPcs=2,
            res <- nlpca(prepres$data, nPcs=nPcs, ...)
          })
 
+  nPcs <- ncol(res@scores)
   if(is.null(scores(res)) | is.null(loadings(res)) |
      is.null(R2cum(res)) | is.null(method(res)))
     stop(paste("bad result from pca method", method))

@@ -27,25 +27,25 @@ void norm(vector<double>& vec) {
 }
 
 RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
-  SEXP rl = R_NilValue;
-  bool cnt;
-  int count = 0;
-  double tsize;
-
-  char* exceptionMesg = NULL;
-  try {
-    RcppParams rparams(params);
-    int maxSteps = rparams.getIntValue("maxSteps");
-    double eps = rparams.getDoubleValue("threshold");
-    int nPcs = rparams.getIntValue("nPcs");
-    double varLimit = rparams.getDoubleValue("varLimit");
-    RcppMatrix<double> mat(Mat);
+  try{
+    bool cnt;
+    int count = 0;
+    double tsize;
+    Rcpp::List rl = R_NilValue;
+  
+    Rcpp::List rparams(params);
+    int maxSteps = Rcpp::as<int>(rparams["maxSteps"]);
+    double eps = Rcpp::as<double>(rparams["threshold"]);
+    int nPcs = Rcpp::as<int>(rparams["nPcs"]);
+    double varLimit = Rcpp::as<double>(rparams["varLimit"]);
+    Rcpp::NumericMatrix mat(Mat);
+    //Rcpp::NumericMatrix omat(Mat);
     RcppMatrix<double> omat(Mat);
-    int nr = mat.getDim1();
-    int nc = mat.getDim2();
-    RcppMatrix<double> est_mat(nr, nc);
-    RcppMatrix<double> tt(nr, nPcs);
-    RcppMatrix<double> pp(nc, nPcs);
+    int nr = mat.nrow();
+    int nc = mat.ncol();
+    Rcpp::NumericMatrix est_mat(nr, nc);
+    Rcpp::NumericMatrix tt(nr, nPcs);
+    Rcpp::NumericMatrix pp(nc, nPcs);
     vector<double> r2cum;
     vector<double> thold(nr);
     vector<double> th(nr);
@@ -143,10 +143,9 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
       np++;
     }
     
-    RcppResultSet rs;
     if(np != nPcs) {
-      RcppMatrix<double> ttt(nr, np);
-      RcppMatrix<double> ppp(nc, np);
+      Rcpp::NumericMatrix ttt(nr, np);
+      Rcpp::NumericMatrix ppp(nc, np);
       for(int r = 0; r < nr; r++) {
 	for(int p = 0; p < np; p++) {
 	  ttt(r,p) = tt(r,p);
@@ -157,27 +156,24 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
 	  ppp(c,p) = pp(c,p);
 	}
       }
-      rs.add("scores", ttt);
-      rs.add("loadings", ppp);
+      rl["scores"] = ttt;
+      rl["loadings"] = ppp;
     } else {
-      rs.add("scores", tt);
-      rs.add("loadings", pp);
+      rl["scores"] = tt;
+      rl["loadings"] = pp;
     }
-    rs.add("R2cum", r2cum);
-    rl = rs.getReturnList();
-  } catch(int e) {
+    rl["R2cum"] = r2cum;
+    return rl;
+  }catch(int e) {
     if(e == 1) {
-      exceptionMesg = copyMessageToR("Too many iterations, quitting");
+      ::Rf_error("Too many iterations, quitting");
     }else {
-      exceptionMesg = copyMessageToR("unknown error");
+      ::Rf_error("unknown error");
     }
   } catch(std::exception& ex) {
-    exceptionMesg = copyMessageToR(ex.what());
+    forward_exception_to_r(ex); 
   } catch(...) {
-    exceptionMesg = copyMessageToR("unknown error");
+    ::Rf_error("unknown error");
   }
-
-  if (exceptionMesg != NULL) Rf_error(exceptionMesg);
-  return rl;
+  return R_NilValue;
 }
-
