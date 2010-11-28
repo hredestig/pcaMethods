@@ -39,8 +39,7 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
     int nPcs = Rcpp::as<int>(rparams["nPcs"]);
     double varLimit = Rcpp::as<double>(rparams["varLimit"]);
     Rcpp::NumericMatrix mat(Mat);
-    //Rcpp::NumericMatrix omat(Mat);
-    RcppMatrix<double> omat(Mat);
+    Rcpp::NumericMatrix omat = Rcpp::clone<Rcpp::NumericMatrix>( Mat );
     int nr = mat.nrow();
     int nc = mat.ncol();
     Rcpp::NumericMatrix est_mat(nr, nc);
