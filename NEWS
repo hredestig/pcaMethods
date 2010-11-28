@@ -1,6 +1,15 @@
 # -*- org -*-
 #+TITLE: NEWS file for the pcaMethods package
 
+
+* Version 1.33.0
+** Major changes
+*** STARTED Dirk E.'s patch about Rcpp updates
+    - State "STARTED"    from "TODO"       [2010-11-28 Sun 19:15]
+    - State "TODO"       from ""           [2010-11-28 Sun 14:22]
+in short, Rcpp can now (and should) use the LinkingTo field. Also, lots of interface changes to Rcpp makes current nipals.cpp dated.
+* Version 1.31.0
+better calculation of number of pcs, bug fix to slplot, bug fix to prep that caused pareto scaling to not work properly
 * Version 1.29.1 
 ** Minor corrections
 - Fixed mistake in slplot, now report the explained variance up to the highest chosen pc instead of the minimum. 
