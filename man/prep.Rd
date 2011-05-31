@@ -1,7 +1,7 @@
 \name{prep}
 \alias{prep}
 \title{Pre-process a matrix for PCA}
-\usage{prep(object, scale=c("none\", \"pareto\", \"vector\", \"uv"),
+\usage{prep(object, scale=c("none", "pareto", "vector", "uv"),
     center=TRUE, eps=1e-12, simple=TRUE, reverse=FALSE, ...)}
 \description{Scaling and centering a matrix.}
 \details{Does basically the same as \code{\link{scale}} but adds some

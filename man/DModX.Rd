@@ -1,6 +1,6 @@
 \name{DModX}
 \title{DModX}
-\usage{DModX(object, dat, ...)}
+\usage{DModX(object, dat, newdata=FALSE, type=c("normalized","absolute"), ...)}
 \description{Distance to the model of X-space.}
 \details{Measures how well described the observations are, i.e. how well
 they fit in the mode. High DModX indicate a poor fit. Defined as:
