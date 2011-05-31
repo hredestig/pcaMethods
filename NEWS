@@ -1,7 +1,8 @@
 # -*- org -*-
 #+TITLE: NEWS file for the pcaMethods package
 
-
+* Version 1.38.0
+bugfix in the DModX function which resulted in wrong results. Thanks to Mikhail Kozine for pointing this out.
 * Version 1.33.0
 ** Major changes
 *** STARTED Dirk E.'s patch about Rcpp updates

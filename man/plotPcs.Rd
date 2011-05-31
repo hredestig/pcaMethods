@@ -1,7 +1,7 @@
 \name{plotPcs}
 \alias{plotPcs}
 \title{Plot many side by side scores XOR loadings plots}
-\usage{plotPcs(object, pcs=1:nP(object), type=c("scores", "loadings"), sl,
+\usage{plotPcs(object, pcs=1:nP(object), type=c("scores\", \"loadings"), sl,
     hotelling=0.95, ...)}
 \description{A function that can be used to visualise many PCs plotted against
 each other}

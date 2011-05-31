@@ -2,13 +2,13 @@
 \alias{Q2}
 \title{Cross-validation for PCA}
 \usage{Q2(object, originalData=completeObs(object), fold=5, nruncv=1,
-    type=c("krzanowski", "impute"), verbose=interactive(), ...)}
+    type=c("krzanowski\", \"impute"), verbose=interactive(), ...)}
 \description{Internal cross-validation can be used for estimating the level of
 structure in a data set and to optimise the choice of number of
 principal components.}
 \details{This method calculates \eqn{Q^2} for a PCA model. This is the
-predictory version of \eqn{R^2} and can be interpreted as the
-ratio of variance that can be predicted independetly by the PCA
+cross-validated version of \eqn{R^2} and can be interpreted as the
+ratio of variance that can be predicted independently by the PCA
 model. Poor (low) \eqn{Q^2} indicates that the PCA model only
 describes noise and that the model is unrelated to the true data
 structure. The definition of \eqn{Q^2} is: \deqn{Q^2 = 1 -
@@ -34,6 +34,8 @@ a reduced matrix, it is not possible estimate Q2 for all
 components and the result vector may therefore be shorter than
 \code{nPcs(object)}.}
 \value{A matrix or vector with \eqn{Q^2} estimates.}
+\references{Krzanowski, WJ. Cross-validation in principal
+component analysis. Biometrics. 1987(43):3,575-584}
 \author{Henning Redestig}
 \keyword{multivariate}
 \arguments{\item{object}{A \code{pcaRes} object (result from previous PCA

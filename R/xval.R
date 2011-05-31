@@ -3,8 +3,8 @@
 ##' principal components.
 ##'
 ##' This method calculates \eqn{Q^2} for a PCA model. This is the
-##' predictory version of \eqn{R^2} and can be interpreted as the
-##' ratio of variance that can be predicted independetly by the PCA
+##' cross-validated version of \eqn{R^2} and can be interpreted as the
+##' ratio of variance that can be predicted independently by the PCA
 ##' model. Poor (low) \eqn{Q^2} indicates that the PCA model only
 ##' describes noise and that the model is unrelated to the true data
 ##' structure. The definition of \eqn{Q^2} is: \deqn{Q^2 = 1 -
@@ -44,6 +44,8 @@
 ##' within Q2.
 ##' @return A matrix or vector with \eqn{Q^2} estimates.
 ##' @export
+##' @references Krzanowski, WJ. Cross-validation in principal
+##' component analysis. Biometrics. 1987(43):3,575-584
 ##' @examples
 ##' data(iris)
 ##' x <- iris[,1:4]
@@ -177,7 +179,8 @@ Q2 <- function(object, originalData=completeObs(object), fold=5, nruncv=1,
           for(fc in 1:foldC) 
             press[p] <- press[p] +
               sum((originalData[rseg[[fr]],cseg[[fc]]] - 
-                   (tcv[fc,,][,1:p,drop=FALSE] %*% t(pcv[fr,,][,1:p,drop=FALSE]))[rseg[[fr]],cseg[[fc]]])^2,
+                   (tcv[fc,,][,1:p,drop=FALSE] %*%
+                    t(pcv[fr,,][,1:p,drop=FALSE]))[rseg[[fr]],cseg[[fc]]])^2,
                   na.rm=TRUE)
     }
     q2[,nr] <- 1 - press / ssx
@@ -236,4 +239,52 @@ deletediagonals <- function(x, diagonals=1) {
   }
   if (wastransposed) x <- t(x)
   return(x)
+}
+
+##' Get cross-validation segments that have (as far as possible) the
+##' same ratio of all classes (if classes are present)
+##' @title Get CV segments
+##' @param x a factor, character or numeric vector that describes
+##' class membership of a set of items, or, a numeric vector
+##' indicating unique indices of items, or, a numeric of length 1 that
+##' describes the number of items to segment (without any classes)
+##' @param fold the desired number of segments
+##' @param seed randomization seed for reproducibility
+##' @return a list where each element is a set of indices that defines
+##' the CV segment.
+##' @examples
+##' seg <- cvseg(iris$Species, 10)
+##' sapply(seg, function(s) table(iris$Species[s]))
+##' cvseg(20, 10)
+##' @seealso the \code{cvsegments} function in the \code{pls} package
+##' @export
+##' @author Henning Redestig
+cvseg <- function(x, fold=7, seed=NULL) {
+  if(any(table(x) > 1)) {
+    if(any(table(x) < fold)) {
+      fold <- min(table(x))
+    }
+    if(fold < 2)
+      stop("too few observations in the smallest class")
+    res <-
+      sapply(unique(x), function(z) {
+        if(!is.null(seed))
+          set.seed(seed)
+        tmp <- sample(which(x == z))
+        seg <- matrix(c(tmp,
+                        rep(NA, ifelse(length(tmp) %% fold ==0, 0,
+                                       fold - (length(tmp) %% fold)))),
+                      nrow=fold)
+      },simplify=FALSE)
+    res <- do.call("cbind", res)
+  } else {
+    if(length(x) == 1) x <- 1:x
+    res <- matrix(sample(c(x,
+                           rep(NA, ifelse(length(x) %% fold ==0, 0,
+                                          fold - (length(x) %% fold))))),
+                  nrow=fold)
+  }
+  res <- res[!apply(is.na(res), 1, all),,drop=FALSE]
+  res
+  lapply(as.data.frame(t(res)), function(x) c(na.omit(x)))
 }
