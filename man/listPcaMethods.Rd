@@ -1,7 +1,7 @@
 \name{listPcaMethods}
 \alias{listPcaMethods}
 \title{List PCA methods}
-\usage{listPcaMethods(which=c("all", "linear", "nonlinear"))}
+\usage{listPcaMethods(which=c("all\", \"linear\", \"nonlinear"))}
 \description{Vector with current valid PCA methods}
 \value{A character vector with the current methods for doing PCA}
 \author{Henning Redestig}

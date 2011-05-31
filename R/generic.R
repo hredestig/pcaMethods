@@ -45,7 +45,7 @@ setGeneric("DModX", function(object, dat, ...) standardGeneric("DModX"))
 ##'
 ##' For observation \eqn{i}, in a model with \eqn{A} components,
 ##' \eqn{K} variables and \eqn{N} obserations. SSE is the squared sum
-##' of the residuals. \eqn{A_0} is 0 if model was centered and 1
+##' of the residuals. \eqn{A_0} is 1 if model was centered and 0
 ##' otherwise. DModX is claimed to be approximately F-distributed and
 ##' can therefore be used to check if an observation is significantly
 ##' far away from the PCA model assuming normally distributed data.
@@ -57,6 +57,12 @@ setGeneric("DModX", function(object, dat, ...) standardGeneric("DModX"))
 ##' @param object a pcaRes object
 ##' @param dat the original data, taken from \code{completeObs} if
 ##' left missing.
+##' @param newdata logical indicating if this data was part of the
+##' training data or not. If it was, it is adjusted by a near one factor
+##' \eqn{v=(N/ (N-A-A0))^-1}
+##' @param type if absolute or normalized values should be
+##' given. Normalized values are adjusted to the the total RSD of the
+##' model.
 ##' @param ... Not used 
 ##' @return A vector with distances from observations to the PCA model
 ##' @aliases DModX DModX,pcaRes-method
@@ -70,24 +76,24 @@ setGeneric("DModX", function(object, dat, ...) standardGeneric("DModX"))
 ##' @exportMethod DModX
 ##' @author Henning Redestig
 setMethod("DModX", "pcaRes",
-          function(object, dat, ...) {
-            newdata <- TRUE
+          function(object, dat, newdata=FALSE, type=c("normalized","absolute"), ...) {
+            type <- match.arg(type)
             if(missing(dat)) {
-              newdata <- FALSE
-              if(!is.null(completeObs(object))) dat <- completeObs(object)
+              if(!is.null(completeObs(object)))
+                dat <- completeObs(object)
               else stop("missing data when calculating DModX")
             }
-            newE2 <- resid(object, dat)^2
-            modelE2 <- resid(object, completeObs(object))^2
-            sEk2 <- sqrt(newE2  / (nVar(object) - nP(object)))
-            ny <- sqrt(nObs(object) /
-                       (nObs(object) - nP(object) - as.integer(centered(object))))
-            s0 <- sqrt(sum(modelE2) /
-                       ((nObs(object) - nP(object) - as.integer(centered(object))) *
-                        (nVar(object) - nP(object))))
-            if(newdata)
-              ny <- 1
-            (rowSums(sEk2, na.rm=TRUE) * ny) / s0
+            A0 <- as.integer(centered(object))
+            ny <- ifelse(newdata, 1,
+                         sqrt(nObs(object) /
+                              (nObs(object) - nP(object) - A0)))
+            E2 <- resid(object, dat)^2
+            s <- sqrt(rowSums(E2) / (nVar(object) - nP(object))) * ny
+            if(type == "absolute")
+              return(s)
+            s0 <- sqrt(sum(E2) / ((nObs(object) - nP(object) - A0) *
+                                  (nVar(object) - nP(object))))
+            s / s0
           })
 
 setGeneric("nP", function(object, ...) standardGeneric("nP"))

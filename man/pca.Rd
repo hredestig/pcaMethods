@@ -1,9 +1,9 @@
 \name{pca}
 \alias{pca}
 \title{Perform principal component analysis}
-\usage{pca(object, method=listPcaMethods(), nPcs=2, scale=c("none", "pareto",
-    "vector", "uv"), center=TRUE, completeObs=TRUE, subset,
-    cv=c("none", "q2"), ...)}
+\usage{pca(object, method=listPcaMethods(), nPcs=2, scale=c("none\",
+    \"pareto\", \"vector\", \"uv"), center=TRUE, completeObs=TRUE,
+    subset, cv=c("none\", \"q2"), ...)}
 \description{Can be used for computing PCA on a numeric matrix for
 visualisation, information extraction and missing value
 imputation.}
