@@ -2,7 +2,7 @@
 \alias{Q2}
 \title{Cross-validation for PCA}
 \usage{Q2(object, originalData=completeObs(object), fold=5, nruncv=1,
-    type=c("krzanowski\", \"impute"), verbose=interactive(), ...)}
+    type=c("krzanowski", "impute"), verbose=interactive(), ...)}
 \description{Internal cross-validation can be used for estimating the level of
 structure in a data set and to optimise the choice of number of
 principal components.}

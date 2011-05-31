@@ -1,7 +1,7 @@
 \name{plotR2}
 \alias{plotR2}
 \title{R2 plot (screeplot) for PCA}
-\usage{plotR2(object, nPcs=nP(object), type=c("barplot\", \"lines"),
+\usage{plotR2(object, nPcs=nP(object), type=c("barplot", "lines"),
     main=deparse(substitute(object)), ...)}
 \description{Plot the R2 of the principal components to get an idea of their
 importance. Note though that the standard screeplot shows the

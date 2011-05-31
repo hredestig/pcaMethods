@@ -35,7 +35,7 @@ setMethod("leverage", "pcaRes",
                  solve(crossprod(scores(object))) %*% t(scores(object)))
           })
 
-setGeneric("DModX", function(object, dat, ...) standardGeneric("DModX"))
+setGeneric("DModX", function(object, dat, newdata=FALSE, type=c("normalized","absolute"), ...) standardGeneric("DModX"))
 ##' Distance to the model of X-space.
 ##'
 ##' Measures how well described the observations are, i.e. how well
@@ -53,7 +53,7 @@ setGeneric("DModX", function(object, dat, ...) standardGeneric("DModX"))
 ##' Pass original data as an argument if the model was calculated with
 ##' \code{completeObs=FALSE}.
 ##' @title DModX
-##' @usage DModX(object, dat, ...)
+##' @usage DModX(object, dat, newdata=FALSE, type=c("normalized","absolute"), ...)
 ##' @param object a pcaRes object
 ##' @param dat the original data, taken from \code{completeObs} if
 ##' left missing.
