@@ -18,9 +18,10 @@ Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA,
     Physiology, Golm, Germany. Now developed at CAS-MPG Partner
     Institute for Computational Biology (PICB) Shanghai, P.R. China and
     RIKEN Plant Science Center, Yokohama Japan.
-Version: 1.41.1
+Version: 1.41.2
 biocViews: Bioinformatics
 Depends: Biobase, MASS, pls, methods, Rcpp (>= 0.8.7)
+Imports: BiocGenerics
 Suggests: aroma.light
 Collate: 'BPCA_dostep.R' 'BPCA_initmodel.R' 'bpca.R' 'checkData.R'
     'derrorHierarchic.R' 'errorHierarchic.R' 'classes.R'

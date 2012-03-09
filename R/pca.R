@@ -585,7 +585,6 @@ residuals.pcaRes <- function(object, data=completeObs(object), ...) {
 ##' @importFrom stats,residuals
 ##' @exportMethod residuals
 ##' @aliases residuals,pcaRes-method
-setGeneric("residuals")
 setMethod("residuals", "pcaRes", residuals.pcaRes)
 ##' Residuals of PCA data.
 ##' @seealso \code{\link{residuals.pcaRes}}
