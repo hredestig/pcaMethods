@@ -1,10 +1,19 @@
 \name{nVar}
-\title{Get the number of variables used to build the PCA model.}
-\usage{nVar(object, ...)}
-\description{Get the number of variables used to build the PCA model.}
 \alias{nVar}
 \alias{nVar,pcaRes-method}
-\value{Number of variables}
-\author{Henning Redestig}
-\arguments{\item{object}{pcaRes object}
-\item{...}{Not used}}
+\title{Get the number of variables used to build the PCA model.}
+\arguments{
+  \item{object}{pcaRes object}
+
+  \item{...}{Not used}
+}
+\value{
+  Number of variables
+}
+\description{
+  Get the number of variables used to build the PCA model.
+}
+\author{
+  Henning Redestig
+}
+

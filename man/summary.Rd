@@ -1,10 +1,19 @@
 \name{summary}
-\title{Summary of PCA model}
-\usage{summary(object, ...)}
-\description{Print a brief description of the PCA model}
-\value{Nothing, used for side-effect}
 \alias{summary}
 \alias{summary,pcaRes-method}
-\author{Henning Redestig}
-\arguments{\item{object}{a pcaRes object}
-\item{...}{Not available}}
+\title{Summary of PCA model}
+\arguments{
+  \item{object}{a pcaRes object}
+
+  \item{...}{Not available}
+}
+\value{
+  Nothing, used for side-effect
+}
+\description{
+  Print a brief description of the PCA model
+}
+\author{
+  Henning Redestig
+}
+
