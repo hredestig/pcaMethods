@@ -1,0 +1,50 @@
+\name{plot.pcaRes}
+\alias{plot.pcaRes}
+\alias{plot,pcaRes-method}
+\title{Plot diagnostics (screeplot)}
+\usage{
+  \method{plot}{pcaRes} (x, y = NULL,
+    main = deparse(substitute(object)),
+    col = gray(c(0.9, 0.5)), ...)
+}
+\arguments{
+  \item{x}{\code{pcaRes} The pcaRes object.}
+
+  \item{y}{not used}
+
+  \item{main}{title of the plot}
+
+  \item{col}{Colors of the bars}
+
+  \item{...}{further arguments to barplot}
+}
+\value{
+  None, used for side effect.
+}
+\description{
+  Plot the computed diagnostics of PCA model to get an idea
+  of their importance. Note though that the standard
+  screeplot shows the standard deviations for the PCs this
+  method shows the R2 values which empirically shows the
+  importance of the P's and is thus applicable for any PCA
+  method rather than just SVD based PCA.
+}
+\details{
+  If cross-validation was done for the PCA the plot will
+  also show the CV based statistics.  A common
+  rule-of-thumb for determining the optimal number of PCs
+  is the PC where the CV diagnostic is at its maximum but
+  not very far from \eqn{R^2}.
+}
+\examples{
+data(metaboliteData)
+pc <- pca(t(metaboliteData), nPcs=5, cv="q2", scale="uv")
+plot(pc)
+}
+\author{
+  Henning Redestig
+}
+\seealso{
+  \link{screeplot}
+}
+

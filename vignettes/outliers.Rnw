@@ -84,21 +84,16 @@ results to the optimal PCA solution for the complete data set (which is \texttt{
 In Figure \ref{fig:svdPlot} we plot the estimated and original loadings against each other.
 \begin{figure}[!ht]
   \centering
-<<fig=true, width=16, height=16, results=hide, echo=false>>=
-par(mar=c(5, 6, 4, 2))
+<<fig=true, width=8, height=8, results=hide, echo=false>>=
 par(mfrow=c(2,2))
-plot(resSvd@loadings[,1], resSvdOut@loadings[,1], 
-xlab = "Loading 1 SVD", ylab = "Loading 1 SVD with outliers",
-cex.lab = 3, cex.axis = 2, cex = 3, lwd = 3)
-plot(resSvd@loadings[,1], resRobSvd@loadings[,1],
-xlab = "Loading 1 SVD", ylab = "Loading 1 robustSVD with outliers",
-cex.lab = 3, cex.axis = 2, cex = 3, lwd = 3)
-plot(resSvd@loadings[,1], resPPCA@loadings[,1],
-xlab = "Loading 1 SVD", ylab = "Loading 1 PPCA with outliers = NA",
-cex.lab = 3, cex.axis = 2, cex = 3, lwd = 3)
-plot(resRobSvd@loadings[,1], resPPCA@loadings[,1],
-xlab = "Loading 1 roubst SVD with outliers", ylab = "Loading 1 svdImpute with outliers = NA",
-cex.lab = 3, cex.axis = 2, cex = 3, lwd = 3)
+plot(loadings(resSvd)[,1], loadings(resSvdOut)[,1], 
+xlab = "Loading 1 SVD", ylab = "Loading 1 SVD with outliers")
+plot(loadings(resSvd)[,1], loadings(resRobSvd)[,1],
+xlab = "Loading 1 SVD", ylab = "Loading 1 robustSVD with outliers")
+plot(loadings(resSvd)[,1], loadings(resPPCA)[,1],
+xlab = "Loading 1 SVD", ylab = "Loading 1 PPCA with outliers = NA")
+plot(loadings(resRobSvd)[,1], loadings(resPPCA)[,1],
+xlab = "Loading 1 roubst SVD with outliers", ylab = "Loading 1 svdImpute with outliers = NA")
 @
   \caption{Figures show (from left to right): \newline
   Original PCA solution vs. solution on data with outliers; \newline

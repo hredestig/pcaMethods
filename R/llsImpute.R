@@ -166,7 +166,7 @@ llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE,
             Apart <- obs[!tMiss, simIx, drop = FALSE]
             Bpart <- obs[tMiss, simIx, drop = FALSE]
             targetComplete <- target[!tMiss, , drop = FALSE]
-            X <- ginv(Apart) %*% targetComplete
+            X <- MASS::ginv(Apart) %*% targetComplete
             estimate <- Bpart %*% X
 
             ## Impute the estimate

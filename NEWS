@@ -1,6 +1,10 @@
 # -*- org -*-
 #+TITLE: NEWS file for the pcaMethods package
 
+* Version 1.44.0 <2012-06-13 Wed>
+Large scale cleanup of S3 / S4 methods. Better use of namespace imports as opposed to full attaches. This should improve behavior for packages that imports from pcaMethods.
+* Version 1.38.1 
+Documentation changes to use roxygen2 instead. Also import scores and loadings generics from pls as that package now has a proper namespace.
 * Version 1.38.0
 bugfix in the DModX function which resulted in wrong results. Thanks to Mikhail Kozine for pointing this out.
 * Version 1.33.0
@@ -66,7 +70,7 @@ Major tidying act (still ongoing). Many methods were creating unnecessary copies
 * Planned
 ** C++ Versions
 of ppca and possibly bpca. Nlpca would be nice and would probably benefit most of being ported to C++..
-*** ppca							    :STARTED:
+*** ppca 							    :STARTED:
 using gsl but speed gain so far not so remarkable
 ** DONE Proper handling of scaling and centering
    CLOSED: [2010-01-22 Fri 11:15]

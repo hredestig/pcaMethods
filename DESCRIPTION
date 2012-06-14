@@ -1,5 +1,5 @@
 Package: pcaMethods
-Maintainer: Wolfram Stacklies <wolfram.stacklies@gmail.com>
+Maintainer: Henning Redestig <henning.red@gmail.com>
 License: GPL (>= 3)
 Title: A collection of PCA methods.
 LinkingTo: Rcpp
@@ -15,18 +15,47 @@ Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA,
     provided. All PCA methods make use of the same data structure
     (pcaRes) to provide a unique interface to the PCA results.
     Initiated at the Max-Planck Institute for Molecular Plant
-    Physiology, Golm, Germany. Now developed at CAS-MPG Partner
-    Institute for Computational Biology (PICB) Shanghai, P.R. China and
-    RIKEN Plant Science Center, Yokohama Japan.
-Version: 1.43.0
+    Physiology, Golm, Germany.
+Version: 1.44.0
 biocViews: Bioinformatics
-Depends: Biobase, MASS, pls, methods, Rcpp (>= 0.8.7)
-Imports: BiocGenerics
-Suggests: aroma.light
-Collate: 'BPCA_dostep.R' 'BPCA_initmodel.R' 'bpca.R' 'checkData.R'
-    'derrorHierarchic.R' 'errorHierarchic.R' 'classes.R'
-    'forkNlpcaNet.R' 'generic.R' 'kEstimateFast.R' 'kEstimate.R'
-    'lineSearch.R' 'llsImpute.R' 'nipalsPca.R' 'nlpca.R' 'optiAlgCgd.R'
-    'orth.R' 'pcaMethods-package.R' 'pca.R' 'ppca.R' 'prep.R'
-    'repmat.R' 'robustPca.R' 'sortFeatures.R' 'svdImpute.R'
-    'vector2matrices.R' 'xval.R'
+Depends:
+    Biobase,
+    methods,
+    Rcpp (>= 0.8.7)
+Imports:
+    BiocGenerics,
+    MASS
+Suggests:
+    aroma.light,
+    lattice
+Collate:
+    'derrorHierarchic.R'
+    'errorHierarchic.R'
+    'AllClasses.R'
+    'AllGenerics.R'
+    'methods-nniRes.R'
+    'methods-pcaRes.R'
+    'methods-ExpressionSet.R'
+    'BPCA_dostep.R'
+    'BPCA_initmodel.R'
+    'bpca.R'
+    'checkData.R'
+    'forkNlpcaNet.R'
+    'kEstimateFast.R'
+    'kEstimate.R'
+    'lineSearch.R'
+    'llsImpute.R'
+    'nipalsPca.R'
+    'nlpca.R'
+    'optiAlgCgd.R'
+    'orth.R'
+    'pcaMethods-package.R'
+    'pca.R'
+    'ppca.R'
+    'prep.R'
+    'repmat.R'
+    'robustPca.R'
+    'sortFeatures.R'
+    'svdImpute.R'
+    'vector2matrices.R'
+    'xval.R'

@@ -82,7 +82,7 @@ svdImpute <- function(Matrix, nPcs=2, threshold=0.01, maxSteps=100,
       target <- Matrix[!missing[,index],index, drop = FALSE]
       Apart <- loadings[!missing[,index], , drop = FALSE]
       Bpart <- loadings[missing[,index], , drop = FALSE]
-      X <- ginv(Apart) %*% target
+      X <- MASS::ginv(Apart) %*% target
       estimate <- Bpart %*% X
       
       Matrix[missing[,index], index] <- estimate
