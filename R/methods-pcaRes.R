@@ -280,8 +280,8 @@ setMethod("R2cum", "pcaRes", function(object, ...) {
 ##' @param ... not used
 ##' @return The scores as a matrix
 ##' @export
-##' @method scores pcaRes
 ##' @author Henning Redestig
+##' @method scores pcaRes
 scores.pcaRes <- function(object, ...) object@scores
 ##' Get scores from a pcaRes object
 ##' @param object a pcaRes object
