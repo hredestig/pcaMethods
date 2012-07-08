@@ -437,6 +437,56 @@ biplot.pcaRes <- function(x, choices=1:2, scale=1, pc.biplot=FALSE, ...) {
 ##' @importFrom stats biplot
 setMethod("biplot", "pcaRes", biplot.pcaRes)
 
+##' Flexible calculation of R2 goodness of fit.
+##' @title R2 goodness of fit
+##' @param object a PCA model object
+##' @param direction choose between calculating R2 per variable, per
+##' observation or for the entire data with 'variables',
+##' 'observations' or 'complete'.
+##' @param data the data used to fit the model
+##' @param pcs the number of PCs to use to calculate R2
+##' @aliases R2X,pcaRes-method
+##' @examples
+##' R2X(pca(iris))
+##' @return A vector with R2 values
+##' @author Henning Redestig
+setMethod('R2X', 'pcaRes',
+          function(object,
+                   direction=c('variables', 'observations', 'complete'),
+                   data=completeObs(object), pcs=nP(object)) {
+  direction <- match.arg(direction)
+  if(is.null(data)) 
+    stop('missing input when calculating R2')
+  if(any(is.na(data))) 
+    stop('missing values not allowed for calculating R2')
+  dat <- prep(data, scale=scl(object), center=center(object))
+  xhat <- resid(object, pcs=pcs)
+  switch(direction, variables={
+    1 - colSums(xhat^2) / colSums(dat^2)
+  }, observations={
+    1 - rowSums(xhat^2) / rowSums(dat^2)
+  }, complete={
+    1 - sum(xhat^2) / sum(dat^2)
+  })
+})
+
+setAs('pcaRes', 'data.frame', function(from) {
+  tt <- scores(from)
+  pp <- loadings(from)
+  if(is.null(rownames(tt)))
+    rownames(tt) <- 1:nrow(tt)
+  if(is.null(rownames(pp)))
+    rownames(pp) <- 1:nrow(pp)
+  dfs <- as.data.frame(tt)
+  dfs$names <- rownames(tt)
+  dfs$type <- 'scores'
+  dfl <- as.data.frame(pp)
+  dfl$names <- rownames(pp)
+  dfl$type <- 'loadings'
+  rownames(dfl) <- rownames(dfs) <- NULL
+  rbind(dfl, dfs)
+})
+
 ##' Print a brief description of the PCA model
 ##' @title Summary of PCA model
 ##' @param object a pcaRes object

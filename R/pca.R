@@ -53,7 +53,8 @@ listPcaMethods <- function(which=c("all", "linear", "nonlinear")) {
 ##' @param object Numerical matrix with (or an object coercible to
 ##' such) with samples in rows and variables as columns. Also takes
 ##' \code{ExpressionSet} in which case the transposed expression
-##' matrix is used.
+##' matrix is used. Can also be a data frame in which case all
+##' numberic variables are used to fit the PCA.
 ##' @param method One of the methods reported by
 ##' \code{listPcaMethods()}. Can be left missing in which case the
 ##' \code{svd} PCA is chosen.
@@ -106,7 +107,13 @@ pca <- function(object, method, nPcs=2,
   if(missing(method))
     method <- listPcaMethods()[1]
   method <- match.arg(method, choices=listPcaMethods())
-  if(inherits(object, "ExpressionSet")) {
+  if(inherits(object, 'data.frame')) {
+    num <- vapply(object, is.numeric, logical(1))
+    if(sum(num) < 2)
+      stop('no numeric data in supplied data.frame')
+    Matrix <- as.matrix(object[,num])
+  }
+  else if(inherits(object, "ExpressionSet")) {
     Matrix <- t(exprs(object))
   } else
   Matrix <- as.matrix(object, rownames.force=TRUE)

@@ -44,3 +44,5 @@ setGeneric("slplot", function(object, pcs=c(1,2),
 setGeneric("scores", function(object, ...) standardGeneric("scores"))
 ##' @exportMethod loadings
 setGeneric("loadings", function(object, ...) standardGeneric("loadings"))
+##' @exportMethod R2X
+setGeneric("R2X", function(object, ...) standardGeneric("R2X"))
