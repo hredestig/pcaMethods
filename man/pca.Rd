@@ -11,7 +11,9 @@
   \item{object}{Numerical matrix with (or an object
   coercible to such) with samples in rows and variables as
   columns. Also takes \code{ExpressionSet} in which case
-  the transposed expression matrix is used.}
+  the transposed expression matrix is used. Can also be a
+  data frame in which case all numberic variables are used
+  to fit the PCA.}
 
   \item{method}{One of the methods reported by
   \code{listPcaMethods()}. Can be left missing in which

@@ -1,6 +1,6 @@
 \name{plot.pcaRes}
-\alias{plot.pcaRes}
 \alias{plot,pcaRes-method}
+\alias{plot.pcaRes}
 \title{Plot diagnostics (screeplot)}
 \usage{
   \method{plot}{pcaRes} (x, y = NULL,

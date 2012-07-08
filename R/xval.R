@@ -57,7 +57,8 @@
 ##' barplot(q2, main="Imputation CV", xlab="Number of PCs", ylab=expression(Q^2))
 ##' @author Henning Redestig
 ##' @keywords multivariate
-Q2 <- function(object, originalData=completeObs(object), fold=5, nruncv=1,
+Q2 <- function(object, originalData=completeObs(object),
+               fold=5, nruncv=1,
                type=c("krzanowski", "impute"),
                verbose=interactive(), ...) {
   type <- match.arg(type)
@@ -108,9 +109,10 @@ Q2 <- function(object, originalData=completeObs(object), fold=5, nruncv=1,
       
       if(verbose)
         message("Doing ", length(seg), " fold ", "cross validation")
+      pb <- txtProgressBar(length(seg))
       for(i in seg) {
         if(verbose)
-          cat(".")
+          setTxtProgressBar(i)
         test <- originalData
         test[i] <- NA
         test <- tempFixNas(test)
@@ -134,10 +136,8 @@ Q2 <- function(object, originalData=completeObs(object), fold=5, nruncv=1,
             sum((originalData[i] - fittedData[i])^2, na.rm=TRUE)
         }
       }
-      if(verbose)
-        cat("\nDone\n")
     }
-    ## ---- krzanowski ----
+
     if(type == "krzanowski") {
 
       rseg <- split(sample(1:nR), rep(1:fold, ceiling(nR / fold))[1:nR])
