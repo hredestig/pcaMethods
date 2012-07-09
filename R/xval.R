@@ -109,7 +109,7 @@ Q2 <- function(object, originalData=completeObs(object),
       
       if(verbose)
         message("Doing ", length(seg), " fold ", "cross validation")
-      pb <- txtProgressBar(length(seg))
+      pb <- txtProgressBar(0, length(seg))
       for(i in seg) {
         if(verbose)
           setTxtProgressBar(i)
