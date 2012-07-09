@@ -1,6 +1,10 @@
 # -*- org -*-
 #+TITLE: NEWS file for the pcaMethods package
 
+* Version 1.47.1 <2012-07-09 Mon>
+Added R2VX as per request by Brandon Hurr
+
+Added warning when user specifies using svd despite having missing values in the data as requested by Jean-Olivier Irisson
 * Version 1.44.0 <2012-06-13 Wed>
 Large scale cleanup of S3 / S4 methods. Better use of namespace imports as opposed to full attaches. This should improve behavior for packages that imports from pcaMethods.
 * Version 1.38.1 
@@ -78,3 +82,5 @@ Current version is broken and need full rewrite
 ** DONE Add Q2 as a slot 
    CLOSED: [2010-01-22 Fri 11:15]
 and a plotting function
+** TODO Q2VX
+per variable / observation Q2 estimates
