@@ -1,6 +1,6 @@
-\name{R2X}
-\alias{R2X}
-\alias{R2X,pcaRes-method}
+\name{R2VX}
+\alias{R2VX}
+\alias{R2VX,pcaRes-method}
 \title{R2 goodness of fit}
 \arguments{
   \item{object}{a PCA model object}
@@ -20,7 +20,7 @@
   Flexible calculation of R2 goodness of fit.
 }
 \examples{
-R2X(pca(iris))
+R2VX(pca(iris))
 }
 \author{
   Henning Redestig

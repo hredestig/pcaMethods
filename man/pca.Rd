@@ -17,7 +17,8 @@
 
   \item{method}{One of the methods reported by
   \code{listPcaMethods()}. Can be left missing in which
-  case the \code{svd} PCA is chosen.}
+  case the \code{svd} PCA is chosen for data wihout missing
+  values and \code{nipalsPca} for data with missing values}
 
   \item{nPcs}{Number of principal components to calculate.}
 

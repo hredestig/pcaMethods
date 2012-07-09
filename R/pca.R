@@ -57,7 +57,8 @@ listPcaMethods <- function(which=c("all", "linear", "nonlinear")) {
 ##' numberic variables are used to fit the PCA.
 ##' @param method One of the methods reported by
 ##' \code{listPcaMethods()}. Can be left missing in which case the
-##' \code{svd} PCA is chosen.
+##' \code{svd} PCA is chosen for data wihout missing values and
+##' \code{nipalsPca} for data with missing values
 ##' @param nPcs Number of principal components to calculate.
 ##' @param scale Scaling, see \code{\link{prep}}.
 ##' @param center Centering, see \code{\link{prep}}.
@@ -90,8 +91,8 @@ listPcaMethods <- function(which=c("all", "linear", "nonlinear")) {
 ##' @examples
 ##' data(iris)
 ##' ##  Usually some kind of scaling is appropriate
-##' pcIr <- pca(iris[,1:4], method="svd", nPcs=2)
-##' pcIr <- pca(iris[,1:4], method="nipals", nPcs=3, cv="q2")
+##' pcIr <- pca(iris, method="svd", nPcs=2)
+##' pcIr <- pca(iris, method="nipals", nPcs=3, cv="q2")
 ##' ## Get a short summary on the calculated model
 ##' summary(pcIr)
 ##' plot(pcIr)
@@ -104,9 +105,6 @@ pca <- function(object, method, nPcs=2,
                 scale=c("none", "pareto", "vector", "uv"),
                 center=TRUE, completeObs=TRUE, subset=NULL,
                 cv=c("none","q2"), ...) {
-  if(missing(method))
-    method <- listPcaMethods()[1]
-  method <- match.arg(method, choices=listPcaMethods())
   if(inherits(object, 'data.frame')) {
     num <- vapply(object, is.numeric, logical(1))
     if(sum(num) < 2)
@@ -139,8 +137,17 @@ pca <- function(object, method, nPcs=2,
 
   missing <- is.na(Matrix)
 
-  if(any(missing) & method == "svd") 
-    method <- "nipals"
+  if(missing(method)) {
+    if(any(missing))
+      method <- 'nipals'
+    else
+      method <- 'svd'
+  }
+  if(any(missing) & method == 'svd') {
+    warning('data has missing values using nipals instead of user requested svd')
+    method <- 'nipals'
+  }
+  method <- match.arg(method, choices=listPcaMethods())
   
   prepres <- prep(Matrix, scale=scale, center=center, simple=FALSE, ...)
 

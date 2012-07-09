@@ -445,12 +445,12 @@ setMethod("biplot", "pcaRes", biplot.pcaRes)
 ##' 'observations' or 'complete'.
 ##' @param data the data used to fit the model
 ##' @param pcs the number of PCs to use to calculate R2
-##' @aliases R2X,pcaRes-method
+##' @aliases R2VX,pcaRes-method
 ##' @examples
-##' R2X(pca(iris))
+##' R2VX(pca(iris))
 ##' @return A vector with R2 values
 ##' @author Henning Redestig
-setMethod('R2X', 'pcaRes',
+setMethod('R2VX', 'pcaRes',
           function(object,
                    direction=c('variables', 'observations', 'complete'),
                    data=completeObs(object), pcs=nP(object)) {
