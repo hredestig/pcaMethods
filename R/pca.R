@@ -21,14 +21,13 @@ listPcaMethods <- function(which=c("all", "linear", "nonlinear")) {
          })
 }
 
-##' Can be used for computing PCA on a numeric matrix for
-##' visualisation, information extraction and missing value
-##' imputation.
+##' Perform PCA on a numeric matrix for visualisation, information
+##' extraction and missing value imputation.
 ##'
 ##' This method is wrapper function for the following set of pca
 ##' methods:
 ##'
-##' \describe{\item{svd:}{Uses classical \code{prcomp}.See
+##' \describe{\item{svd:}{Uses classical \code{prcomp}. See
 ##' documentation for \code{\link{svdPca}}.}
 ##' 
 ##' \item{nipals:}{An iterative method capable of handling small

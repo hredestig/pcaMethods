@@ -490,28 +490,29 @@ setAs('pcaRes', 'data.frame', function(from) {
 ##' Print a brief description of the PCA model
 ##' @title Summary of PCA model
 ##' @param object a pcaRes object
-##' @param ... Not available
-##' @usage summary(object, ...)
+##' @param ... Not used
 ##' @return Nothing, used for side-effect
 ##' @aliases summary summary,pcaRes-method
 ##' @author Henning Redestig
-setMethod("summary", "pcaRes",
-          function(object) {
-            cat(method(object), "calculated PCA\n")
-            cat("Importance of component(s):\n")
-            prop <- vector(length=length(R2cum(object)), mode="numeric")
-            prop[1] <- R2cum(object)[1]
-            if (length(R2cum(object)) > 1) {
-              for (i in 2:length(prop)) {
-                prop[i] <- R2cum(object)[i] - R2cum(object)[i-1]
-              }
-            }
-            r <- rbind(prop, R2cum(object))
-            rownames(r) <- c("R2", "Cumulative R2")
-            colnames(r) <- paste("PC", 1:nP(object), sep="")
-            print(r, digits=4)
-            invisible(r)
-          })
+##' @export
+##' @method summary pcaRes
+summary.pcaRes <- function(object, ...){
+  cat(method(object), "calculated PCA\n")
+  cat("Importance of component(s):\n")
+  prop <- vector(length=length(R2cum(object)), mode="numeric")
+  prop[1] <- R2cum(object)[1]
+  if (length(R2cum(object)) > 1) {
+    for (i in 2:length(prop)) {
+      prop[i] <- R2cum(object)[i] - R2cum(object)[i-1]
+    }
+  }
+  r <- rbind(prop, R2cum(object))
+  rownames(r) <- c("R2", "Cumulative R2")
+  colnames(r) <- paste("PC", 1:nP(object), sep="")
+  print(r, digits=4)
+  invisible(r)
+}
+setMethod("summary", "pcaRes", summary.pcaRes)
 
 ##' Predict data using PCA model
 ##'
