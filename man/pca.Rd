@@ -44,15 +44,14 @@
   A \code{pcaRes} object.
 }
 \description{
-  Can be used for computing PCA on a numeric matrix for
-  visualisation, information extraction and missing value
-  imputation.
+  Perform PCA on a numeric matrix for visualisation,
+  information extraction and missing value imputation.
 }
 \details{
   This method is wrapper function for the following set of
   pca methods:
 
-  \describe{\item{svd:}{Uses classical \code{prcomp}.See
+  \describe{\item{svd:}{Uses classical \code{prcomp}. See
   documentation for \code{\link{svdPca}}.}
 
   \item{nipals:}{An iterative method capable of handling
@@ -79,8 +78,8 @@
 \examples{
 data(iris)
 ##  Usually some kind of scaling is appropriate
-pcIr <- pca(iris[,1:4], method="svd", nPcs=2)
-pcIr <- pca(iris[,1:4], method="nipals", nPcs=3, cv="q2")
+pcIr <- pca(iris, method="svd", nPcs=2)
+pcIr <- pca(iris, method="nipals", nPcs=3, cv="q2")
 ## Get a short summary on the calculated model
 summary(pcIr)
 plot(pcIr)
