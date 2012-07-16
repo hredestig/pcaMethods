@@ -74,10 +74,10 @@
 ##' Missing value estimation methods for DNA microarrays.
 ##' \emph{Bioinformatics. 2001 Jun;17(6):520-525.}
 ##' @author Wolfram Stacklies
-llsImpute <- function(Matrix, k = 10, center = FALSE, completeObs = TRUE,
-                      correlation = "pearson", 
-                      allVariables = FALSE, maxSteps = 100, xval = NULL,
-                      verbose = interactive(), ...) {
+llsImpute <- function(Matrix, k=10, center=FALSE, completeObs=TRUE,
+                      correlation="pearson", 
+                      allVariables=FALSE, maxSteps=100, xval=NULL,
+                      verbose=FALSE, ...) {
 
     threshold <- 0.001
 

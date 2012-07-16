@@ -107,12 +107,15 @@ Q2 <- function(object, originalData=completeObs(object),
       for(i in 1:ncol(diags)) 
         seg[[i]] <- which(is.na(deletediagonals(originalData, diags[,i])))
       
-      if(verbose)
+      if(verbose){
         message("Doing ", length(seg), " fold ", "cross validation")
-      pb <- txtProgressBar(0, length(seg))
+        pb <- txtProgressBar(0, length(seg), style=3, width=20)
+      }
+      j <- 0
       for(i in seg) {
+        j <- j + 1
         if(verbose)
-          setTxtProgressBar(i)
+          setTxtProgressBar(pb, j)
         test <- originalData
         test[i] <- NA
         test <- tempFixNas(test)
@@ -123,8 +126,9 @@ Q2 <- function(object, originalData=completeObs(object),
         
         for(np in 1:nP) {
           if(method(object) == "llsImpute") {
-            fittedData <- llsImpute(test, k = np, verbose = FALSE,
-                                    allVariables = TRUE, center = FALSE)@completeObs
+            fittedData <-
+              completeObs(llsImpute(test, k=np, allVariables=TRUE,
+                                    center=FALSE))
           }
           else {
             if(method(object) == "nlpca")
@@ -185,6 +189,7 @@ Q2 <- function(object, originalData=completeObs(object),
     }
     q2[,nr] <- 1 - press / ssx
   }
+  if(verbose) message('\n')
   rownames(q2) <- paste("PC", 1:nrow(q2))
   drop(q2)
 }

@@ -13,10 +13,10 @@ Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA,
     incomplete data as well as for accurate missing value estimation. A
     set of methods for printing and plotting the results is also
     provided. All PCA methods make use of the same data structure
-    (pcaRes) to provide a unique interface to the PCA results.
+    (pcaRes) to provide a common interface to the PCA results.
     Initiated at the Max-Planck Institute for Molecular Plant
     Physiology, Golm, Germany.
-Version: 1.47.2
+Version: 1.47.3
 biocViews: Bioinformatics
 Depends:
     Biobase,
