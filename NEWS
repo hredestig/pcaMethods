@@ -1,6 +1,8 @@
 # -*- org -*-
 #+TITLE: NEWS file for the pcaMethods package
 
+* Version 1.47.3 <2012-07-16 Mon>
+fix bug in progress bar introduced 1.47.1
 * Version 1.47.1 <2012-07-09 Mon>
 Added R2VX as per request by Brandon Hurr
 
