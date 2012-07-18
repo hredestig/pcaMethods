@@ -5,7 +5,7 @@
   llsImpute(Matrix, k = 10, center = FALSE,
     completeObs = TRUE, correlation = "pearson",
     allVariables = FALSE, maxSteps = 100, xval = NULL,
-    verbose = interactive(), ...)
+    verbose = FALSE, ...)
 }
 \arguments{
   \item{Matrix}{\code{matrix} -- Data containing the
