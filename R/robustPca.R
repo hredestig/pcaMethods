@@ -166,9 +166,8 @@ robustSvd <- function(x) {
   ## We need the weightedMedian function provided by the aroma.light
   ## package. However we do not want to make the whole package dependant
   ## on aroma.light
-  if (!require(aroma.light, quietly = TRUE))
-    stop("The aroma.light package is required in order to use this function.
-The package is available at www.bioconductor.org")
+  if (!require(matrixStats, quietly = TRUE))
+    stop("package matrixStats required but not available")
 
   ## Define a couple of helper functions
   L1RegCoef <- function(x,a){
