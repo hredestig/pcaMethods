@@ -16,7 +16,7 @@ Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA,
     (pcaRes) to provide a common interface to the PCA results.
     Initiated at the Max-Planck Institute for Molecular Plant
     Physiology, Golm, Germany.
-Version: 1.47.4
+Version: 1.47.5
 biocViews: Bioinformatics
 Depends:
     Biobase,
@@ -26,7 +26,7 @@ Imports:
     BiocGenerics,
     MASS
 Suggests:
-    aroma.light,
+    matrixStats,
     lattice
 Collate:
     'derrorHierarchic.R'
