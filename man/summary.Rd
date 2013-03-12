@@ -1,11 +1,15 @@
 \name{summary}
 \alias{summary}
 \alias{summary,pcaRes-method}
+\alias{summary.pcaRes}
 \title{Summary of PCA model}
+\usage{
+  \method{summary}{pcaRes} (object, ...)
+}
 \arguments{
   \item{object}{a pcaRes object}
 
-  \item{...}{Not available}
+  \item{...}{Not used}
 }
 \value{
   Nothing, used for side-effect

@@ -492,9 +492,10 @@ setAs('pcaRes', 'data.frame', function(from) {
 ##' @param object a pcaRes object
 ##' @param ... Not used
 ##' @return Nothing, used for side-effect
-##' @aliases summary summary,pcaRes-method
+##' @aliases summary summary.pcaRes summary,pcaRes-method
 ##' @author Henning Redestig
 ##' @export
+##' @name summary
 ##' @method summary pcaRes
 summary.pcaRes <- function(object, ...){
   cat(method(object), "calculated PCA\n")

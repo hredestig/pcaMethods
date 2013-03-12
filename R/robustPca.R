@@ -62,13 +62,8 @@ robustPca <- function(Matrix, nPcs=2, verbose=interactive(), ... ) {
 
   nas <- is.na(Matrix)
 
-  if (!any(nas) & verbose) {
-    cat("Input data is not complete.\n")
-    cat("Scores, R2 and R2cum may be inaccurate, handle with care\n")
-  }
-
   if (sum(nas) != 0)
-    warning("It is not recommended to use robustPca for missing value estimation\n")
+    warning("Data is incomplete, it is not recommended to use robustPca for missing value estimation")
   svdSol <- robustSvd(Matrix)
   
   ## Sort the eigenvalues and eigenvectors
