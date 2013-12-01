@@ -2,6 +2,9 @@
 \alias{nPcs}
 \alias{nPcs,pcaRes-method}
 \title{Get number of PCs.}
+\usage{
+  nPcs(object, ...)
+}
 \arguments{
   \item{object}{pcaRes object}
 

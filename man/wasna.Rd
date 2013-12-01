@@ -3,6 +3,9 @@
 \alias{wasna,pcaRes-method}
 \title{Get a matrix with indicating the elements that were missing in the
 input data. Convenient for estimating imputation performance.}
+\usage{
+  wasna(object, ...)
+}
 \arguments{
   \item{object}{pcaRes object}
 

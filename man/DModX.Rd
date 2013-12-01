@@ -2,6 +2,10 @@
 \alias{DModX}
 \alias{DModX,pcaRes-method}
 \title{DModX}
+\usage{
+  DModX(object, dat, newdata=FALSE,
+    type=c("normalized","absolute"), ...)
+}
 \arguments{
   \item{object}{a pcaRes object}
 

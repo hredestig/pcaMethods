@@ -2,6 +2,9 @@
 \alias{nVar}
 \alias{nVar,pcaRes-method}
 \title{Get the number of variables used to build the PCA model.}
+\usage{
+  nVar(object, ...)
+}
 \arguments{
   \item{object}{pcaRes object}
 

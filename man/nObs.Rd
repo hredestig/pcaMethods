@@ -2,6 +2,9 @@
 \alias{nObs}
 \alias{nObs,pcaRes-method}
 \title{Get the number of observations used to build the PCA model.}
+\usage{
+  nObs(object, ...)
+}
 \arguments{
   \item{object}{pcaRes object}
 

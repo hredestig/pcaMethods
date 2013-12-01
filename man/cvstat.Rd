@@ -2,6 +2,9 @@
 \alias{cvstat}
 \alias{cvstat,pcaRes-method}
 \title{Get cross-validation statistics (e.g. \eqn{Q^2}).}
+\usage{
+  cvstat(object, ...)
+}
 \arguments{
   \item{object}{pcaRes object}
 

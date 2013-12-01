@@ -3,6 +3,9 @@
 \alias{scl,pcaRes-method}
 \title{Get the scales (e.g. standard deviations) of the original
 variables}
+\usage{
+  scl(object, ...)
+}
 \arguments{
   \item{object}{pcaRes object}
 

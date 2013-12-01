@@ -2,6 +2,9 @@
 \name{helix}
 \alias{helix}
 \title{A helix structured toy data set}
+\usage{
+  data(helix)
+}
 \description{
   Simulated data set looking like a helix
 }

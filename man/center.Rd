@@ -2,6 +2,9 @@
 \alias{center}
 \alias{center,pcaRes-method}
 \title{Get the centers of the original variables}
+\usage{
+  center(object, ...)
+}
 \arguments{
   \item{object}{pcaRes object}
 

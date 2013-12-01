@@ -1,5 +1,6 @@
 #include <math.h>
 #include <Rcpp.h>
+#include <R.h>
 
 using namespace std;
 
@@ -56,7 +57,7 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
     double anotherPc = true;
     for (int r = 0; r < nr; r++) {
       for (int c = 0; c < nc; c++) {
-	if(!isnan(mat(r,c))) {
+	if(!ISNAN(mat(r,c))) {
 	  tss += mat(r,c) * mat(r,c);
 	}
       }
@@ -65,7 +66,7 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
     while(anotherPc) {
       for(int r = 0; r < nr; r++) {
 	th[r] = 0;
-	if(!isnan(mat(r,0))) {
+	if(!ISNAN(mat(r,0))) {
 	  th[r] = mat(r,0);
 	}
       }
@@ -84,7 +85,7 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
 	for(int r = 0; r < nr; r++) {
 	  double ti = th[r] / tsize;
 	  for(int c = 0; c < nc; c++) {
-	    if(!isnan(mat(r,c))) {
+	    if(!ISNAN(mat(r,c))) {
 	      ph[c] += mat(r,c) * ti;
 	    }
 	  }
@@ -95,7 +96,7 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
 	for(int r = 0; r < nr; r++) {
 	  th[r] = 0;
 	  for(int c = 0; c < nc; c++) {
-	    if(!isnan(mat(r,c))) {
+	    if(!ISNAN(mat(r,c))) {
 	      th[r] += mat(r,c) * ph[c];
 	    } 
 	  }
@@ -114,7 +115,7 @@ RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
       double err = 0;
       for(int r = 0; r < nr; r++) {
 	for(int c = 0; c < nc; c++) {
-	  if(!isnan(mat(r,c))) {
+	  if(!ISNAN(mat(r,c))) {
 	    mathat = th[r] * ph[c];
 	    est_mat(r, c) += mathat;
 	    err = omat(r,c) - est_mat(r, c);
