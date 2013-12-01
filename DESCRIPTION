@@ -16,17 +16,47 @@ Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA,
     (pcaRes) to provide a common interface to the PCA results.
     Initiated at the Max-Planck Institute for Molecular Plant
     Physiology, Golm, Germany.
-Version: 1.53.0
+Version: 1.53.1
 biocViews: Bioinformatics
-Depends: Biobase, methods, Rcpp (>= 0.8.7)
-Imports: BiocGenerics, MASS
-Suggests: matrixStats, lattice
-Collate: 'derrorHierarchic.R' 'errorHierarchic.R' 'AllClasses.R'
-        'AllGenerics.R' 'methods-nniRes.R' 'methods-pcaRes.R'
-        'methods-ExpressionSet.R' 'BPCA_dostep.R' 'BPCA_initmodel.R'
-        'bpca.R' 'checkData.R' 'forkNlpcaNet.R' 'kEstimateFast.R'
-        'kEstimate.R' 'lineSearch.R' 'llsImpute.R' 'nipalsPca.R'
-        'nlpca.R' 'optiAlgCgd.R' 'orth.R' 'pcaMethods-package.R'
-        'pca.R' 'ppca.R' 'prep.R' 'repmat.R' 'robustPca.R'
-        'sortFeatures.R' 'svdImpute.R' 'vector2matrices.R' 'xval.R'
+Depends:
+    Biobase,
+    methods,
+    Rcpp (>= 0.8.7)
+Imports:
+    BiocGenerics,
+    MASS
+Suggests:
+    matrixStats,
+    lattice
+Collate:
+    'derrorHierarchic.R'
+    'errorHierarchic.R'
+    'AllClasses.R'
+    'AllGenerics.R'
+    'methods-nniRes.R'
+    'methods-pcaRes.R'
+    'methods-ExpressionSet.R'
+    'BPCA_dostep.R'
+    'BPCA_initmodel.R'
+    'bpca.R'
+    'checkData.R'
+    'forkNlpcaNet.R'
+    'kEstimateFast.R'
+    'kEstimate.R'
+    'lineSearch.R'
+    'llsImpute.R'
+    'nipalsPca.R'
+    'nlpca.R'
+    'optiAlgCgd.R'
+    'orth.R'
+    'pcaMethods-package.R'
+    'pca.R'
+    'ppca.R'
+    'prep.R'
+    'repmat.R'
+    'robustPca.R'
+    'sortFeatures.R'
+    'svdImpute.R'
+    'vector2matrices.R'
+    'xval.R'
 Packaged: 2013-03-12 21:41:03 UTC; henning

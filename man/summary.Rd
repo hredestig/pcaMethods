@@ -1,7 +1,7 @@
 \name{summary}
 \alias{summary}
-\alias{summary,pcaRes-method}
 \alias{summary.pcaRes}
+\alias{summary,pcaRes-method}
 \title{Summary of PCA model}
 \usage{
   \method{summary}{pcaRes} (object, ...)

@@ -3,6 +3,9 @@
 \alias{sDev,pcaRes-method}
 \title{Get the standard deviations of the scores (indicates their
 relevance)}
+\usage{
+  sDev(object, ...)
+}
 \arguments{
   \item{object}{pcaRes object}
 

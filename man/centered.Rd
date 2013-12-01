@@ -2,6 +2,9 @@
 \alias{centered}
 \alias{centered,pcaRes-method}
 \title{Check centering was part of the model}
+\usage{
+  centered(object, ...)
+}
 \arguments{
   \item{object}{pcaRes object}
 

@@ -4,6 +4,9 @@
 \alias{completeObs,pcaRes-method}
 \title{Get the original data with missing values replaced with predicted
 values.}
+\usage{
+  completeObs(object, ...)
+}
 \arguments{
   \item{object}{object to fetch complete data from}
 

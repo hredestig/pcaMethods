@@ -2,6 +2,11 @@
 \alias{slplot}
 \alias{slplot,pcaRes-method}
 \title{Side by side scores and loadings plot}
+\usage{
+  slplot(object, pcs=c(1,2), scoresLoadings=c(TRUE, TRUE),
+    sl="def", ll="def", hotelling=0.95, rug=TRUE,
+    sub=NULL,...)
+}
 \arguments{
   \item{object}{a pcaRes object}
 

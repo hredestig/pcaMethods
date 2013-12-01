@@ -2,6 +2,9 @@
 \alias{method}
 \alias{method,pcaRes-method}
 \title{Get the used PCA method}
+\usage{
+  method(object, ...)
+}
 \arguments{
   \item{object}{pcaRes object}
 

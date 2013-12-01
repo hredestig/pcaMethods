@@ -3,6 +3,9 @@
 \alias{nmissing,nniRes-method}
 \alias{nmissing,pcaRes-method}
 \title{Missing values}
+\usage{
+  nmissing(object, ...)
+}
 \arguments{
   \item{object}{pcaRes object}
 
