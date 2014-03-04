@@ -7,56 +7,26 @@ LazyLoad: Yes
 Author: Wolfram Stacklies, Henning Redestig, Kevin Wright
 SystemRequirements: Rcpp
 Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA,
-    Inverse Non-Linear PCA and the conventional SVD PCA. A cluster
-    based method for missing value estimation is included for
-    comparison. BPCA, PPCA and NipalsPCA may be used to perform PCA on
-    incomplete data as well as for accurate missing value estimation. A
-    set of methods for printing and plotting the results is also
-    provided. All PCA methods make use of the same data structure
-    (pcaRes) to provide a common interface to the PCA results.
-    Initiated at the Max-Planck Institute for Molecular Plant
-    Physiology, Golm, Germany.
-Version: 1.53.2
-biocViews: Bioinformatics
-Depends:
-    Biobase,
-    methods,
-    Rcpp (>= 0.8.7)
-Imports:
-    BiocGenerics,
-    MASS
-Suggests:
-    matrixStats,
-    lattice
-Collate:
-    'derrorHierarchic.R'
-    'errorHierarchic.R'
-    'AllClasses.R'
-    'AllGenerics.R'
-    'methods-nniRes.R'
-    'methods-pcaRes.R'
-    'methods-ExpressionSet.R'
-    'BPCA_dostep.R'
-    'BPCA_initmodel.R'
-    'bpca.R'
-    'checkData.R'
-    'forkNlpcaNet.R'
-    'kEstimateFast.R'
-    'kEstimate.R'
-    'lineSearch.R'
-    'llsImpute.R'
-    'nipalsPca.R'
-    'nlpca.R'
-    'optiAlgCgd.R'
-    'orth.R'
-    'pcaMethods-package.R'
-    'pca.R'
-    'ppca.R'
-    'prep.R'
-    'repmat.R'
-    'robustPca.R'
-    'sortFeatures.R'
-    'svdImpute.R'
-    'vector2matrices.R'
-    'xval.R'
+        Inverse Non-Linear PCA and the conventional SVD PCA. A cluster
+        based method for missing value estimation is included for
+        comparison. BPCA, PPCA and NipalsPCA may be used to perform PCA
+        on incomplete data as well as for accurate missing value
+        estimation. A set of methods for printing and plotting the
+        results is also provided. All PCA methods make use of the same
+        data structure (pcaRes) to provide a common interface to the
+        PCA results. Initiated at the Max-Planck Institute for
+        Molecular Plant Physiology, Golm, Germany.
+Version: 1.53.3
+Depends: Biobase, methods, Rcpp (>= 0.8.7)
+Imports: BiocGenerics, MASS
+Suggests: matrixStats, lattice
+Collate: 'derrorHierarchic.R' 'errorHierarchic.R' 'AllClasses.R'
+        'AllGenerics.R' 'methods-nniRes.R' 'methods-pcaRes.R'
+        'methods-ExpressionSet.R' 'BPCA_dostep.R' 'BPCA_initmodel.R'
+        'bpca.R' 'checkData.R' 'forkNlpcaNet.R' 'kEstimateFast.R'
+        'kEstimate.R' 'lineSearch.R' 'llsImpute.R' 'nipalsPca.R'
+        'nlpca.R' 'optiAlgCgd.R' 'orth.R' 'pcaMethods-package.R'
+        'pca.R' 'ppca.R' 'prep.R' 'repmat.R' 'robustPca.R'
+        'sortFeatures.R' 'svdImpute.R' 'vector2matrices.R' 'xval.R'
 Packaged: 2013-03-12 21:41:03 UTC; henning
+biocViews: Bayesian
