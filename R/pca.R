@@ -8,15 +8,16 @@
 ##' @author Henning Redestig
 listPcaMethods <- function(which=c("all", "linear", "nonlinear")) {
   switch(match.arg(which),
-         all = {
+         all={
            return(c("svd", "nipals", "rnipals", "bpca", "ppca",
-                    "svdImpute", "robustPca", "nlpca"))
+                    "svdImpute", "robustPca", "nlpca", "llsImpute",
+                    "llsImputeAll"))
          },
-         linear = {
+         linear={
            return(c("svd", "nipals", "rnipals", "bpca", "ppca",
                     "svdImpute", "robustPca"))
          },
-         nonlinear = {
+         nonlinear={
            return("nlpca")
          })
 }
@@ -151,28 +152,28 @@ pca <- function(object, method, nPcs=2,
   prepres <- prep(Matrix, scale=scale, center=center, simple=FALSE, ...)
 
   switch(method,
-         svd = {
+         svd={
            res <- svdPca(prepres$data, nPcs=nPcs,...)   
          },
-         nipals = {
+         nipals={
            res <- nipalsPca(prepres$data, nPcs=nPcs, ...) 
          },
-         rnipals = {
+         rnipals={
            res <- RnipalsPca(prepres$data,  nPcs=nPcs, ...) 
          },
-         bpca = {
+         bpca={
            res <- bpca(prepres$data, nPcs=nPcs, ...) 
          },
-         ppca = {
+         ppca={
            res <- ppca(prepres$data, nPcs=nPcs, ...) 
          },
-         svdImpute = {
+         svdImpute={
            res <- svdImpute(prepres$data, nPcs=nPcs, ...) 
          },
-         robustPca = {
+         robustPca={
            res <- robustPca(prepres$data,  nPcs=nPcs, ...) 
          },
-         nlpca = {
+         nlpca={
            res <- nlpca(prepres$data, nPcs=nPcs, ...)
          })
 
@@ -181,10 +182,10 @@ pca <- function(object, method, nPcs=2,
      is.null(R2cum(res)) | is.null(method(res)))
     stop(paste("bad result from pca method", method))
 
-  colnames(res@scores) <- paste("PC", 1:nPcs, sep = "")
+  colnames(res@scores) <- paste("PC", 1:nPcs, sep="")
   rownames(res@scores) <- rownames(Matrix)
   if(all(dim(loadings(res)) == c(ncol(Matrix), nPcs))) {
-    colnames(res@loadings) <- paste("PC", 1:nPcs, sep = "")
+    colnames(res@loadings) <- paste("PC", 1:nPcs, sep="")
     rownames(res@loadings) <- colnames(Matrix)
   }
   if(!is.null(subset))
@@ -250,9 +251,9 @@ nni <- function(object, method=c("llsImpute"), subset=numeric(), ...) {
 
   method <- match.arg(method)
 
-  if ( !checkData(as.matrix(object), verbose = interactive()) )
+  if ( !checkData(as.matrix(object), verbose=interactive()) )
     stop("Invalid data format, exiting...\n",
-         "Run checkData(data, verbose = TRUE) for details\n")
+         "Run checkData(data, verbose=TRUE) for details\n")
 
   missing <- sum(is.na(object))
   if(length(subset) > 0)
@@ -308,12 +309,12 @@ plotPcs <- function(object,
   }
 
   switch(type,
-         scores = {
+         scores={
            labels <- paste("PC", pcs, "\n", "R^2 =", round(object@R2[pcs], 2))
            pairs(scores(object)[,pcs], labels=labels,
                  panel=panel, upper.panel=NULL,...)
          },
-         loadings = {
+         loadings={
            if(method(object) == "nlpca")
              stop("Loadings plot not applicable for non-linear PCA")
            labels <- paste("PC", pcs, "\n", "R^2 =", round(object@R2[pcs], 2))
