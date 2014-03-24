@@ -48,9 +48,9 @@
 ##' ## with outliers.
 ##' ## We use center=FALSE here because the large artificial outliers would
 ##' ## affect the means and not allow to objectively compare the results.
-##' resSvd    <- pca(mdc, method = "svd", nPcs = 10, center = FALSE)
-##' resSvdOut <- pca(mdcOut, method = "svd", nPcs = 10, center = FALSE)
-##' resRobPca <- pca(mdcOut, method = "robustPca", nPcs = 10, center = FALSE)
+##' resSvd    <- pca(mdc, method="svd", nPcs=10, center=FALSE)
+##' resSvdOut <- pca(mdcOut, method="svd", nPcs=10, center=FALSE)
+##' resRobPca <- pca(mdcOut, method="robustPca", nPcs=10, center=FALSE)
 ##' ## Now we plot the results for the original data against those with outliers
 ##' ## We can see that robustPca is hardly effected by the outliers.
 ##' plot(loadings(resSvd)[,1], loadings(resSvdOut)[,1])
@@ -67,7 +67,7 @@ robustPca <- function(Matrix, nPcs=2, verbose=interactive(), ... ) {
   svdSol <- robustSvd(Matrix)
   
   ## Sort the eigenvalues and eigenvectors
-  loadings <- svdSol$v[, 1:nPcs, drop = FALSE]
+  loadings <- svdSol$v[, 1:nPcs, drop=FALSE]
   sDev     <- svdSol$d[1:nPcs] / sqrt(max(1, nrow(Matrix) - 1))
 
   ## We estimate the scores by just setting all NA values to 0 This is
@@ -115,7 +115,7 @@ robustPca <- function(Matrix, nPcs=2, verbose=interactive(), ... ) {
 ##' @title Alternating L1 Singular Value Decomposition
 ##' @param x A matrix whose SVD decomposition is to be
 ##' computed. Missing values are allowed.
-##' @return The robust SVD of the matrix is x = u d v'. \item{d}{A
+##' @return The robust SVD of the matrix is x=u d v'. \item{d}{A
 ##' vector containing the singular values of \code{x}.} \item{u}{A
 ##' matrix whose columns are the left singular vectors of \code{x}.}
 ##' \item{v}{A matrix whose columns are the right singular vectors of
@@ -161,14 +161,13 @@ robustSvd <- function(x) {
   ## We need the weightedMedian function provided by the aroma.light
   ## package. However we do not want to make the whole package dependant
   ## on aroma.light
-  if (!require(matrixStats, quietly = TRUE))
+  if (!require(matrixStats, quietly=TRUE))
     stop("package matrixStats required but not available")
 
-  ## Define a couple of helper functions
   L1RegCoef <- function(x,a){
     keep <- (a!=0) & (!is.na(x))
     a <- a[keep]
-    return ( weightedMedian(x[keep]/a,abs(a), interpolate = FALSE) )
+    return(weightedMedian(x[keep]/a, abs(a), na.rm=TRUE, interpolate=FALSE))
   }
 
   L1Eigen <- function(x,a,b){
@@ -176,7 +175,7 @@ robustSvd <- function(x) {
     ab <- as.vector(outer(a,b))
     keep <- (ab!=0) & (!is.na(x))
     ab <- ab[keep]
-    return( weightedMedian(x[keep]/ab,abs(ab), interpolate = FALSE) )
+    return(weightedMedian(x[keep]/ab, abs(ab), na.rm=TRUE, interpolate=FALSE))
   }
 
   ## Initialize outputs
