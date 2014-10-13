@@ -1,0 +1,88 @@
+# -*- org -*-
+#+TITLE: NEWS file for the pcaMethods package
+
+* Version 1.47.3 <2012-07-16 Mon>
+fix bug in progress bar introduced 1.47.1
+* Version 1.47.1 <2012-07-09 Mon>
+Added R2VX as per request by Brandon Hurr
+
+Added warning when user specifies using svd despite having missing values in the data as requested by Jean-Olivier Irisson
+* Version 1.44.0 <2012-06-13 Wed>
+Large scale cleanup of S3 / S4 methods. Better use of namespace imports as opposed to full attaches. This should improve behavior for packages that imports from pcaMethods.
+* Version 1.38.1 
+Documentation changes to use roxygen2 instead. Also import scores and loadings generics from pls as that package now has a proper namespace.
+* Version 1.38.0
+bugfix in the DModX function which resulted in wrong results. Thanks to Mikhail Kozine for pointing this out.
+* Version 1.33.0
+** Major changes
+*** STARTED Dirk E.'s patch about Rcpp updates
+    - State "STARTED"    from "TODO"       [2010-11-28 Sun 19:15]
+    - State "TODO"       from ""           [2010-11-28 Sun 14:22]
+in short, Rcpp can now (and should) use the LinkingTo field. Also, lots of interface changes to Rcpp makes current nipals.cpp dated.
+* Version 1.31.0
+better calculation of number of pcs, bug fix to slplot, bug fix to prep that caused pareto scaling to not work properly
+* Version 1.29.1 
+** Minor corrections
+- Fixed mistake in slplot, now report the explained variance up to the highest chosen pc instead of the minimum. 
+* Version 1.29.0 <2010-01-23 Sat> 
+** CV 
+Can now be done directly when calling pca and the result is saved withing the pcaRes object to make plotting easier. A new method plot.pcaRes replaces plotR2
+** Migration to roxygen
+The main event in this version is that pcaMethods is now completely documented with roxygen style comment fields. No more editing Rd files, wohoo!
+** Migration to using getter methods
+Should have been done to start with. Obvious advantages.
+** Proper handling of pre-processing
+the prep method has been shaped up and now handles various kind of pre-processing and also post-processing where so that fitted can actually deliver the final fitted data. 
+*** Unification of pre-processing policies
+All pca methods now only set scores, loadings and R2cum (all these may be computed slightly differently within the different methods) all other slots are handled by the pca wrapper method. This way, handling of pre-processing is guaranteed to be the same for all methods and makes for much cleaner code.
+** Clean up
+Major tidying act (still ongoing). Many methods were creating unnecessary copies of large matrices and used poor variable names. This has been amended.
+* Version 1.27.2 <2010-01-05 Tue> 
+- Krzanowski CV changed so to not try to estimate Q^2 for more
+  PCs than possible.
+* Version 1.27.0 <2010-01-02 Sat> 
+- No warnings anymore when requesting SVD on matrix with missing
+  values, silently switch to nipals.
+- New C++ implementation of nipals, save old R-version to
+  'rnipals' for reference.
+- Dependence on package Rcpp which made C++ implementation
+  much easier.
+- Successive introduction of Roxygen style documentation
+  (.Rd files  are generated from the comment sections)
+- Successive introduction of using getter functions instead
+  of '@'
+- Remove redundant 'checkData' calls from *pca functions,
+  it is called   from pca()
+- Introduction of new X-validation approach which is
+  applicable also for SVD.
+* Version 1.24.0 <2008-10-27 Mon> 
+- Improvements to slplot, bugfixes and a show method
+* Version x.y.z <2008-02-27 Wed> 
+- Replaced usage of exprSet class with ExpressionSet
+* Version x.y.z <2007-04-10 Tue> 
+- Added robustSVD, a SVD implementation robust to outliers
+* Version x.y.z <2007-01-02 Tue> 
+- Added a Non-linear PCA algorithm.
+* Version x.y.z <2006-12-11 Mon> 
+- kEstimate interface has changed. Instead of specifying a
+  single value for the maximum number of pcs it is now possible
+  to specify an array, e.g. c(3,5,7,9.20) or 3:7
+* Version x.y.z <2006-12-11 Mon> 
+- Added a cluster based imputation method called llsImpute.
+  This is mainly thought for comparison with the other methods.
+  kEstimate may also be used with llsImpute.
+* Version 1.0.0 <2006-08-27 Sun> 
+- This is the first revision of our pca package. Enjoy!
+* Planned
+** C++ Versions
+of ppca and possibly bpca. Nlpca would be nice and would probably benefit most of being ported to C++..
+*** ppca 							    :STARTED:
+using gsl but speed gain so far not so remarkable
+** DONE Proper handling of scaling and centering
+   CLOSED: [2010-01-22 Fri 11:15]
+Current version is broken and need full rewrite
+** DONE Add Q2 as a slot 
+   CLOSED: [2010-01-22 Fri 11:15]
+and a plotting function
+** TODO Q2VX
+per variable / observation Q2 estimates

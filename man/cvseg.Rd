@@ -1,0 +1,38 @@
+\name{cvseg}
+\alias{cvseg}
+\title{Get CV segments}
+\usage{
+  cvseg(x, fold = 7, seed = NULL)
+}
+\arguments{
+  \item{x}{a factor, character or numeric vector that
+  describes class membership of a set of items, or, a
+  numeric vector indicating unique indices of items, or, a
+  numeric of length 1 that describes the number of items to
+  segment (without any classes)}
+
+  \item{fold}{the desired number of segments}
+
+  \item{seed}{randomization seed for reproducibility}
+}
+\value{
+  a list where each element is a set of indices that
+  defines the CV segment.
+}
+\description{
+  Get cross-validation segments that have (as far as
+  possible) the same ratio of all classes (if classes are
+  present)
+}
+\examples{
+seg <- cvseg(iris$Species, 10)
+sapply(seg, function(s) table(iris$Species[s]))
+cvseg(20, 10)
+}
+\author{
+  Henning Redestig
+}
+\seealso{
+  the \code{cvsegments} function in the \code{pls} package
+}
+

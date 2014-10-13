@@ -1,0 +1,50 @@
+\name{svdPca}
+\alias{svdPca}
+\title{Perform principal component analysis using singular value
+decomposition}
+\usage{
+  svdPca(Matrix, nPcs = 2, varLimit = 1,
+    verbose = interactive(), ...)
+}
+\arguments{
+  \item{Matrix}{Pre-processed (centered and possibly
+  scaled) numerical matrix samples in rows and variables as
+  columns. No missing values allowed.}
+
+  \item{nPcs}{Number of components that should be
+  extracted.}
+
+  \item{varLimit}{Optionally the ratio of variance that
+  should be explained. \code{nPcs} is ignored if varLimit <
+  1}
+
+  \item{verbose}{Verbose complaints to matrix structure}
+
+  \item{...}{Only used for passing through arguments.}
+}
+\value{
+  A \code{pcaRes} object.
+}
+\description{
+  A wrapper function for \code{prcomp} to deliver the
+  result as a \code{pcaRes} method. Supplied for
+  compatibility with the rest of the pcaMethods package.
+  It is not recommended to use this function directely but
+  rather to use the \code{pca()} wrapper function.
+}
+\examples{
+data(metaboliteDataComplete)
+mat <- prep(t(metaboliteDataComplete))
+pc <- svdPca(mat, nPcs=2)
+## better use pca()
+pc <- pca(t(metaboliteDataComplete), method="svd", nPcs=2)
+\dontshow{stopifnot(sum((fitted(pc) - t(metaboliteDataComplete))^2, na.rm=TRUE) < 200)}
+}
+\author{
+  Henning Redestig
+}
+\seealso{
+  \code{prcomp}, \code{princomp}, \code{pca}
+}
+\keyword{multivariate}
+

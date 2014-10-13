@@ -1,0 +1,30 @@
+\name{deletediagonals}
+\alias{deletediagonals}
+\title{Delete diagonals}
+\usage{
+  deletediagonals(x, diagonals = 1)
+}
+\arguments{
+  \item{x}{The matrix}
+
+  \item{diagonals}{The diagonal to be replaced, i.e. the
+  first, second and so on when looking at the fat version
+  of the matrix (transposed or not) counting from the
+  bottom. Can be a vector to delete more than one
+  diagonal.}
+}
+\value{
+  The original matrix with some values missing
+}
+\description{
+  Replace a diagonal of elements of a matrix with NA
+}
+\details{
+  Used for creating artifical missing values in matrices
+  without causing any full row or column to be completely
+  missing
+}
+\author{
+  Henning Redestig
+}
+

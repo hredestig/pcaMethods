@@ -1,0 +1,21 @@
+\name{tempFixNas}
+\alias{tempFixNas}
+\title{Temporary fix for missing values}
+\usage{
+  tempFixNas(mat)
+}
+\arguments{
+  \item{mat}{a matrix}
+}
+\value{
+  The original matrix with completely missing rows/cols
+  filled with zeroes.
+}
+\description{
+  Simply replace completely missing rows or cols with
+  zeroes.
+}
+\author{
+  Henning Redestig
+}
+
