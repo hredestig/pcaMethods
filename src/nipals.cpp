@@ -3,6 +3,7 @@
 #include <R.h>
 
 using namespace std;
+using namespace Rcpp;
 
 double difference(vector<double>& vec1, vector<double>& vec2) {
   double diff = 0;
@@ -27,7 +28,8 @@ void norm(vector<double>& vec) {
   }
 }
 
-RcppExport SEXP Nipals(SEXP Mat, SEXP params) {
+// [[Rcpp::export]]
+List Nipals(SEXP Mat, SEXP params) {
   try{
     bool cnt;
     int count = 0;

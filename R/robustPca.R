@@ -167,7 +167,8 @@ robustSvd <- function(x) {
   L1RegCoef <- function(x,a){
     keep <- (a!=0) & (!is.na(x))
     a <- a[keep]
-    return(weightedMedian(x[keep]/a, abs(a), na.rm=TRUE, interpolate=FALSE))
+    return(matrixStats::weightedMedian(x[keep]/a, abs(a),
+                                       na.rm=TRUE, interpolate=FALSE))
   }
 
   L1Eigen <- function(x,a,b){
@@ -175,7 +176,8 @@ robustSvd <- function(x) {
     ab <- as.vector(outer(a,b))
     keep <- (ab!=0) & (!is.na(x))
     ab <- ab[keep]
-    return(weightedMedian(x[keep]/ab, abs(ab), na.rm=TRUE, interpolate=FALSE))
+    return(matrixStats::weightedMedian(x[keep]/ab, abs(ab),
+                                       na.rm=TRUE, interpolate=FALSE))
   }
 
   ## Initialize outputs

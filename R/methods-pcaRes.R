@@ -288,7 +288,7 @@ scores.pcaRes <- function(object, ...) object@scores
 ##' @param ... not used
 ##' @return The scores as a matrix
 ##' @seealso \code{\link{scores.pcaRes}}
-##' @aliases scores,pcaRes-method
+##' @aliases scores scores,pcaRes-method
 ##' @author Henning Redestig
 setMethod("scores", "pcaRes", scores.pcaRes)
 
@@ -314,7 +314,7 @@ setMethod("loadings", "pcaRes", loadings.pcaRes)
 ##' @param ...  not used
 ##' @return The loadings
 ##' @author Henning Redestig
-##' @aliases loadings,ANY-method
+##' @aliases loadings loadings,ANY-method
 setMethod("loadings", "ANY", function(object,...) {
   stats::loadings(object)
 })
@@ -337,6 +337,7 @@ dim.pcaRes <- function(x)  {
 ##' @param x a pcaRes object
 ##' @param ...  not used
 ##' @return nothing, used for its side effect
+##' @name show-methods
 ##' @export
 ##' @author Henning Redestig
 showPcaRes <- function(x, ...) {
@@ -371,14 +372,13 @@ showPcaRes <- function(x, ...) {
     print(dim(loadings(x)))
   }
 }
-##' Print basic info
-##' @seealso \code{\link{showPcaRes}} \code{\link{showNniRes}}
 ##' @aliases print,pcaRes-method print,nniRes-method
+##' @name show-methods
 setMethod("print", "pcaRes", showPcaRes)
-##' Show pcaRes / nniRes objects.
-##' @seealso \code{\link{showPcaRes}} \code{\link{showNniRes}}
-##' @importFrom methods show
+## @importFrom methods show
 ##' @aliases show,pcaRes-method show,nniRes-method
+##' @param object the object to print information about
+##' @name show-methods
 setMethod("show", "pcaRes", function(object) showPcaRes(object))
 
 ##' Visualize two-components simultaneously
@@ -416,6 +416,7 @@ setMethod("show", "pcaRes", function(object) showPcaRes(object))
 ##' @seealso \code{prcomp}, \code{pca}, \code{princomp}
 ##' @author Kevin Wright, Adapted from \code{biplot.prcomp}
 ##' @keywords multivariate
+##' @name biplot-methods
 biplot.pcaRes <- function(x, choices=1:2, scale=1, pc.biplot=FALSE, ...) {
   if(length(choices)!=2)
     stop("length of choices must be 2")
@@ -431,10 +432,9 @@ biplot.pcaRes <- function(x, choices=1:2, scale=1, pc.biplot=FALSE, ...) {
          t(t(loadings(x)[, choices]) * lam), , ...)
   invisible()
 }
-##' Biplot for pcaRes method. 
-##' @seealso \code{\link{biplot.pcaRes}}
 ##' @aliases biplot,pcaRes-method
-##' @importFrom stats biplot
+## @importFrom stats biplot
+##' @name biplot-methods
 setMethod("biplot", "pcaRes", biplot.pcaRes)
 
 ##' Flexible calculation of R2 goodness of fit.
@@ -445,7 +445,7 @@ setMethod("biplot", "pcaRes", biplot.pcaRes)
 ##' 'observations' or 'complete'.
 ##' @param data the data used to fit the model
 ##' @param pcs the number of PCs to use to calculate R2
-##' @aliases R2VX,pcaRes-method
+##' @aliases R2VX R2VX,pcaRes-method
 ##' @examples
 ##' R2VX(pca(iris))
 ##' @return A vector with R2 values
@@ -545,7 +545,8 @@ setMethod("summary", "pcaRes", summary.pcaRes)
 ##' pcFull <- pca(iris[,1:4])
 ##' irisHat <- predict(pcIr, iris[hidden,1:4])
 ##' cor(irisHat$scores[,1], scores(pcFull)[hidden,1])
-##' @export 
+##' @export
+##' @name predict-methods
 ##' @author Henning Redestig
 predict.pcaRes <- function(object, newdata, pcs=nP(object),
                            pre=TRUE, post=TRUE, ...) {
@@ -561,9 +562,8 @@ predict.pcaRes <- function(object, newdata, pcs=nP(object),
     xhat <- prep(xhat, scl(object), center(object), reverse=TRUE)
   list(scores=tnew, x=xhat)
 }
-##' Predict PCA data.
-##' @seealso \code{\link{predict.pcaRes}}
-##' @importFrom stats predict
+## @importFrom stats predict
+##' @name predict-methods
 ##' @aliases predict,pcaRes-method
 setMethod("predict", "pcaRes", predict.pcaRes)
 
@@ -580,6 +580,7 @@ setMethod("predict", "pcaRes", predict.pcaRes)
 ##' @method residuals pcaRes
 ##' @keywords multivariate
 ##' @export
+##' @name rediduals-methods
 ##' @examples
 ##' data(iris)
 ##' pcIr <- pca(iris[,1:4])
@@ -590,14 +591,10 @@ residuals.pcaRes <- function(object, data=completeObs(object), ...) {
     stop("data missing when calculating residuals")
   data - predict(object, data, ...)$x
 }
-##' Residuals of PCA data.
-##' @seealso \code{\link{residuals.pcaRes}}
-##' @importFrom stats residuals
 ##' @aliases residuals,pcaRes-method
+##' @name rediduals-methods
 setMethod("residuals", "pcaRes", residuals.pcaRes)
-##' Residuals of PCA data.
-##' @seealso \code{\link{residuals.pcaRes}}
-##' @importFrom stats resid
+##' @name rediduals-methods
 ##' @aliases resid,pcaRes-method
 setMethod("resid", "pcaRes", residuals.pcaRes)
 
@@ -629,6 +626,7 @@ setMethod("resid", "pcaRes", residuals.pcaRes)
 ##' pc <- pca(iris[,1:4], nPcs=4, center=TRUE, scale="uv")
 ##' sum( (fitted(pc) - iris[,1:4])^2 )
 ##' @export
+##' @name fitted-methods
 ##' @author Henning Redestig
 fitted.pcaRes <- function(object, data=NULL, nPcs=nP(object),
                           pre=TRUE, post=TRUE, ...) {
@@ -659,9 +657,8 @@ fitted.pcaRes <- function(object, data=NULL, nPcs=nP(object),
     recData <- prep(recData, scl(object), center(object), reverse=TRUE)
   return(recData)
 }
-##' Fitted PCA data.
-##' @seealso \code{\link{fitted.pcaRes}}
-##' @importFrom stats fitted
+## @importFrom stats fitted
+##' @name fitted-methods
 ##' @aliases fitted,pcaRes-method
 setMethod("fitted", "pcaRes", fitted.pcaRes)
 
@@ -693,6 +690,7 @@ setMethod("fitted", "pcaRes", fitted.pcaRes)
 ##' @author Henning Redestig
 plot.pcaRes <- function(x, y=NULL, main=deparse(substitute(object)),
                         col=gray(c(0.9, 0.5)), ...) {
+  y <- NULL
   ## the deparse(subsitute(object)) later fails otherwise
   main <- main
   if(!is.null(cvstat(x))) {

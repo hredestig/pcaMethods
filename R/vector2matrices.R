@@ -22,7 +22,8 @@ setMethod("vector2matrices", "nlpcaNet", function(object) {
 })
 
 ##' Tranform the vectors of weights to matrix structure
-##' @param object  an nlpcaNet
+##' @param object an nlpcaNet
+##' @param net the neural network
 ##' @return weights in matrix structure
 ##' @author Henning Redestig
 ##' @aliases vector2matrices,matrix-method
