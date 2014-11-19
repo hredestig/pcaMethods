@@ -3,7 +3,8 @@ setGeneric("vector2matrices", function(object, ...)
 ##' @exportMethod leverage
 setGeneric("leverage", function(object, ...) standardGeneric("leverage"))
 ##' @exportMethod DModX
-setGeneric("DModX", function(object, dat, newdata=FALSE, type=c("normalized","absolute"), ...) standardGeneric("DModX"))
+setGeneric("DModX", function(object, dat, newdata=FALSE, type=c("normalized","absolute"), ...)
+    standardGeneric("DModX"))
 ##' @exportMethod nP
 setGeneric("nP", function(object, ...) standardGeneric("nP"))
 ##' @exportMethod cvstat
@@ -46,3 +47,5 @@ setGeneric("scores", function(object, ...) standardGeneric("scores"))
 setGeneric("loadings", function(object, ...) standardGeneric("loadings"))
 ##' @exportMethod R2VX
 setGeneric("R2VX", function(object, ...) standardGeneric("R2VX"))
+## @exportMethod prep
+#setGeneric("prep", function(object, ...) standardGeneric("prep"))

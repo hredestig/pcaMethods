@@ -156,7 +156,7 @@ RnipalsPca <- function(Matrix, nPcs=2,
 nipalsPca <- function(Matrix, nPcs=2, varLimit=1, maxSteps=5000, 
                       threshold=1e-6, ...) {
 
-  nipRes <- .Call("Nipals", Matrix, params=list(nPcs=nPcs,
+  nipRes <- .Call("pcaMethods_Nipals", Matrix, params=list(nPcs=nPcs,
                                       varLimit=varLimit,
                                       threshold=threshold,
                                       maxSteps=maxSteps),
