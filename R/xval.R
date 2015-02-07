@@ -7,12 +7,12 @@
 ##' ratio of variance that can be predicted independently by the PCA
 ##' model. Poor (low) \eqn{Q^2} indicates that the PCA model only
 ##' describes noise and that the model is unrelated to the true data
-##' structure. The definition of \eqn{Q^2} is: \deqn{Q^2 = 1 -
+##' structure. The definition of \eqn{Q^2} is: \deqn{Q^2=1 -
 ##' \frac{\sum_{i}^{k}\sum_{j}^{n}(x -
-##' \hat{x})^2}{\sum_{i}^{k}\sum_{j}^{n}x^2}}{Q^2 = 1 - sum_i^k
+##' \hat{x})^2}{\sum_{i}^{k}\sum_{j}^{n}x^2}}{Q^2=1 - sum_i^k
 ##' sum_j^n (x - \hat{x})^2 / \sum_i^k \sum_j^n(x^2)} for the matrix
 ##' \eqn{x} which has \eqn{n} rows and \eqn{k} columns. For a given
-##' number of PC's x is estimated as \eqn{\hat{x} = TP'} (T are scores
+##' number of PC's x is estimated as \eqn{\hat{x}=TP'} (T are scores
 ##' and P are loadings). Although this defines the leave-one-out
 ##' cross-validation this is  not what is performed if fold is less
 ##' than the number of rows and/or columns.  In 'impute' type CV,
@@ -40,6 +40,9 @@
 ##' @param type krzanowski or imputation type cross-validation
 ##' @param verbose \code{boolean} If TRUE Q2 outputs a primitive
 ##' progress bar.
+##' @param variables indices of the variables to use during
+##' cross-validation calculation. Other variables are kept as they are
+##' and do not contribute to the total sum-of-squares.
 ##' @param ... Further arguments passed to the \code{\link{pca}} function called
 ##' within Q2.
 ##' @return A matrix or vector with \eqn{Q^2} estimates.
@@ -52,144 +55,131 @@
 ##' pcIr <- pca(x, nPcs=3)
 ##' q2 <- Q2(pcIr, x)
 ##' barplot(q2, main="Krzanowski CV", xlab="Number of PCs", ylab=expression(Q^2))
+##' ## q2 for a single variable
+##' Q2(pcIr, x, variables=2)
 ##' pcIr <- pca(x, nPcs=3, method="nipals")
 ##' q2 <- Q2(pcIr, x, type="impute")
 ##' barplot(q2, main="Imputation CV", xlab="Number of PCs", ylab=expression(Q^2))
-##' @author Henning Redestig
+##' @author Henning Redestig, Ondrej Mikula
 ##' @keywords multivariate
-Q2 <- function(object, originalData=completeObs(object),
-               fold=5, nruncv=1,
-               type=c("krzanowski", "impute"),
-               verbose=interactive(), ...) {
+Q2 <- function (object, originalData=completeObs(object), fold=5, 
+                nruncv=1, type=c("krzanowski", "impute"), verbose=interactive(),
+                variables=1:nVar(object), ...) {
   type <- match.arg(type)
-
-  if(inherits(originalData, "ExpressionSet")) {
+  if (inherits(originalData, "ExpressionSet")) {
     set <- originalData
     originalData <- t(exprs(originalData))
   }
-  if(is.null(originalData))
+  if (is.null(originalData)) 
     stop("missing data when estimating Q2")
   originalData <- as.matrix(originalData)
   originalData <- prep(originalData, scale=scl(object), center=center(object))
-
   nR <- nObs(object)
   nC <- nVar(object)
-  
-  if(nR != nrow(originalData) | nC != ncol(originalData))
+  if (nR != nrow(originalData) | nC != ncol(originalData)) 
     stop("data and model dimensions do not match")
-  if(fold > max(nR, nC))
+  if (fold > max(nR, nC)) 
     stop("fold must be equal or less to max dimension of original data")
-  if(method(object) %in% c("svd") & type != "krzanowski")
+  if (method(object) %in% c("svd") & type != "krzanowski") 
     stop("Chosen PCA method must use krzanowski type cv")
-  if(method(object) %in% c("llsImpute") & type != "impute")
+  if (method(object) %in% c("llsImpute") & type != "impute") 
     stop("Chosen PCA method must use impute type cv")
-
-  ssx <- sum(originalData^2, na.rm=TRUE)
   
-  for(nr in 1:nruncv) {
-    ## --- impute ---
-    if(type == "impute") {
+  if (is.logical(variables))
+    variables <- which(variables)
+
+  ssx <- sum(originalData[, variables]^2, na.rm=TRUE)
+  for (nr in 1:nruncv) {
+    if (type == "impute") {
       nP <- nPcs(object)
       press <- rep(0, nP)
       q2 <- matrix(NA, nP, ncol=nruncv)
       seg <- list()
       nDiag <- max(nR, nC)
-      diagPerFold <- floor(nDiag / fold)
-      suppressWarnings(diags <- matrix(1:nDiag, nrow=diagPerFold,
-                                       ncol=fold, byrow=TRUE))
-      if(diagPerFold == 0 || diagPerFold > (nDiag / 2))
-        stop("Matrix could not be safely divided into ", fold,
-             " segments. Choose a different fold or provide the desired segments")
-      if(nDiag %% fold > 0)
-        warning("Validation incomplete: ",
-                (nDiag %% fold) * min(dim(originalData)),
+      diagPerFold <- floor(nDiag/fold)
+      suppressWarnings(diags <- matrix(1:nDiag, nrow=diagPerFold, ncol=fold, byrow=TRUE))
+      if (diagPerFold == 0 || diagPerFold > (nDiag/2)) 
+        stop("Matrix could not be safely divided into ", 
+             fold, " segments. Choose a different fold or provide the desired segments")
+      if (nDiag%%fold > 0) 
+        warning("Validation incomplete: ", (nDiag%%fold) * 
+                  min(dim(originalData)),
                 " values were left out of from cross validation, Q2 estimate will be biased.")
-      for(i in 1:ncol(diags)) 
-        seg[[i]] <- which(is.na(deletediagonals(originalData, diags[,i])))
-      
-      if(verbose){
+      for (i in 1:ncol(diags))
+        seg[[i]] <- which(is.na(deletediagonals(originalData, diags[, i])))
+      if (verbose) {
         message("Doing ", length(seg), " fold ", "cross validation")
         pb <- txtProgressBar(0, length(seg), style=3, width=20)
       }
       j <- 0
-      for(i in seg) {
+      for (i in seg) {
         j <- j + 1
-        if(verbose)
+        if (verbose) 
           setTxtProgressBar(pb, j)
         test <- originalData
         test[i] <- NA
         test <- tempFixNas(test)
-        if (method(object)!= "llsImpute") {
-          pc <- pca(test, nPcs=nP, method=method(object), verbose=FALSE,
-                    center=centered(object), scale=object@scaled,...)
+        if (method(object) != "llsImpute") {
+          pc <- pca(test, nPcs=nP, method=method(object), 
+					verbose=FALSE, center=centered(object), scale=object@scaled, ...)
         }
-        
-        for(np in 1:nP) {
-          if(method(object) == "llsImpute") {
-            fittedData <-
-              completeObs(llsImpute(test, k=np, allVariables=TRUE,
-                                    center=FALSE))
+        for (np in 1:nP) {
+          if (method(object) == "llsImpute") {
+            fittedData <- completeObs(llsImpute(test, k=np, allVariables=TRUE, center=FALSE))
           }
           else {
-            if(method(object) == "nlpca")
+            if (method(object) == "nlpca") 
               fittedData <- fitted(pc, data=test, nPcs=np)
-            else
-              fittedData <- fitted(pc, data=NULL, nPcs=np)
+            else fittedData <- fitted(pc, data=NULL, nPcs=np)
           }
-          press[np] <- press[np] +
-            sum((originalData[i] - fittedData[i])^2, na.rm=TRUE)
+          ii <- i[ceiling(i / nR) %in% variables]
+          press[np] <- press[np] + sum((originalData[ii] - fittedData[ii])^2, na.rm=TRUE)
         }
       }
     }
 
-    if(type == "krzanowski") {
-
-      rseg <- split(sample(1:nR), rep(1:fold, ceiling(nR / fold))[1:nR])
-      cseg <- split(sample(1:nC), rep(1:fold, ceiling(nC / fold))[1:nC])
-      nP <- min(nR - max(sapply(rseg, length)), nC - max(sapply(cseg, length)),
-                nPcs(object))
+    if (type == "krzanowski") {
+      rseg <- split(sample(1:nR), rep(1:fold, ceiling(nR/fold))[1:nR])
+      cseg <- split(sample(1:nC), rep(1:fold, ceiling(nC/fold))[1:nC])
+      nP <- min(nR - max(sapply(rseg, length)), nC - max(sapply(cseg, length)), nPcs(object))
       q2 <- matrix(NA, nP, ncol=nruncv)
       press <- rep(0, nP)
       foldC <- length(cseg)
       foldR <- length(rseg)
       tcv <- array(0, dim=c(foldC, nR, nP))
       pcv <- array(0, dim=c(foldR, nC, nP))
-      for(f in 1:foldC) {
-        test <- tempFixNas(originalData[,-cseg[[f]]])
-        tcv[f,,] <- scores(pca(test, nPcs=nP,
-                               method=method(object), verbose=FALSE,
-                               center=centered(object),
-                               scale=object@scaled, ...))
-        for(p in 1:nP) {
-          if(cor(tcv[f,,p], scores(object)[,p]) < 0) 
-            tcv[f,,p] <- tcv[f,,p] * -1
+      for (f in 1:foldC) {
+        test <- tempFixNas(originalData[, -cseg[[f]]])
+        tcv[f, , ] <- scores(pca(test, nPcs=nP, method=method(object), 
+                                 verbose=FALSE, center=centered(object), scale=object@scaled, ...))
+        for (p in 1:nP) {
+          if (cor(tcv[f, , p], scores(object)[, p]) < 0) 
+            tcv[f, , p] <- tcv[f, , p] * -1
         }
       }
-      for(f in 1:foldR) {
-        test <- tempFixNas(originalData[-rseg[[f]],])
-        pcv[f,,] <- loadings(pca(test, nPcs=nP,
-                                 method=method(object), verbose=FALSE,
-                                 center=centered(object),
-                                 scale=object@scaled, ...))
-        for(p in 1:nP) {
-          if(cor(pcv[f,,p], loadings(object)[,p]) < 0) 
-            pcv[f,,p] <- pcv[f,,p] * -1
+      for (f in 1:foldR) {
+        test <- tempFixNas(originalData[-rseg[[f]], ])
+        pcv[f, , ] <- loadings(pca(test, nPcs=nP, method=method(object), 
+                                   verbose=FALSE, center=centered(object), scale=object@scaled, ...))
+        for (p in 1:nP) {
+          if (cor(pcv[f, , p], loadings(object)[, p]) < 0) 
+            pcv[f, , p] <- pcv[f, , p] * -1
         }
       }
-      
       press <- rep(0, nP)
-      for(p in 1:nP) 
-        for(fr in 1:foldR)
-          for(fc in 1:foldC) 
-            press[p] <- press[p] +
-              sum((originalData[rseg[[fr]],cseg[[fc]]] - 
-                   (tcv[fc,,][,1:p,drop=FALSE] %*%
-                    t(pcv[fr,,][,1:p,drop=FALSE]))[rseg[[fr]],cseg[[fc]]])^2,
-                  na.rm=TRUE)
+      for (p in 1:nP)
+        for (fr in 1:foldR)
+          for (fc in 1:foldC) 
+            press[p] <- press[p] + sum((
+              originalData[rseg[[fr]], cseg[[fc]]] - 
+                (tcv[fc, , ][, 1:p, drop=FALSE] %*% t(pcv[fr, , ][,1:p, drop=FALSE]))
+              [rseg[[fr]], intersect(cseg[[fc]], variables)])^2, na.rm=TRUE)
     }
-    q2[,nr] <- 1 - press / ssx
+    q2[, nr] <- 1 - press/ssx
   }
-  if(verbose) message('\n')
+
+  if (verbose) 
+    message("\n")
   rownames(q2) <- paste("PC", 1:nrow(q2))
   drop(q2)
 }
@@ -231,8 +221,8 @@ deletediagonals <- function(x, diagonals=1) {
   if (!all(diagonals <= nc)) {
     stop(paste("Order of diagonal number", max(diagonals),  "is out of bound"))
   }
-  indexmatrix <- matrix(1 : (nr * nc), ncol = nc, nrow = nr)
-  finalmatrix <- matrix(ncol = (nr - 1 + nc), nrow = nr)
+  indexmatrix <- matrix(1 : (nr * nc), ncol=nc, nrow=nr)
+  finalmatrix <- matrix(ncol=(nr - 1 + nc), nrow=nr)
   finalmatrix[,1 : (nr - 1)] <- indexmatrix[,rev((nc : 1)[1 : (nr - 1)])]
   finalmatrix[,nr : (nr - 1 + nc)] <- indexmatrix
   dia <- 1 + 0:(nr - 1) * (nr + 1)
