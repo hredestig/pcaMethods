@@ -1,0 +1,117 @@
+\documentclass[a4paper]{article}
+
+%\VignetteIndexEntry{Data with outliers}
+
+\usepackage{hyperref}
+
+\title{Handling of data containing outliers}
+\author{Wolfram Stacklies and Henning Redestig\\
+CAS-MPG Partner Institute for Computational Biology (PICB)\\
+Shanghai, P.R. China \\
+and\\
+Max Planck Institute for Molecular Plant Physiology\\
+Potsdam, Germany\\
+\url{http://bioinformatics.mpimp-golm.mpg.de/}
+}
+\date{\today}
+
+\begin{document}
+\setkeys{Gin}{width=1.0\textwidth}
+@
+\maketitle
+
+\section{PCA robust to outliers}
+Away from often showing missing values, Microarray or Metabolite data are often
+corrupted with extreme values (outliers). 
+Standard SVD is highly susceptible to outliers. In
+the extreme case, an individual data point, if sufficiently outlying, can draw even the
+leading principal component toward itself.
+This problem can be addressed by using 
+a robust analysis method. Hereto we provide \texttt{robustSvd}, a singular value
+decomposition robust to outliers. \texttt{robustPca} is a PCA implementation that
+resembles the original \texttt{R} \texttt{prcomp} method, with the difference
+that it uses \texttt{robustSvd} instead of the standard \texttt{svd} function.\\
+Robust SVD and its application to microarray data were proposed in \cite{hawkins01} 
+and \cite{liu03}. The algorithm is based on the idea to use a sequential estimation 
+of the eigenvalues and left and right eigenvectors that
+ignores missing values and is resistant to outliers. \\
+The \texttt{robustSvd} script included here was contributed by Kevin Wright. Thanks
+a lot to him! 
+
+\section{Outliers and missing value imputation}
+The problem of outliers is similar to the missing data problem in the sense that
+extreme values provide no or wrong information. They are generally artifacts of
+the experiment and provide no information about the underlying biological
+processes. \\
+Most of the PCA methods coming with the package were not designed to be robust to
+outliers in the sense that they will converge to the standard PCA solution on a complete
+data set.
+Yet, an applicable solution is to remove obvious outliers from the data first (by setting
+them NA) and to then estimate the PCA solution on the incomplete data. This is likely
+to produce accurate results if the number of missing data does not exceed a certain
+amount, less than 10\% should be a good number.
+
+The following example illustrates the effect of outliers and the use of robust methods.
+First, we attach the complete metabolite data set and create 5\% outliers. We
+mean center the data before we create outliers because these large artificial
+outliers will strongly shift the original means. This would not allow for objective comparison
+between the differnt results obtained, e.g. when doing scatterplots.
+<<results=hide>>=
+library(pcaMethods)
+@
+<<>>=
+data(metaboliteDataComplete)
+mdc          <- scale(metaboliteDataComplete, center=TRUE, scale=FALSE)
+cond         <- runif(length(mdc)) < 0.05;
+mdcOut       <- mdc; mdcOut[cond] <- 10
+@
+Then we calculate a PCA solution using standard SVD and robust SVD.
+<<results=hide>>=
+resSvd       <- pca(mdc, method = "svd", nPcs = 5, center = FALSE)
+resSvdOut    <- pca(mdcOut, method = "svd", nPcs = 5, center = FALSE)
+resRobSvd    <- pca(mdcOut, method = "robustPca", nPcs = 5, center = FALSE)
+@
+Now we use \texttt{PPCA} to estimate the PCA solution, 
+but set the outliers NA before.
+<<results=hide>>=
+mdcNa        <- mdc;
+mdcNa[cond]  <- NA
+resPPCA      <- pca(mdcNa, method = "ppca", nPcs = 5, center = FALSE)
+@
+
+To check the robustness to outliers we can just do a scatterplot comparing the
+results to the optimal PCA solution for the complete data set (which is \texttt{resSvd}).
+In Figure \ref{fig:svdPlot} we plot the estimated and original loadings against each other.
+\begin{figure}[!ht]
+  \centering
+<<fig=true, width=8, height=8, results=hide, echo=false>>=
+par(mfrow=c(2,2))
+plot(loadings(resSvd)[,1], loadings(resSvdOut)[,1], 
+xlab = "Loading 1 SVD", ylab = "Loading 1 SVD with outliers")
+plot(loadings(resSvd)[,1], loadings(resRobSvd)[,1],
+xlab = "Loading 1 SVD", ylab = "Loading 1 robustSVD with outliers")
+plot(loadings(resSvd)[,1], loadings(resPPCA)[,1],
+xlab = "Loading 1 SVD", ylab = "Loading 1 PPCA with outliers = NA")
+plot(loadings(resRobSvd)[,1], loadings(resPPCA)[,1],
+xlab = "Loading 1 roubst SVD with outliers", ylab = "Loading 1 svdImpute with outliers = NA")
+@
+  \caption{Figures show (from left to right): \newline
+  Original PCA solution vs. solution on data with outliers; \newline
+  Original PCA solution vs. robust PCA solution on data with outliers; \newline
+  Original PCA solution vs. PPCA solution on data where outliers = NA; \newline
+  Robust PCA solution vs. PPCA solution on data with outliers / outliers = NA.
+  \label{fig:svdPlot}
+  }
+\end{figure}
+
+\begin{thebibliography}{2006}
+\bibitem{hawkins01} Hawkins, D.M., Liu, L. and Young, S.S.
+{\sl Robust Singular Value Decomposition.}
+National Institute of Statistical Sciences, 2001, Tech Report 122.
+
+\bibitem{liu03} Liu, L., Hawkins, D.M., Ghosh, S. and Young, S.S.
+{\sl Robust singular value decomposition analysis of microarray data.}
+PNAS, 2003;100:13167--13172.
+\end{thebibliography}
+
+\end{document}

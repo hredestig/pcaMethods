@@ -1,0 +1,16 @@
+citHeader("The pcaMethods package implement algorithms found in several different publication. Refer to function documentation for reference to the original articles.")
+
+citEntry(entry="article",
+    title = "pcaMethods -- a Bioconductor package providing PCA methods for incomplete	data",
+    author = "Wolfram Stacklies and Henning Redestig and Matthias Scholz and Dirk Walther and Joachim Selbig",
+    journal = "Bioinformatics",
+    year = 2007,
+    pages ="1164--1167",
+    volume = "23",
+    textVersion = 
+    paste("Stacklies, W., Redestig, H., Scholz, M., Walther, D. and Selbig, J. ",
+          "pcaMethods -- a Bioconductor package providing PCA methods for incomplete",
+          "data. Bioinformatics, 2007, 23, 1164-1167")
+    )
+
+citFooter("This free open-source software implements academic research by the authors and co-workers. If you use it, please support the project by citing the appropriate journal articles.")

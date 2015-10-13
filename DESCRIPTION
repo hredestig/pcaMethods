@@ -1,0 +1,62 @@
+Package: pcaMethods
+Maintainer: Henning Redestig <henning.red@gmail.com>
+License: GPL (>= 3)
+Title: A collection of PCA methods
+LinkingTo: Rcpp
+LazyLoad: Yes
+Author: Wolfram Stacklies, Henning Redestig, Kevin Wright
+SystemRequirements: Rcpp
+Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA,
+    Inverse Non-Linear PCA and the conventional SVD PCA. A cluster
+    based method for missing value estimation is included for
+    comparison. BPCA, PPCA and NipalsPCA may be used to perform PCA
+    on incomplete data as well as for accurate missing value
+    estimation. A set of methods for printing and plotting the
+    results is also provided. All PCA methods make use of the same
+    data structure (pcaRes) to provide a common interface to the
+    PCA results. Initiated at the Max-Planck Institute for
+    Molecular Plant Physiology, Golm, Germany.
+Version: 1.60.0
+Depends:
+    Biobase,
+    methods
+Imports:
+    BiocGenerics,
+    Rcpp (>= 0.11.3),
+    MASS
+Suggests:
+    matrixStats,
+    lattice
+Collate:
+    'errorHierarchic.R'
+    'derrorHierarchic.R'
+    'AllClasses.R'
+    'AllGenerics.R'
+    'BPCA_dostep.R'
+    'BPCA_initmodel.R'
+    'bpca.R'
+    'checkData.R'
+    'forkNlpcaNet.R'
+    'kEstimate.R'
+    'kEstimateFast.R'
+    'lineSearch.R'
+    'llsImpute.R'
+    'methods-ExpressionSet.R'
+    'methods-nniRes.R'
+    'methods-pcaRes.R'
+    'nipalsPca.R'
+    'nlpca.R'
+    'optiAlgCgd.R'
+    'orth.R'
+    'pca.R'
+    'pcaMethods-package.R'
+    'ppca.R'
+    'prep.R'
+    'repmat.R'
+    'robustPca.R'
+    'sortFeatures.R'
+    'svdImpute.R'
+    'vector2matrices.R'
+    'xval.R'
+Packaged: 2013-03-12 21:41:03 UTC; henning
+biocViews: Bayesian
