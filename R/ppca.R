@@ -171,4 +171,3 @@ ppca <- function(Matrix, nPcs=2, seed=NA, threshold=1e-5, maxIterations=1000, ..
   res@method <- "ppca"
   return(res)
 }
-
