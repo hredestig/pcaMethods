@@ -1,6 +1,6 @@
 ##' Implements a Bayesian PCA missing value estimator.  The script
 ##' is a port of the Matlab version provided by Shigeyuki OBA.  See
-##' also \url{http://hawaii.aist-nara.ac.jp/\%7Eshige-o/tools/}.
+##' also \url{http://ishiilab.jp/member/oba/tools/BPCAFill.html}.
 ##' BPCA combines an EM approach for PCA with a Bayesian model.  In
 ##' standard PCA data far from the training set but close to the
 ##' principal subspace may have the same reconstruction error.  BPCA
@@ -40,6 +40,16 @@
 ##' 
 ##' It is not recommended to use this function directely but rather to
 ##' use the pca() wrapper function.
+##'
+##' There is a difference with respect the interpretation of rows
+##' (observations) and columns (variables) compared to matlab
+##' implementation. For estimation of missing values for microarray
+##' data, the suggestion in the original bpca is to intepret genes as
+##' observations and the samples as variables. In pcaMethods however,
+##' genes are interpreted as variables and samples as observations
+##' which arguably also is the more natural interpretation. For bpca
+##' behavior like in the matlab implementation, simply transpose your
+##' input matrix.
 ##' 
 ##' Details about the probabilistic model underlying BPCA are found in
 ##' Oba et. al 2003. The algorithm uses an expectation maximation
@@ -59,31 +69,32 @@
 ##' complexity for inverting a matrix of size
 ##' \eqn{components}{components}. Components is the number of
 ##' components used for re-estimation.
-##' @title Bayesian PCA Missing Value Estimator
+##' @title Bayesian PCA missing value estimation
 ##' @param Matrix \code{matrix} -- Pre-processed matrix (centered,
-##' scaled) with variables in columns and observations in rows. The
-##' data may contain missing values, denoted as \code{NA}.
+##'   scaled) with variables in columns and observations in rows. The
+##'   data may contain missing values, denoted as \code{NA}.
 ##' @param nPcs \code{numeric} -- Number of components used for
-##' re-estimation. Choosing few components may decrease the estimation
-##' precision.
+##'   re-estimation. Choosing few components may decrease the
+##'   estimation precision.
 ##' @param maxSteps \code{numeric} -- Maximum number of estimation
-##' steps. 
+##'   steps.
 ##' @param verbose \code{boolean} -- BPCA prints the number of steps
-##' and the increase in precision if set to TRUE. Default is
-##' interactive().
+##'   and the increase in precision if set to TRUE. Default is
+##'   interactive().
 ##' @param threshold convergence threshold
 ##' @param ... Reserved for future use. Currently no further
-##' parameters are used
+##'   parameters are used
 ##' @return Standard PCA result object used by all PCA-based methods
-##' of this package. Contains scores, loadings, data mean and
-##' more. See \code{\link{pcaRes}} for details.
-##' @references   Shigeyuki Oba, Masa-aki Sato, Ichiro Takemasa,
-##' Morito Monden, Ken-ichi Matsubara and Shin Ishii.  A Bayesian
-##' missing value estimation method for gene expression profile
-##' data. \emph{Bioinformatics, 19(16):2088-2096, Nov 2003}.
+##'   of this package. Contains scores, loadings, data mean and
+##'   more. See \code{\link{pcaRes}} for details.
+##' @references Shigeyuki Oba, Masa-aki Sato, Ichiro Takemasa, Morito
+##'   Monden, Ken-ichi Matsubara and Shin Ishii.  A Bayesian missing
+##'   value estimation method for gene expression profile
+##'   data. \emph{Bioinformatics, 19(16):2088-2096, Nov 2003}.
 ##' @seealso \code{\link{ppca}}, \code{\link{svdImpute}},
-##' \code{\link{prcomp}}, \code{\link{nipalsPca}}, \code{\link{pca}},
-##' \code{\link{pcaRes}}. \code{\link{kEstimate}}.
+##'   \code{\link{prcomp}}, \code{\link{nipalsPca}},
+##'   \code{\link{pca}},
+##'   \code{\link{pcaRes}}. \code{\link{kEstimate}}.
 ##' @note Requires \code{MASS}.
 ##' @examples
 ##' ## Load a sample metabolite dataset with 5\% missig values (metaboliteData)e

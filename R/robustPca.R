@@ -161,7 +161,7 @@ robustSvd <- function(x) {
   ## We need the weightedMedian function provided by the aroma.light
   ## package. However we do not want to make the whole package dependant
   ## on aroma.light
-  if (!require(matrixStats, quietly=TRUE))
+  if (!requireNamespace("matrixStats", quietly=TRUE))
     stop("package matrixStats required but not available")
 
   L1RegCoef <- function(x,a){
