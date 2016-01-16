@@ -47,7 +47,8 @@
 ##' vary slightly. Set the seed for exact reproduction of your
 ##' results.
 ##' @param threshold Convergence threshold.
-##' @param ...  Reserved for future use. Currently no further
+##' @param maxIterations the maximum number of allowed iterations
+##' @param ... Reserved for future use. Currently no further
 ##' parameters are used.
 ##' @note Requires \code{MASS}. It is not recommended to use this
 ##' function directely but rather to use the pca() wrapper function.
@@ -71,7 +72,7 @@
 ##' @keywords multivariate
 ##' @author Wolfram Stacklies
 ##' @export
-ppca <- function(Matrix, nPcs=2, seed=NA, threshold=1e-5, ...) {
+ppca <- function(Matrix, nPcs=2, seed=NA, threshold=1e-5, maxIterations=1000, ...) {
   ## Set the seed to the user defined value. This affects the generation
   ## of random values for the initial setup of the loading matrix
   if (!is.na(seed)) 
@@ -96,7 +97,7 @@ ppca <- function(Matrix, nPcs=2, seed=NA, threshold=1e-5, ...) {
   X  <- Matrix %*% C %*% solve(CtC)
   recon    <- X %*% t(C)
   recon[hidden] <- 0
-  ss <- sum(sum((recon - Matrix)^2)) / (N - missing)
+  ss <- sum(sum((recon - Matrix)^2)) / (N * D - missing)
 
   count <- 1
   old <- Inf
@@ -124,28 +125,20 @@ ppca <- function(Matrix, nPcs=2, seed=NA, threshold=1e-5, ...) {
     ss <- ( sum(sum( (C %*% t(X) - t(Matrix))^2 )) + N * sum(sum(CtC %*% Sx)) +
            missing * ss_old ) / (N * D)
 
-    ## Some of the values may be negative at the beginning of the iteration,
-    ## check that we are ot trying to calculate a log(<0)
-    if( (ss < 0) | (det(Sx) < 0) | (ss_old < 0) ) {
-      objective <- NaN
-    } else {
-      objective <- N * (D * log(ss) + sum(diag(Sx)) - log(det(Sx)) ) +
-        sum(diag(SumXtX)) - missing * log(ss_old)
-    }
+    objective <- N * (D * log(ss) + sum(diag(Sx)) - log(det(Sx)) ) +
+      sum(diag(SumXtX)) - missing * log(ss_old)
 
     rel_ch <- abs( 1 - objective / old )
     old <- objective
 
     count <- count + 1
-    if (!is.nan(rel_ch))  {
-      if( (rel_ch < threshold) & (count > 5) ) {
-        count <- 0
-      }
-    } else if (count > 1000) {
+    if( rel_ch < threshold & count > 5 ) {
       count <- 0
-      warning("Stopped after 1000 iterations, but rel_ch was NaN\n",
-              "Results may be inaccurate\n")
-    }    
+    }
+    else if (count > maxIterations) {
+      count <- 0
+      warning("stopped after max iterations, but rel_ch was > threshold")
+    }
   } ## End EM iteration
   C <- orth(C)
   evs <- eigen( cov(Matrix %*% C) )
