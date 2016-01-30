@@ -82,6 +82,16 @@ summary(pcIr)
 plot(pcIr)
 ## Scores and loadings plot
 slplot(pcIr, sl=as.character(iris[,5]))
+
+## use an expressionset and ggplot
+data(sample.ExpressionSet)
+pc <- pca(sample.ExpressionSet)
+df <- merge(scores(pc), pData(sample.ExpressionSet), by=0)
+library(ggplot2)
+ggplot(df, aes(PC1, PC2, shape=sex, color=type)) +
+  geom_point() +
+  xlab(paste("PC1", pc@R2[1] * 100, "\% of variance")) +
+  ylab(paste("PC2", pc@R2[2] * 100, "\% of variance"))
 }
 \author{
 Wolfram Stacklies, Henning Redestig

@@ -28,7 +28,8 @@ Imports:
     MASS
 Suggests:
     matrixStats,
-    lattice
+    lattice,
+    ggplot2
 Collate:
     'derrorHierarchic.R'
     'errorHierarchic.R'
