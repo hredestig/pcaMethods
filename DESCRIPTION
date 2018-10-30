@@ -16,7 +16,7 @@ Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA,
     data structure (pcaRes) to provide a common interface to the
     PCA results. Initiated at the Max-Planck Institute for
     Molecular Plant Physiology, Golm, Germany.
-Version: 1.73.1
+Version: 1.74.0
 URL: https://github.com/hredestig/pcamethods
 BugReports: https://github.com/hredestig/pcamethods/issues
 Depends:
