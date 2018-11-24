@@ -4,8 +4,8 @@
 \alias{prep}
 \title{Pre-process a matrix for PCA}
 \usage{
-prep(object, scale = c("none", "pareto", "vector", "uv"), center = TRUE,
-  eps = 1e-12, simple = TRUE, reverse = FALSE, ...)
+prep(object, scale = c("none", "pareto", "vector", "uv"),
+  center = TRUE, eps = 1e-12, simple = TRUE, reverse = FALSE, ...)
 }
 \arguments{
 \item{object}{Numerical matrix (or an object coercible to such)
@@ -63,4 +63,3 @@ sum((object - prep(obj, scale=res$scale, center=res$center, rev=TRUE))^2)
 \author{
 Henning Redestig
 }
-

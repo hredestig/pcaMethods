@@ -2,12 +2,12 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{show-methods}
-\alias{print,nniRes-method}
-\alias{print,pcaRes-method}
-\alias{show,nniRes-method}
-\alias{show,pcaRes-method}
 \alias{show-methods}
 \alias{showPcaRes}
+\alias{print,pcaRes-method}
+\alias{print,nniRes-method}
+\alias{show,pcaRes-method}
+\alias{show,nniRes-method}
 \title{Print/Show for pcaRes}
 \usage{
 showPcaRes(x, ...)
@@ -32,4 +32,3 @@ Print basic information about pcaRes object
 \author{
 Henning Redestig
 }
-

@@ -2,9 +2,9 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{nmissing,pcaRes-method}
+\alias{nmissing,pcaRes-method}
 \alias{nmissing}
 \alias{nmissing,nniRes-method}
-\alias{nmissing,pcaRes-method}
 \title{Missing values}
 \usage{
 nmissing(object, ...)
@@ -23,4 +23,3 @@ Missing values
 \author{
 Henning Redestig
 }
-

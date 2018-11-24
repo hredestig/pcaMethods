@@ -125,9 +125,6 @@ cObs <- completeObs(pc)
 slplot(pc)
 \dontshow{stopifnot(sum((fitted(pc) - t(metaboliteData))^2, na.rm=TRUE) < 200)}
 }
-\author{
-Wolfram Stacklies
-}
 \references{
 Shigeyuki Oba, Masa-aki Sato, Ichiro Takemasa, Morito
   Monden, Ken-ichi Matsubara and Shin Ishii.  A Bayesian missing
@@ -140,5 +137,7 @@ Shigeyuki Oba, Masa-aki Sato, Ichiro Takemasa, Morito
   \code{\link{pca}},
   \code{\link{pcaRes}}. \code{\link{kEstimate}}.
 }
+\author{
+Wolfram Stacklies
+}
 \keyword{multivariate}
-

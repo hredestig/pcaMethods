@@ -2,9 +2,9 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{fitted-methods}
-\alias{fitted,pcaRes-method}
 \alias{fitted-methods}
 \alias{fitted.pcaRes}
+\alias{fitted,pcaRes-method}
 \title{Extract fitted values from PCA.}
 \usage{
 \method{fitted}{pcaRes}(object, data = NULL, nPcs = nP(object),
@@ -54,4 +54,3 @@ sum( (fitted(pc) - iris[,1:4])^2 )
 Henning Redestig
 }
 \keyword{multivariate}
-

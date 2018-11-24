@@ -23,4 +23,3 @@ of A
 \author{
 Wolfram Stacklies
 }
-

@@ -3,9 +3,9 @@
 \docType{methods}
 \name{rediduals-methods}
 \alias{rediduals-methods}
-\alias{resid,pcaRes-method}
-\alias{residuals,pcaRes-method}
 \alias{residuals.pcaRes}
+\alias{residuals,pcaRes-method}
+\alias{resid,pcaRes-method}
 \title{Residuals values from a PCA model.}
 \usage{
 \method{residuals}{pcaRes}(object, data = completeObs(object), ...)
@@ -40,4 +40,3 @@ head(residuals(pcIr, iris[,1:4]))
 Henning Redestig
 }
 \keyword{multivariate}
-

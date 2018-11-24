@@ -30,4 +30,3 @@ Line search for conjugate gradient
 \author{
 Henning Redestig, Matthias Scholz
 }
-

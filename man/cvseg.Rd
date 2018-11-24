@@ -29,10 +29,9 @@ seg <- cvseg(iris$Species, 10)
 sapply(seg, function(s) table(iris$Species[s]))
 cvseg(20, 10)
 }
-\author{
-Henning Redestig
-}
 \seealso{
 the \code{cvsegments} function in the \code{pls} package
 }
-
+\author{
+Henning Redestig
+}

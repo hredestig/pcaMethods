@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{completeObs,nniRes-method}
-\alias{completeObs}
 \alias{completeObs,nniRes-method}
+\alias{completeObs}
 \alias{completeObs,pcaRes-method}
 \title{Get the original data with missing values replaced with predicted
 values.}
@@ -25,4 +25,3 @@ values.
 \author{
 Henning Redestig
 }
-

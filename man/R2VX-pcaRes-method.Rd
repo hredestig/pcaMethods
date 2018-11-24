@@ -2,12 +2,13 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{R2VX,pcaRes-method}
-\alias{R2VX}
 \alias{R2VX,pcaRes-method}
+\alias{R2VX}
 \title{R2 goodness of fit}
 \usage{
-\S4method{R2VX}{pcaRes}(object, direction = c("variables", "observations",
-  "complete"), data = completeObs(object), pcs = nP(object))
+\S4method{R2VX}{pcaRes}(object, direction = c("variables",
+  "observations", "complete"), data = completeObs(object),
+  pcs = nP(object))
 }
 \arguments{
 \item{object}{a PCA model object}
@@ -32,4 +33,3 @@ R2VX(pca(iris))
 \author{
 Henning Redestig
 }
-

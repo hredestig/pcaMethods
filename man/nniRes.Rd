@@ -39,4 +39,3 @@ to perform clustering], missing=[amount of NAs])}
 Wolfram Stacklies
 }
 \keyword{classes}
-

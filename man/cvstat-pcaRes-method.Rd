@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{cvstat,pcaRes-method}
-\alias{cvstat}
 \alias{cvstat,pcaRes-method}
+\alias{cvstat}
 \title{Get cross-validation statistics (e.g. \eqn{Q^2}).}
 \usage{
 cvstat(object, ...)
@@ -22,4 +22,3 @@ Get cross-validation statistics (e.g. \eqn{Q^2}).
 \author{
 Henning Redestig
 }
-

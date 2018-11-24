@@ -22,4 +22,3 @@ Sort the features of NLPCA object
 \author{
 Henning Redestig
 }
-

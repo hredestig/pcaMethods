@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{nP,pcaRes-method}
-\alias{nP}
 \alias{nP,pcaRes-method}
+\alias{nP}
 \title{Get number of PCs}
 \usage{
 nP(object, ...)
@@ -22,4 +22,3 @@ Get number of PCs
 \author{
 Henning Redestig
 }
-

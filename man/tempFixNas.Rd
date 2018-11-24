@@ -19,4 +19,3 @@ Simply replace completely missing rows or cols with zeroes.
 \author{
 Henning Redestig
 }
-

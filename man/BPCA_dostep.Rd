@@ -27,4 +27,3 @@ This function is NOT intended to be run standalone.
 \author{
 Wolfram Stacklies
 }
-

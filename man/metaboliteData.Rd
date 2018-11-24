@@ -17,9 +17,6 @@ A matrix containing 154 observations (rows) and 52 metabolites
 distributed misssing values. The data was created during an in
 house Arabidopsis coldstress experiment.
 }
-\author{
-Wolfram Stacklies
-}
 \references{
 Matthias Scholz, Fatma Kaplan, Charles L. Guy, Joachim
 Kopka and Joachim Selbig. - Non-linear PCA: a missing data
@@ -28,5 +25,7 @@ approach.\emph{Bioinformatics 2005 21(20):3887-3895}
 \seealso{
 \code{\link{metaboliteDataComplete}}
 }
+\author{
+Wolfram Stacklies
+}
 \keyword{datasets}
-

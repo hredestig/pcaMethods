@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{R2cum,pcaRes-method}
-\alias{R2cum}
 \alias{R2cum,pcaRes-method}
+\alias{R2cum}
 \title{Cumulative R2 is the total ratio of variance that is being
 explained by the model}
 \usage{
@@ -24,4 +24,3 @@ explained by the model
 \author{
 Henning Redestig
 }
-

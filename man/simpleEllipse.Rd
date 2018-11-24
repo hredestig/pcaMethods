@@ -29,10 +29,9 @@ compared to the ellipse function the ellipse package except that
 this function assumes that and y are uncorrelated (which they of
 are if they are scores or loadings from a PCA).
 }
-\author{
-Henning Redestig
-}
 \seealso{
 ellipse
 }
-
+\author{
+Henning Redestig
+}

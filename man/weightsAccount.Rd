@@ -21,4 +21,3 @@ sets weights in using an environment object.
 \author{
 Henning Redestig
 }
-

@@ -41,11 +41,10 @@ data(iris)
 pcIr <- pca(iris[,1:4], nPcs=3,  method="svd")
 plotPcs(pcIr, col=as.integer(iris[,4]) + 1)
 }
-\author{
-Henning Redestig
-}
 \seealso{
 \code{prcomp}, \code{pca}, \code{princomp}, \code{slplot}
 }
+\author{
+Henning Redestig
+}
 \keyword{multivariate}
-

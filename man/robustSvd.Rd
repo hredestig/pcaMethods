@@ -69,9 +69,6 @@ resRobSvdOut <- robustSvd(mdcOut)
 plot(resSvd$v[,1], resSvdOut$v[,1])
 plot(resRobSvd$v[,1], resRobSvdOut$v[,1])
 }
-\author{
-Kevin Wright, modifications by Wolfram Stacklies
-}
 \references{
 Hawkins, Douglas M, Li Liu, and S Stanley Young (2001)
 Robust Singular Value Decomposition, National Institute of
@@ -82,5 +79,7 @@ Statistical Sciences, Technical Report Number
 \code{\link{svd}}, \code{\link[ade4:nipals]{nipals}} for
 an alternating L2 norm method that also accommodates missing data.
 }
+\author{
+Kevin Wright, modifications by Wolfram Stacklies
+}
 \keyword{algebra}
-

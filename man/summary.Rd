@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \name{summary}
 \alias{summary}
-\alias{summary,pcaRes-method}
 \alias{summary.pcaRes}
+\alias{summary,pcaRes-method}
 \title{Summary of PCA model}
 \usage{
 \method{summary}{pcaRes}(object, ...)
@@ -22,4 +22,3 @@ Print a brief description of the PCA model
 \author{
 Henning Redestig
 }
-

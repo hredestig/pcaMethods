@@ -16,9 +16,6 @@ Arabidopsis coldstress experiment.
 A matrix containing 154 observations (rows) and 52 metabolites
 (columns).
 }
-\author{
-Wolfram Stacklies
-}
 \references{
 Matthias Scholz, Fatma Kaplan, Charles L. Guy, Joachim
 Kopka and Joachim Selbig. - Non-linear PCA: a missing data
@@ -27,5 +24,7 @@ approach.\emph{Bioinformatics 2005 21(20):3887-3895}
 \seealso{
 \code{\link{metaboliteData}}
 }
+\author{
+Wolfram Stacklies
+}
 \keyword{datasets}
-

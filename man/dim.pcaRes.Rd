@@ -18,4 +18,3 @@ Dimensions of a PCA model
 \author{
 Henning Redestig
 }
-

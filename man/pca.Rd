@@ -4,9 +4,9 @@
 \alias{pca}
 \title{Perform principal component analysis}
 \usage{
-pca(object, method, nPcs = 2, scale = c("none", "pareto", "vector", "uv"),
-  center = TRUE, completeObs = TRUE, subset = NULL, cv = c("none",
-  "q2"), ...)
+pca(object, method, nPcs = 2, scale = c("none", "pareto", "vector",
+  "uv"), center = TRUE, completeObs = TRUE, subset = NULL,
+  cv = c("none", "q2"), ...)
 }
 \arguments{
 \item{object}{Numerical matrix with (or an object coercible to
@@ -90,11 +90,8 @@ df <- merge(scores(pc), pData(sample.ExpressionSet), by=0)
 library(ggplot2)
 ggplot(df, aes(PC1, PC2, shape=sex, color=type)) +
   geom_point() +
-  xlab(paste("PC1", pc@R2[1] * 100, "\% of variance")) +
-  ylab(paste("PC2", pc@R2[2] * 100, "\% of variance"))
-}
-\author{
-Wolfram Stacklies, Henning Redestig
+  xlab(paste("PC1", pc@R2[1] * 100, "\% of the variance")) +
+  ylab(paste("PC2", pc@R2[2] * 100, "\% of the variance"))
 }
 \references{
 Wold, H. (1966) Estimation of principal components and
@@ -115,5 +112,7 @@ Missing value estimation methods for DNA microarrays.
 \code{\link{prcomp}}, \code{\link{princomp}},
 \code{\link{nipalsPca}}, \code{\link{svdPca}}
 }
+\author{
+Wolfram Stacklies, Henning Redestig
+}
 \keyword{multivariate}
-

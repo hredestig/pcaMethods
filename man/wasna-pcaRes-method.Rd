@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{wasna,pcaRes-method}
-\alias{wasna}
 \alias{wasna,pcaRes-method}
+\alias{wasna}
 \title{Get a matrix with indicating the elements that were missing in the
 input data. Convenient for estimating imputation performance.}
 \usage{
@@ -30,4 +30,3 @@ plot(completeObs(result)[wasna(result)], metaboliteDataComplete[wasna(result)])
 \author{
 Henning Redestig
 }
-

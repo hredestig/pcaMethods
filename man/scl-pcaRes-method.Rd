@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{scl,pcaRes-method}
-\alias{scl}
 \alias{scl,pcaRes-method}
+\alias{scl}
 \title{Get the scales (e.g. standard deviations) of the original
 variables}
 \usage{
@@ -21,10 +21,9 @@ Vector with the scales
 Get the scales (e.g. standard deviations) of the original
 variables
 }
-\author{
-Henning Redestig
-}
 \seealso{
 \code{\link{prep}}
 }
-
+\author{
+Henning Redestig
+}

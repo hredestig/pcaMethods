@@ -38,4 +38,3 @@ The data must be a numeric matrix and not contain:
 Wolfram Stacklies
 }
 \keyword{multivariate}
-

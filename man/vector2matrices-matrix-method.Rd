@@ -21,4 +21,3 @@ Tranform the vectors of weights to matrix structure
 \author{
 Henning Redestig
 }
-

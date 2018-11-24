@@ -2,16 +2,16 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{predict-methods}
-\alias{predict,pcaRes-method}
 \alias{predict-methods}
 \alias{predict.pcaRes}
+\alias{predict,pcaRes-method}
 \title{Predict values from PCA.}
 \usage{
 \method{predict}{pcaRes}(object, newdata, pcs = nP(object), pre = TRUE,
   post = TRUE, ...)
 
-\S4method{predict}{pcaRes}(object, newdata, pcs = nP(object), pre = TRUE,
-  post = TRUE, ...)
+\S4method{predict}{pcaRes}(object, newdata, pcs = nP(object),
+  pre = TRUE, post = TRUE, ...)
 }
 \arguments{
 \item{object}{\code{pcaRes} the \code{pcaRes} object of interest.}
@@ -57,4 +57,3 @@ cor(irisHat$scores[,1], scores(pcFull)[hidden,1])
 Henning Redestig
 }
 \keyword{multivariate}
-

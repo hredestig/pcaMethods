@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{method,pcaRes-method}
-\alias{method}
 \alias{method,pcaRes-method}
+\alias{method}
 \title{Get the used PCA method}
 \usage{
 method(object, ...)
@@ -22,4 +22,3 @@ Get the used PCA method
 \author{
 Henning Redestig
 }
-

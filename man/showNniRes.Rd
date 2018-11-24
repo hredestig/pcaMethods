@@ -20,4 +20,3 @@ Print a brief description of nniRes model
 \author{
 Henning Redestig
 }
-

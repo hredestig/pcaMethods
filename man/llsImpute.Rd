@@ -89,9 +89,6 @@ result <- llsImpute(metaboliteData, k = 10, correlation="pearson", allVariables=
 ## Get the estimated complete observations
 cObs <- completeObs(result)
 }
-\author{
-Wolfram Stacklies
-}
 \references{
 Kim, H. and Golub, G.H. and Park, H.  - Missing value
 estimation for DNA microarray gene expression data: local least
@@ -105,5 +102,7 @@ Missing value estimation methods for DNA microarrays.
 \seealso{
 \code{\link{pca}, \link{nniRes}, \link{nni}}.
 }
+\author{
+Wolfram Stacklies
+}
 \keyword{multivariate}
-

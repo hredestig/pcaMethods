@@ -18,10 +18,9 @@ The loadings as a matrix
 \description{
 Get loadings from a pcaRes object
 }
-\author{
-Henning Redestig
-}
 \seealso{
 \code{\link{loadings.pcaRes}}
 }
-
+\author{
+Henning Redestig
+}

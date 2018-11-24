@@ -24,4 +24,3 @@ Conjugate gradient optimization
 \author{
 Henning Redestig, Matthias Scholz
 }
-

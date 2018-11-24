@@ -5,8 +5,9 @@
 \title{Estimate best number of Components for missing value
 estimation}
 \usage{
-kEstimate(Matrix, method = "ppca", evalPcs = 1:3, segs = 3, nruncv = 5,
-  em = "q2", allVariables = FALSE, verbose = interactive(), ...)
+kEstimate(Matrix, method = "ppca", evalPcs = 1:3, segs = 3,
+  nruncv = 5, em = "q2", allVariables = FALSE,
+  verbose = interactive(), ...)
 }
 \arguments{
 \item{Matrix}{\code{matrix} -- numeric matrix containing
@@ -132,11 +133,10 @@ print(esti$bestNPcs)
 barplot(drop(esti$variableWiseError[, which(esti$evalPcs == esti$bestNPcs)]), 
         xlab = "Incomplete variable Index", ylab = "NRMSEP")
 }
-\author{
-Wolfram Stacklies
-}
 \seealso{
 \code{\link{kEstimateFast}, \link{Q2}, \link{pca}, \link{nni}}.
 }
+\author{
+Wolfram Stacklies
+}
 \keyword{multivariate}
-

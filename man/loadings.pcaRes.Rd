@@ -20,4 +20,3 @@ Get loadings from a pcaRes object
 \author{
 Henning Redestig
 }
-
