@@ -18,4 +18,3 @@ Complete copy of nlpca net object
 \author{
 Henning Redestig
 }
-

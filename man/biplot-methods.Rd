@@ -2,16 +2,16 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{biplot-methods}
-\alias{biplot,pcaRes-method}
 \alias{biplot-methods}
 \alias{biplot.pcaRes}
+\alias{biplot,pcaRes-method}
 \title{Plot a overlaid scores and loadings plot}
 \usage{
-\method{biplot}{pcaRes}(x, choices = 1:2, scale = 1, pc.biplot = FALSE,
-  ...)
+\method{biplot}{pcaRes}(x, choices = 1:2, scale = 1,
+  pc.biplot = FALSE, ...)
 
-\S4method{biplot}{pcaRes}(x, choices = 1:2, scale = 1, pc.biplot = FALSE,
-  ...)
+\S4method{biplot}{pcaRes}(x, choices = 1:2, scale = 1,
+  pc.biplot = FALSE, ...)
 }
 \arguments{
 \item{x}{a pcaRes object}
@@ -54,11 +54,10 @@ data(iris)
 pcIr <- pca(iris[,1:4])
 biplot(pcIr)
 }
-\author{
-Kevin Wright, Adapted from \code{biplot.prcomp}
-}
 \seealso{
 \code{prcomp}, \code{pca}, \code{princomp}
 }
+\author{
+Kevin Wright, Adapted from \code{biplot.prcomp}
+}
 \keyword{multivariate}
-

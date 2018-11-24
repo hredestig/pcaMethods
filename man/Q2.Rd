@@ -81,12 +81,11 @@ pcIr <- pca(x, nPcs=3, method="nipals")
 q2 <- Q2(pcIr, x, type="impute")
 barplot(q2, main="Imputation CV", xlab="Number of PCs", ylab=expression(Q^2))
 }
-\author{
-Henning Redestig, Ondrej Mikula
-}
 \references{
 Krzanowski, WJ. Cross-validation in principal
 component analysis. Biometrics. 1987(43):3,575-584
 }
+\author{
+Henning Redestig, Ondrej Mikula
+}
 \keyword{multivariate}
-

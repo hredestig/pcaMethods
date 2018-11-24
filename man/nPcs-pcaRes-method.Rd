@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{nPcs,pcaRes-method}
-\alias{nPcs}
 \alias{nPcs,pcaRes-method}
+\alias{nPcs}
 \title{Get number of PCs.}
 \usage{
 nPcs(object, ...)
@@ -26,4 +26,3 @@ clash with argument names.
 \author{
 Henning Redestig
 }
-

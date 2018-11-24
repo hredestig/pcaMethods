@@ -27,4 +27,3 @@ causing any full row or column to be completely missing
 \author{
 Henning Redestig
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{DModX,pcaRes-method}
-\alias{DModX}
 \alias{DModX,pcaRes-method}
+\alias{DModX}
 \title{DModX}
 \usage{
 DModX(object, dat, newdata=FALSE, type=c("normalized","absolute"), ...)
@@ -51,12 +51,11 @@ data(iris)
 pcIr <- pca(iris[,1:4])
 with(iris, plot(DModX(pcIr)~Species))
 }
-\author{
-Henning Redestig
-}
 \references{
 Introduction to Multi- and Megavariate Data Analysis
 using Projection Methods (PCA and PLS), L. Eriksson, E. Johansson,
 N. Kettaneh-Wold and S. Wold, Umetrics 1999, p. 468
 }
-
+\author{
+Henning Redestig
+}

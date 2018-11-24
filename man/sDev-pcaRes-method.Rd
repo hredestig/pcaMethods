@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{sDev,pcaRes-method}
-\alias{sDev}
 \alias{sDev,pcaRes-method}
+\alias{sDev}
 \title{Get the standard deviations of the scores (indicates their
 relevance)}
 \usage{
@@ -24,4 +24,3 @@ relevance)
 \author{
 Henning Redestig
 }
-

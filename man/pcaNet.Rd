@@ -2,9 +2,9 @@
 % Please edit documentation in R/AllClasses.R
 \docType{class}
 \name{pcaNet}
+\alias{pcaNet}
 \alias{nlpcaNet}
 \alias{nlpcaNet-class}
-\alias{pcaNet}
 \title{Class representation of the NLPCA neural net}
 \description{
 This is a class representation of a non-linear PCA neural
@@ -77,11 +77,10 @@ Methods
 \describe{ \item{vector2matrices}{Returns the
 weights in a matrix representation.} }
 }
-\author{
-Henning Redestig
-}
 \seealso{
 \code{\link{nlpca}}
 }
+\author{
+Henning Redestig
+}
 \keyword{classes}
-

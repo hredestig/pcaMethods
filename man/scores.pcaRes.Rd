@@ -20,4 +20,3 @@ Get scores from a pcaRes object
 \author{
 Henning Redestig
 }
-

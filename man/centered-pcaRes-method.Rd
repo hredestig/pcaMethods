@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{centered,pcaRes-method}
-\alias{centered}
 \alias{centered,pcaRes-method}
+\alias{centered}
 \title{Check centering was part of the model}
 \usage{
 centered(object, ...)
@@ -22,4 +22,3 @@ Check centering was part of the model
 \author{
 Henning Redestig
 }
-

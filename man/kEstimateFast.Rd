@@ -68,11 +68,10 @@ barplot(drop(esti$eError), xlab = "Components",ylab = "NRMSEP (1 iterations)")
 # The best k value is:
 print(esti$minNPcs)
 }
-\author{
-Wolfram Stacklies
-}
 \seealso{
 \code{\link{kEstimate}}.
 }
+\author{
+Wolfram Stacklies
+}
 \keyword{multivariate}
-

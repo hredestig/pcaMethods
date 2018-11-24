@@ -74,14 +74,13 @@ cObs <- completeObs(result)
 ## Now plot the scores
 plotPcs(result, type = "scores")
 }
-\author{
-Wolfram Stacklies
-}
 \references{
 Troyanskaya O. and Cantor M. and Sherlock G. and Brown
 P. and Hastie T. and Tibshirani R. and Botstein D. and Altman
 RB. - Missing value estimation methods for DNA
 microarrays. \emph{Bioinformatics. 2001 Jun;17(6):520-5.}
 }
+\author{
+Wolfram Stacklies
+}
 \keyword{multivariate}
-

@@ -36,11 +36,10 @@ for \code{link{llsImpute}}.
 data(metaboliteData)
 llsRes <- nni(metaboliteData, k=6, method="llsImpute", allGenes=TRUE)
 }
-\author{
-Wolfram Stacklies
-}
 \seealso{
 \code{\link{llsImpute}}, \code{\link{pca}}
 }
+\author{
+Wolfram Stacklies
+}
 \keyword{multivariate}
-

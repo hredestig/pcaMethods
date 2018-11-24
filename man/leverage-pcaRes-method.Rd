@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{leverage,pcaRes-method}
-\alias{leverage}
 \alias{leverage,pcaRes-method}
+\alias{leverage}
 \title{Extract leverages of a PCA model}
 \usage{
 \S4method{leverage}{pcaRes}(object)
@@ -30,13 +30,12 @@ pcIr <- pca(iris[,1:4])
 ## versicolor has the lowest leverage
 with(iris, plot(leverage(pcIr)~Species))
 }
-\author{
-Henning Redestig
-}
 \references{
 Introduction to Multi- and Megavariate Data Analysis
 using Projection Methods (PCA and PLS), L. Eriksson, E. Johansson,
 N. Kettaneh-Wold and S. Wold, Umetrics 1999, p. 466
 }
+\author{
+Henning Redestig
+}
 \keyword{multivariate}
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{nObs,pcaRes-method}
-\alias{nObs}
 \alias{nObs,pcaRes-method}
+\alias{nObs}
 \title{Get the number of observations used to build the PCA model.}
 \usage{
 nObs(object, ...)
@@ -22,4 +22,3 @@ Get the number of observations used to build the PCA model.
 \author{
 Henning Redestig
 }
-

@@ -43,4 +43,3 @@ initial values are  assigned.
 \author{
 Wolfram Stacklies
 }
-

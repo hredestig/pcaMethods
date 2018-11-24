@@ -20,4 +20,3 @@ Vector with current valid PCA methods
 \author{
 Henning Redestig
 }
-

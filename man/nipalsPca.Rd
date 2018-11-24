@@ -48,9 +48,6 @@ pc <- nipalsPca(mat, nPcs=2)
 pc <- pca(t(metaboliteData), method="nipals", nPcs=2)
 \dontshow{stopifnot(sum((fitted(pc) - t(metaboliteData))^2, na.rm=TRUE) < 200)}
 }
-\author{
-Henning Redestig
-}
 \references{
 Wold, H. (1966) Estimation of principal components and
 related models by iterative least squares. In Multivariate
@@ -59,5 +56,7 @@ Analysis (Ed., P.R. Krishnaiah), Academic Press, NY, 391-420.
 \seealso{
 \code{prcomp}, \code{princomp}, \code{pca}
 }
+\author{
+Henning Redestig
+}
 \keyword{multivariate}
-

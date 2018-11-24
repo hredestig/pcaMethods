@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{center,pcaRes-method}
-\alias{center}
 \alias{center,pcaRes-method}
+\alias{center}
 \title{Get the centers of the original variables}
 \usage{
 center(object, ...)
@@ -22,4 +22,3 @@ Get the centers of the original variables
 \author{
 Henning Redestig
 }
-

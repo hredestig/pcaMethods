@@ -24,4 +24,3 @@ the rank of mat.
 \author{
 Wolfram Stacklies
 }
-

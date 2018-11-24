@@ -39,11 +39,10 @@ pc <- svdPca(mat, nPcs=2)
 pc <- pca(t(metaboliteDataComplete), method="svd", nPcs=2)
 \dontshow{stopifnot(sum((fitted(pc) - t(metaboliteDataComplete))^2, na.rm=TRUE) < 200)}
 }
-\author{
-Henning Redestig
-}
 \seealso{
 \code{prcomp}, \code{princomp}, \code{pca}
 }
+\author{
+Henning Redestig
+}
 \keyword{multivariate}
-

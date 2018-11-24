@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{scaled,pcaRes-method}
-\alias{scaled}
 \alias{scaled,pcaRes-method}
+\alias{scaled}
 \title{Check if scaling was part of the PCA model}
 \usage{
 scaled(object, ...)
@@ -22,4 +22,3 @@ Check if scaling was part of the PCA model
 \author{
 Henning Redestig
 }
-

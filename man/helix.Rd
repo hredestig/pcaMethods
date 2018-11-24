@@ -14,13 +14,12 @@ Simulated data set looking like a helix
 A matrix containing 1000 observations (rows) and three variables
 (columns).
 }
-\author{
-Henning Redestig
-}
 \references{
 Matthias Scholz, Fatma Kaplan, Charles L. Guy, Joachim
 Kopka and Joachim Selbig. - Non-linear PCA: a missing data
 approach.  \emph{Bioinformatics 2005 21(20):3887-3895}
 }
+\author{
+Henning Redestig
+}
 \keyword{datasets}
-

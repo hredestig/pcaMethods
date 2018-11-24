@@ -90,12 +90,11 @@ plotPcs(result, type = "scores")
   stopifnot(sum((fitted(result) - t(metaboliteData))^2, na.rm=TRUE) < 200)
 }
 }
-\author{
-Wolfram Stacklies
-}
 \seealso{
 \code{\link{bpca}, \link{svdImpute}, \link{prcomp},
 \link{nipalsPca}, \link{pca}, \link{pcaRes}}.
 }
+\author{
+Wolfram Stacklies
+}
 \keyword{multivariate}
-

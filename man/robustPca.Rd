@@ -71,12 +71,11 @@ resRobPca <- pca(mdcOut, method="robustPca", nPcs=10, center=FALSE)
 plot(loadings(resSvd)[,1], loadings(resSvdOut)[,1])
 plot(loadings(resSvd)[,1], loadings(resRobPca)[,1])
 }
-\author{
-Wolfram Stacklies
-}
 \seealso{
 \code{\link{robustSvd}, \link{svd}, \link{prcomp},
 \link{pcaRes}}.
 }
+\author{
+Wolfram Stacklies
+}
 \keyword{multivariate}
-

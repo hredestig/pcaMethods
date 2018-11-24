@@ -22,4 +22,3 @@ Later
 \author{
 Henning Redestig, Matthias Scholz
 }
-

@@ -18,4 +18,3 @@ Index in hiearchy
 \author{
 Henning Redestig, Matthias Scholz
 }
-

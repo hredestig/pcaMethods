@@ -5,8 +5,8 @@
 \title{Non-linear PCA}
 \usage{
 nlpca(Matrix, nPcs = 2, maxSteps = 2 * prod(dim(Matrix)),
-  unitsPerLayer = NULL, functionsPerLayer = NULL, weightDecay = 0.001,
-  weights = NULL, verbose = interactive(), ...)
+  unitsPerLayer = NULL, functionsPerLayer = NULL,
+  weightDecay = 0.001, weights = NULL, verbose = interactive(), ...)
 }
 \arguments{
 \item{Matrix}{\code{matrix} --- Preprocessed data with the
@@ -79,13 +79,12 @@ helixNipPca <- pca(helixNA, nPcs=2)
 fittedData <- fitted(helixNipPca)
 plot(fittedData[which(is.na(helixNA))], helix[which(is.na(helixNA))])
 }
-\author{
-Based on a matlab script by Matthias Scholz and ported to
-R by Henning Redestig
-}
 \references{
 Matthias Scholz, Fatma Kaplan, Charles L Guy, Joachim
 Kopkaand Joachim Selbig. Non-linear PCA: a missing
 data approach. \emph{Bioinformatics, 21(20):3887-3895, Oct 2005}
 }
-
+\author{
+Based on a matlab script by Matthias Scholz and ported to
+R by Henning Redestig
+}

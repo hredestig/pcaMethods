@@ -14,4 +14,3 @@ R2cum but the result is pretty much the same.}}
 \author{
 Henning Redestig
 }
-

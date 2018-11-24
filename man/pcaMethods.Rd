@@ -33,4 +33,3 @@ P.R. China
 \author{
 Wolfram Stacklies, Henning Redestig
 }
-

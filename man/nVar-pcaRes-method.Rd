@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{nVar,pcaRes-method}
-\alias{nVar}
 \alias{nVar,pcaRes-method}
+\alias{nVar}
 \title{Get the number of variables used to build the PCA model.}
 \usage{
 nVar(object, ...)
@@ -22,4 +22,3 @@ Get the number of variables used to build the PCA model.
 \author{
 Henning Redestig
 }
-

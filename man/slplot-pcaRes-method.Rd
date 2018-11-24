@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{slplot,pcaRes-method}
-\alias{slplot}
 \alias{slplot,pcaRes-method}
+\alias{slplot}
 \title{Side by side scores and loadings plot}
 \usage{
 slplot(object, pcs=c(1,2), scoresLoadings=c(TRUE, TRUE),
@@ -55,11 +55,10 @@ pcIr <- pca(iris[,1:4], scale="uv")
 slplot(pcIr, sl=NULL, spch=5)
 slplot(pcIr, sl=NULL, lcex=1.3, scol=as.integer(iris[,5]))
 }
-\author{
-Henning Redestig
-}
 \seealso{
 \code{\link{pca}}, \code{\link{biplot}}
 }
+\author{
+Henning Redestig
+}
 \keyword{multivariate}
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-pcaRes.R
 \docType{methods}
 \name{scores,pcaRes-method}
-\alias{scores}
 \alias{scores,pcaRes-method}
+\alias{scores}
 \title{Get scores from a pcaRes object}
 \usage{
 \S4method{scores}{pcaRes}(object, ...)
@@ -19,10 +19,9 @@ The scores as a matrix
 \description{
 Get scores from a pcaRes object
 }
-\author{
-Henning Redestig
-}
 \seealso{
 \code{\link{scores.pcaRes}}
 }
-
+\author{
+Henning Redestig
+}
