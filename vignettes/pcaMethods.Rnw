@@ -418,8 +418,7 @@ If you are not interested in variable - wise information we recommend to use the
   \begin{minipage}[c]{0.6\textwidth}
     \centering
 <<fig=true, width=5, height=5, results=hide, echo=false>>=
-barplot(drop(errEsti$variableWiseError[, which(errEsti$evalPcs == errEsti$bestNPcs)]), 
-xlab="Incomplete variable Index", ylab="NRMSEP")
+barplot(drop(errEsti$variableWiseError[, which(errEsti$evalPcs == errEsti$bestNPcs)]), xlab="Incomplete variable Index", ylab="NRMSEP")
 @
   \end{minipage}
   \begin{minipage}[c]{0.3\textwidth}
@@ -430,12 +429,14 @@ xlab="Incomplete variable Index", ylab="NRMSEP")
 \end{figure}
 
 \newpage
-\section{Visualization of the results}
+\section{Visualisation of the results}
+
+\subsection{Quick scores and loadings plot}
 Some methods for display of scores and loadings are also provided.
 The function \texttt{slplot()} aims to be a simple way to quickly
-visualize scores and loadings in an intuitive way, see Figure
+visualise scores and loadings in an intuitive way, see Figure
 \ref{fig:slplot}. Barplots are provided when plotting only one PC and
-colors can be specified differently for the scores and loadings
+colours can be specified differently for the scores and loadings
 plots. For a more specific scatter plot it is however recommended to
 access scores and loadings slots and define own plot functions.
 
@@ -453,11 +454,30 @@ PCs plotted against each other, see Figure \ref{fig:plotPcs}.
 \begin{figure}[!ht]
   \centering
 <<fig=true, width=8, height=8, results=hide, echo=false>>=
-plotPcs(resPPCA, pc=1:3, scoresLoadings=c(TRUE, FALSE))
+plotPcs(resPPCA, pc=1:3, type="score")
 @
 \caption{A plot of score 1:3 for PPCA created with \texttt{plotPcs()}
   \label{fig:plotPcs}}
 \end{figure}
+
+\subsection{Using ggplot2}
+
+For using ggplot, the scores and loadings should best be added to a data frame that add other relevant descriptive factors. For example, after doing PCA on the Iris dataset, we may add the scores back to the original data frame and use ggplot to visualise, see Figure \ref{fig:ggplot}.
+
+\begin{figure}[!ht]
+  \centering
+<<fig=true, width=4.5, height=3>>=
+pc <- pca(iris)
+irdf <- merge(iris, scores(pc), by=0)
+library(ggplot2)
+ggplot(irdf, aes(PC1, PC2, colour=Species)) +
+  geom_point() +
+  stat_ellipse()
+@ 
+\caption{Score plot using ggplot2}
+  \label{fig:ggplot}
+\end{figure}
+
 \cleardoublepage
 \begin{thebibliography}{2006}
 \bibitem{stacklies07} Stacklies W., Redestig H., Scholz M., and
