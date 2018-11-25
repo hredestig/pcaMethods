@@ -1,3 +1,5 @@
+Meta
+doc
 # History files
 .Rhistory
 
@@ -9,3 +11,10 @@
 *Rcheck
 *rds
 */auto*
+*aux
+*log
+*out
+*pdf
+*.tex
+vignettes/*.R
+.build.timestamp
