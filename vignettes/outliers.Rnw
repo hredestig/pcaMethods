@@ -62,21 +62,22 @@ library(pcaMethods)
 <<>>=
 data(metaboliteDataComplete)
 mdc          <- scale(metaboliteDataComplete, center=TRUE, scale=FALSE)
-cond         <- runif(length(mdc)) < 0.05;
-mdcOut       <- mdc; mdcOut[cond] <- 10
+cond         <- runif(length(mdc)) < 0.05
+mdcOut       <- mdc
+mdcOut[cond] <- 10
 @
 Then we calculate a PCA solution using standard SVD and robust SVD.
 <<results=hide>>=
-resSvd       <- pca(mdc, method = "svd", nPcs = 5, center = FALSE)
-resSvdOut    <- pca(mdcOut, method = "svd", nPcs = 5, center = FALSE)
-resRobSvd    <- pca(mdcOut, method = "robustPca", nPcs = 5, center = FALSE)
+resSvd       <- pca(mdc, method="svd", nPcs=5, center=FALSE)
+resSvdOut    <- pca(mdcOut, method="svd", nPcs=5, center=FALSE)
+resRobSvd    <- pca(mdcOut, method="robustPca", nPcs=5, center=FALSE)
 @
 Now we use \texttt{PPCA} to estimate the PCA solution, 
 but set the outliers NA before.
 <<results=hide>>=
-mdcNa        <- mdc;
+mdcNa        <- mdc
 mdcNa[cond]  <- NA
-resPPCA      <- pca(mdcNa, method = "ppca", nPcs = 5, center = FALSE)
+resPPCA      <- pca(mdcNa, method="ppca", nPcs=5, center=FALSE)
 @
 
 To check the robustness to outliers we can just do a scatterplot comparing the
@@ -87,19 +88,19 @@ In Figure \ref{fig:svdPlot} we plot the estimated and original loadings against 
 <<fig=true, width=8, height=8, results=hide, echo=false>>=
 par(mfrow=c(2,2))
 plot(loadings(resSvd)[,1], loadings(resSvdOut)[,1], 
-xlab = "Loading 1 SVD", ylab = "Loading 1 SVD with outliers")
+xlab="Loading 1 SVD", ylab="Loading 1 SVD with outliers")
 plot(loadings(resSvd)[,1], loadings(resRobSvd)[,1],
-xlab = "Loading 1 SVD", ylab = "Loading 1 robustSVD with outliers")
+xlab="Loading 1 SVD", ylab="Loading 1 robustSVD with outliers")
 plot(loadings(resSvd)[,1], loadings(resPPCA)[,1],
-xlab = "Loading 1 SVD", ylab = "Loading 1 PPCA with outliers = NA")
+xlab="Loading 1 SVD", ylab="Loading 1 PPCA with outliers=NA")
 plot(loadings(resRobSvd)[,1], loadings(resPPCA)[,1],
-xlab = "Loading 1 roubst SVD with outliers", ylab = "Loading 1 svdImpute with outliers = NA")
+xlab="Loading 1 robust SVD with outliers", ylab="Loading 1 svdImpute with outliers=NA")
 @
   \caption{Figures show (from left to right): \newline
   Original PCA solution vs. solution on data with outliers; \newline
   Original PCA solution vs. robust PCA solution on data with outliers; \newline
-  Original PCA solution vs. PPCA solution on data where outliers = NA; \newline
-  Robust PCA solution vs. PPCA solution on data with outliers / outliers = NA.
+  Original PCA solution vs. PPCA solution on data where outliers=NA; \newline
+  Robust PCA solution vs. PPCA solution on data with outliers / outliers=NA.
   \label{fig:svdPlot}
   }
 \end{figure}
