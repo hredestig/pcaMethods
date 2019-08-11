@@ -32,6 +32,41 @@ checkData <- function(data, verbose = FALSE) {
   isMatrix <- TRUE
   naRows <- FALSE
   naCols <- FALSE
+  unsupportedNa <- FALSE
+  if (inherits(data, "sparseMatrix")) {
+    data <- data@x
+    if(any(is.na(data))) {
+      isValid <- FALSE
+      unsupportedNa <- TRUE
+      if (verbose)
+        message(paste("Error: sparse data with NA not supported.",
+                      "Try converting to dense matrix with as.matrix(data)"))
+    }
+  } else {
+    if (!is.matrix(data)) {
+      isMatrix <- FALSE
+      isValid <- FALSE
+      if (verbose)
+        message("Error: data is not a matrix. Try to use as.matrix(data)")
+    }
+
+    ## Check for entire rows that are NA only
+    if (sum(apply(is.na(data), 1, sum) == ncol(data)) >= 1 ) {
+      naRows <- TRUE
+      isValid <- FALSE
+      if (verbose)
+        message("Error: Data contains rows in which all elements are 'NA'. Remove them first")
+    }
+
+    ## Check for entire columns that are NA only
+    if (sum(apply(is.na(data), 2, sum) == nrow(data)) >= 1 ) {
+      naCols <- TRUE
+      isValid <- FALSE
+      if (verbose)
+        message(paste("Error: Data contains columns in which all elements are 'NA'.",
+                      "Remove them first"))
+    }
+  }
 
   if (!is.numeric(data)) {
     isNumeric <- FALSE
@@ -54,30 +89,8 @@ checkData <- function(data, verbose = FALSE) {
       message("Error: Data contains 'NaN' values. Missing values must be denoted by 'NA'")
   } 
 
-  if (!is.matrix(data)) {
-    isMatrix <- FALSE
-    isValid <- FALSE
-    if (verbose)
-      message("Error: data is not a matrix. Try to use as.matrix(data)")
-  }
-
-  ## Check for entire rows that are NA only
-  if (sum(apply(is.na(data), 1, sum) == ncol(data)) >= 1 ) {
-    naRows <- TRUE
-    isValid <- FALSE
-    if (verbose)
-      message("Error: Data contains rows in which all elements are 'NA'. Remove them first")
-  }
-
-  ## Check for entire columns that are NA only
-  if (sum(apply(is.na(data), 2, sum) == nrow(data)) >= 1 ) {
-    naCols <- TRUE
-    isValid <- FALSE
-    if (verbose)
-      message("Error: Data contains columns in which all elements are 'NA'. Remove them first")
-  } 
-  
   attr(isValid, "isNumeric") <- isNumeric
+  attr(isValid, "unsupportedNa") <- unsupportedNa
   attr(isValid, "isInfinite") <- isInfinite
   attr(isValid, "isNaN") <- isNaN
   attr(isValid, "isMatrix") <- isMatrix
