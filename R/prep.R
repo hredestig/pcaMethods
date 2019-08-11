@@ -44,13 +44,15 @@ prep <- function(object, scale=c("none", "pareto", "vector", "uv"),
                  center=TRUE, eps=1e-12, simple=TRUE, reverse=FALSE, ...) {
   if(inherits(object, "ExpressionSet"))
     obj <- t(exprs(object))
-  else if(!inherits(object, 'sparseMatrix'))
+  else if(inherits(object, "sparseMatrix")) {
+    obj <- object
+    if (!is.null(scale) && !(scale %in% c("none", "uv"))) {
+      warning("Sparse matrices only support the 'uv' scaling. Converting to a dense matrix")
+      obj <- as.matrix(object)
+    }
+  } else {
     obj <- as.matrix(object)
-  else if (!is.null(scale) && !(scale %in% c("none", "uv"))) {
-    warning("Sparse matrices only support the 'uv' scaling. Converting to a dense matrix")
-    obj <- as.matrix(object)
-  } else  # let irlba handle sparse matrices for now
-    return(list(data = object, center = center, scale = scale))
+  }
 
   if(is.null(center))
     center <- FALSE
@@ -70,8 +72,10 @@ prep <- function(object, scale=c("none", "pareto", "vector", "uv"),
   
   if(is.character(scale[1])) {
     scale <- match.arg(scale)
-    if(scale == "uv")
-      scale <- apply(obj, 2, sd, na.rm=TRUE)
+    if(scale == "uv") {
+      f <- function(i) sqrt(sum((obj[, i] - center[i])^2, na.rm=TRUE) / (nrow(obj) -  1L))
+      scale <- vapply(seq(ncol(obj)), f, .0, USE.NAMES=FALSE)
+    }
     else if(scale == "none")
       scale <- rep(1, ncol(obj))
     else if(scale == "pareto")

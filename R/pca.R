@@ -171,13 +171,7 @@ pca <- function(object, method, nPcs=2,
          svd={
            res <- svdPca(prepres$data, nPcs=nPcs,...)   
          },
-         irlba=if(inherits(prepres$data, "sparseMatrix")) {
-           # The matrix was not actually preprocessed, we just pass the arguments on
-           res <- irlbaPca(prepres$data, nPcs=nPcs,
-                           scale=prepres$scale == "uv",
-                           center=prepres$center,
-                           ...) 
-         } else {
+         irlba={
            res <- irlbaPca(prepres$data, nPcs=nPcs, ...)
          },
          nipals={
@@ -402,13 +396,11 @@ svdPca <- function(Matrix, nPcs=2,
 ##' function.
 ##' @title Perform principal component analysis using sparse friendly
 ##'   singular value decomposition
-##' @param Matrix Un-preprocessed numerical matrix samples in rows and
+##' @param Matrix Preprocessed numerical matrix samples in rows and
 ##'   variables as columns. No missing values allowed.
 ##' @param nPcs Number of components that should be extracted.
 ##' @param varLimit Optionally the ratio of variance that should be
 ##'   explained. \code{nPcs} is ignored if varLimit < 1
-##' @param center Whether to center the matrix or not prior to SVD
-##' @param scale Whether to perform uv scaling or not prior to SVD
 ##' @param verbose Verbose complaints to matrix structure
 ##' @param ... Only used for passing through arguments.
 ##' @return A \code{pcaRes} object.
@@ -426,7 +418,7 @@ irlbaPca <- function(Matrix, nPcs=2, varLimit=1, verbose=interactive(),
                      center=TRUE, scale=FALSE, ...) {
   if (!requireNamespace("irlba", quietly=TRUE))
     stop("Need the irlba package to perform sparse PCA. Please install it.", call.=FALSE)
-  pcs <- irlba::prcomp_irlba(Matrix, center=center, scale.=scale)
+  pcs <- irlba::prcomp_irlba(Matrix, center=FALSE, scale.=FALSE)
   imp <- summary(pcs)$importance
   if (varLimit < 1)
     nPcs <- sum(imp[3, ] < varLimit) + 1
