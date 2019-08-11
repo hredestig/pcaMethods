@@ -22,72 +22,74 @@ listPcaMethods <- function(which=c("all", "linear", "nonlinear")) {
          })
 }
 
-##' Perform PCA on a numeric matrix for visualisation, information
-##' extraction and missing value imputation.
-##'
-##' This method is wrapper function for the following set of pca
-##' methods:
-##'
-##' \describe{\item{svd:}{Uses classical \code{prcomp}. See
-##' documentation for \code{\link{svdPca}}.}
-##' 
-##' \item{nipals:}{An iterative method capable of handling small
-##' amounts of missing values. See documentation for
-##' \code{\link{nipalsPca}}.}
-##' 
-##' \item{rnipals:}{Same as nipals but implemented in R.}
-##' 
-##' \item{bpca:}{An iterative method using a Bayesian model to handle
-##' missing values. See documentation for \code{\link{bpca}}.}
-##' 
-##' \item{ppca:}{An iterative method using a probabilistic model to
-##' handle missing values. See documentation for \code{\link{ppca}}.}
-##' 
-##' \item{svdImpute:}{Uses expectation maximation to perform SVD PCA
-##' on incomplete data. See documentation for
-##' \code{\link{svdImpute}}.}}
-##' 
-##' Scaling and centering is part of the PCA model and handled by
-##' \code{\link{prep}}.
 ##' @title Perform principal component analysis
+##' @description Perform PCA on a numeric matrix for visualisation,
+##'   information extraction and missing value imputation. This method
+##'   is wrapper function for the following set of pca methods:
+##'
+##'   \describe{\item{svd:}{Uses classical \code{prcomp}.  See
+##'   documentation for \code{\link{svdPca}}.}
+##'
+##'   \item{irlba:}{Uses the irlba package's
+##'   \code{prcomp_irlba} to perform sparse-friendly SVD (if
+##'   installed). See documentation for \code{\link{irlbaPca}}.}
+##' 
+##'   \item{nipals:}{An iterative method capable of handling small
+##'   amounts of missing values. See documentation for
+##'   \code{\link{nipalsPca}}.}
+##' 
+##'   \item{rnipals:}{Same as nipals but implemented in R.}
+##' 
+##'   \item{bpca:}{An iterative method using a Bayesian model to
+##'   handle missing values. See documentation for \code{\link{bpca}}.}
+##' 
+##'   \item{ppca:}{An iterative method using a probabilistic model to
+##'   handle missing values. See documentation for \code{\link{ppca}}.}
+##' 
+##'   \item{svdImpute:}{Uses expectation maximation to perform SVD PCA
+##'   on incomplete data. See documentation for
+##'   \code{\link{svdImpute}}.}}
+##' 
+##'   Scaling and centering is part of the PCA model and handled by
+##'   \code{\link{prep}}.
 ##' @param object Numerical matrix with (or an object coercible to
-##' such) with samples in rows and variables as columns. Also takes
-##' \code{ExpressionSet} in which case the transposed expression
-##' matrix is used. Can also be a data frame in which case all
-##' numberic variables are used to fit the PCA.
+##'   such) with samples in rows and variables as columns. Also takes
+##'   \code{ExpressionSet} in which case the transposed expression
+##'   matrix is used. Can also be a data frame in which case all
+##'   numberic variables are used to fit the PCA.
 ##' @param method One of the methods reported by
-##' \code{listPcaMethods()}. Can be left missing in which case the
-##' \code{svd} PCA is chosen for data wihout missing values and
-##' \code{nipalsPca} for data with missing values
+##'   \code{listPcaMethods()}. Can be left missing in which case the
+##'   \code{svd} PCA is chosen for regular data without missing
+##'   values, code{prcomp_irlba} for sparse data without missinv
+##'   values, and \code{nipalsPca} for data with missing values
 ##' @param nPcs Number of principal components to calculate.
 ##' @param scale Scaling, see \code{\link{prep}}.
 ##' @param center Centering, see \code{\link{prep}}.
 ##' @param completeObs Sets the \code{completeObs} slot on the
-##' resulting \code{pcaRes} object containing the original data with
-##' but with all NAs replaced with the estimates.
+##'   resulting \code{pcaRes} object containing the original data with
+##'   but with all NAs replaced with the estimates.
 ##' @param subset A subset of variables to use for calculating the
-##' model. Can be column names or indices.
-##' @param cv character naming a the type of cross-validation
-##' to be performed. 
-##' @param ... Arguments to \code{\link{prep}}, the chosen pca
-##' method and \code{\link{Q2}}.
+##'   model. Can be column names or indices.
+##' @param cv character naming a the type of cross-validation to be
+##'   performed.
+##' @param ... Arguments to \code{\link{prep}}, the chosen pca method
+##'   and \code{\link{Q2}}.
 ##' @return A \code{pcaRes} object.
-##' @references
-##' Wold, H. (1966) Estimation of principal components and
-##' related models by iterative least squares. In Multivariate
-##' Analysis (Ed., P.R. Krishnaiah), Academic Press, NY, 391-420.
+##' @references Wold, H. (1966) Estimation of principal components and
+##'   related models by iterative least squares. In Multivariate
+##'   Analysis (Ed., P.R. Krishnaiah), Academic Press, NY, 391-420.
 ##'   
-##' Shigeyuki Oba, Masa-aki Sato, Ichiro Takemasa, Morito Monden,
-##' Ken-ichi Matsubara and Shin Ishii.  A Bayesian missing value
-##' estimation method for gene expression profile
-##' data. \emph{Bioinformatics, 19(16):2088-2096, Nov 2003}.
+##'   Shigeyuki Oba, Masa-aki Sato, Ichiro Takemasa, Morito Monden,
+##'   Ken-ichi Matsubara and Shin Ishii.  A Bayesian missing value
+##'   estimation method for gene expression profile
+##'   data. \emph{Bioinformatics, 19(16):2088-2096, Nov 2003}.
 ##' 
-##' Troyanskaya O. and Cantor M. and Sherlock G. and Brown P. and
-##' Hastie T. and Tibshirani R. and Botstein D. and Altman RB.  -
-##' Missing value estimation methods for DNA microarrays.
-##' \emph{Bioinformatics. 2001 Jun;17(6):520-5}.
+##'   Troyanskaya O. and Cantor M. and Sherlock G. and Brown P. and
+##'   Hastie T. and Tibshirani R. and Botstein D. and Altman RB.  -
+##'   Missing value estimation methods for DNA microarrays.
+##'   \emph{Bioinformatics. 2001 Jun;17(6):520-5}.
 ##' @seealso \code{\link{prcomp}}, \code{\link{princomp}},
-##' \code{\link{nipalsPca}}, \code{\link{svdPca}}
+##'   \code{\link{nipalsPca}}, \code{\link{svdPca}}
 ##' @examples
 ##' data(iris)
 ##' ##  Usually some kind of scaling is appropriate
@@ -404,6 +406,33 @@ irlbaPca <- function(
   ...
 ) {
   pcs <- prcomp_irlba(Matrix, center = center, scale. = scale)
+##' A wrapper function for \code{irlba::prcomp_irlba} to deliver the
+##' result as a \code{pcaRes} method. Supplied for compatibility with
+##' the rest of the pcaMethods package.  It is not recommended to use
+##' this function directely but rather to use the \code{pca()} wrapper
+##' function.
+##' @title Perform principal component analysis using sparse friendly
+##'   singular value decomposition
+##' @param Matrix Un-preprocessed numerical matrix samples in rows and
+##'   variables as columns. No missing values allowed.
+##' @param nPcs Number of components that should be extracted.
+##' @param varLimit Optionally the ratio of variance that should be
+##'   explained. \code{nPcs} is ignored if varLimit < 1
+##' @param center Whether to center the matrix or not prior to SVD
+##' @param scale Whether to perform uv scaling or not prior to SVD
+##' @param verbose Verbose complaints to matrix structure
+##' @param ... Only used for passing through arguments.
+##' @return A \code{pcaRes} object.
+##' @seealso \code{\link[irlba]{prcomp_irlba}}, \code{\link{pca}}
+##' @examples
+##' mat <- sparseMatrix(c(1, 3:8), c(2, 9, 6:10), x = rnorm(7))
+##' pc <- irlbaPca(mat, nPcs=2)
+##' ## better use pca()
+##' pc <- pca(mat, method="irlba", nPcs=2)
+##' \dontshow{stopifnot(sum((fitted(pc) - mat)^2, na.rm=TRUE) < 200)}
+##' @export
+##' @keywords multivariate
+##' @author Philipp Angerer, Henning Redestig
   if (!requireNamespace("irlba", quietly=TRUE))
     stop("Need the irlba package to perform sparse PCA. Please install it.", call.=FALSE)
   pcs <- irlba::prcomp_irlba(Matrix, center=center, scale.=scale)

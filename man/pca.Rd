@@ -17,8 +17,9 @@ numberic variables are used to fit the PCA.}
 
 \item{method}{One of the methods reported by
 \code{listPcaMethods()}. Can be left missing in which case the
-\code{svd} PCA is chosen for data wihout missing values and
-\code{nipalsPca} for data with missing values}
+\code{svd} PCA is chosen for regular data without missing
+values, code{prcomp_irlba} for sparse data without missinv
+values, and \code{nipalsPca} for data with missing values}
 
 \item{nPcs}{Number of principal components to calculate.}
 
@@ -33,44 +34,45 @@ but with all NAs replaced with the estimates.}
 \item{subset}{A subset of variables to use for calculating the
 model. Can be column names or indices.}
 
-\item{cv}{character naming a the type of cross-validation
-to be performed.}
+\item{cv}{character naming a the type of cross-validation to be
+performed.}
 
-\item{...}{Arguments to \code{\link{prep}}, the chosen pca
-method and \code{\link{Q2}}.}
+\item{...}{Arguments to \code{\link{prep}}, the chosen pca method
+and \code{\link{Q2}}.}
 }
 \value{
 A \code{pcaRes} object.
 }
 \description{
-Perform PCA on a numeric matrix for visualisation, information
-extraction and missing value imputation.
-}
-\details{
-This method is wrapper function for the following set of pca
-methods:
+Perform PCA on a numeric matrix for visualisation,
+  information extraction and missing value imputation. This method
+  is wrapper function for the following set of pca methods:
 
-\describe{\item{svd:}{Uses classical \code{prcomp}. See
-documentation for \code{\link{svdPca}}.}
+  \describe{\item{svd:}{Uses classical \code{prcomp}.  See
+  documentation for \code{\link{svdPca}}.}
 
-\item{nipals:}{An iterative method capable of handling small
-amounts of missing values. See documentation for
-\code{\link{nipalsPca}}.}
+  \item{irlba:}{Uses the irlba package's
+  \code{prcomp_irlba} to perform sparse-friendly SVD (if
+  installed). See documentation for \code{\link{irlbaPca}}.}
 
-\item{rnipals:}{Same as nipals but implemented in R.}
+  \item{nipals:}{An iterative method capable of handling small
+  amounts of missing values. See documentation for
+  \code{\link{nipalsPca}}.}
 
-\item{bpca:}{An iterative method using a Bayesian model to handle
-missing values. See documentation for \code{\link{bpca}}.}
+  \item{rnipals:}{Same as nipals but implemented in R.}
 
-\item{ppca:}{An iterative method using a probabilistic model to
-handle missing values. See documentation for \code{\link{ppca}}.}
+  \item{bpca:}{An iterative method using a Bayesian model to
+  handle missing values. See documentation for \code{\link{bpca}}.}
 
-\item{svdImpute:}{Uses expectation maximation to perform SVD PCA
-on incomplete data. See documentation for
-\code{\link{svdImpute}}.}}
+  \item{ppca:}{An iterative method using a probabilistic model to
+  handle missing values. See documentation for \code{\link{ppca}}.}
 
-Scaling and centering is part of the PCA model and handled by
-\code{\link{prep}}.
+  \item{svdImpute:}{Uses expectation maximation to perform SVD PCA
+  on incomplete data. See documentation for
+  \code{\link{svdImpute}}.}}
+
+  Scaling and centering is part of the PCA model and handled by
+  \code{\link{prep}}.
 }
 \examples{
 data(iris)
@@ -95,8 +97,8 @@ ggplot(df, aes(PC1, PC2, shape=sex, color=type)) +
 }
 \references{
 Wold, H. (1966) Estimation of principal components and
-related models by iterative least squares. In Multivariate
-Analysis (Ed., P.R. Krishnaiah), Academic Press, NY, 391-420.
+  related models by iterative least squares. In Multivariate
+  Analysis (Ed., P.R. Krishnaiah), Academic Press, NY, 391-420.
   
 Shigeyuki Oba, Masa-aki Sato, Ichiro Takemasa, Morito Monden,
 Ken-ichi Matsubara and Shin Ishii.  A Bayesian missing value
