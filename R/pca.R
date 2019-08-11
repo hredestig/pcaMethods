@@ -404,6 +404,9 @@ irlbaPca <- function(
   ...
 ) {
   pcs <- prcomp_irlba(Matrix, center = center, scale. = scale)
+  if (!requireNamespace("irlba", quietly=TRUE))
+    stop("Need the irlba package to perform sparse PCA. Please install it.", call.=FALSE)
+  pcs <- irlba::prcomp_irlba(Matrix, center=center, scale.=scale)
   imp <- summary(pcs)$importance
   if (varLimit < 1)
     nPcs <- sum(imp[3, ] < varLimit) + 1

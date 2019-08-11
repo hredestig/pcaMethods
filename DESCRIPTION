@@ -26,12 +26,12 @@ Depends:
 Imports:
     BiocGenerics,
     Rcpp (>= 0.11.3),
-    MASS,
-    irlba
+    MASS
 Suggests:
     matrixStats,
     lattice,
-    ggplot2
+    ggplot2,
+	irlba
 Collate:
     'derrorHierarchic.R'
     'errorHierarchic.R'
