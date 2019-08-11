@@ -395,17 +395,6 @@ svdPca <- function(Matrix, nPcs=2,
 }
 
 
-##' @importFrom irlba prcomp_irlba
-irlbaPca <- function(
-  Matrix,
-  nPcs = 2,
-  varLimit = 1,
-  verbose = interactive(),
-  center = TRUE,
-  scale. = FALSE,
-  ...
-) {
-  pcs <- prcomp_irlba(Matrix, center = center, scale. = scale)
 ##' A wrapper function for \code{irlba::prcomp_irlba} to deliver the
 ##' result as a \code{pcaRes} method. Supplied for compatibility with
 ##' the rest of the pcaMethods package.  It is not recommended to use
@@ -433,6 +422,8 @@ irlbaPca <- function(
 ##' @export
 ##' @keywords multivariate
 ##' @author Philipp Angerer, Henning Redestig
+irlbaPca <- function(Matrix, nPcs=2, varLimit=1, verbose=interactive(),
+                     center=TRUE, scale=FALSE, ...) {
   if (!requireNamespace("irlba", quietly=TRUE))
     stop("Need the irlba package to perform sparse PCA. Please install it.", call.=FALSE)
   pcs <- irlba::prcomp_irlba(Matrix, center=center, scale.=scale)
