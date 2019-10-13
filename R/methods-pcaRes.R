@@ -460,7 +460,7 @@ setMethod('R2VX', 'pcaRes',
   if(any(is.na(data))) 
     stop('missing values not allowed for calculating R2')
   dat <- prep(data, scale=scl(object), center=center(object))
-  xhat <- resid(object, pcs=pcs)
+  xhat <- resid(object, pcs=pcs, data=dat, pre=FALSE, post=FALSE)
   switch(direction, variables={
     1 - colSums(xhat^2) / colSums(dat^2)
   }, observations={
