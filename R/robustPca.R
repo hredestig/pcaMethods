@@ -164,38 +164,43 @@ robustSvd <- function(x) {
   if (!requireNamespace("matrixStats", quietly=TRUE))
     stop("package matrixStats required but not available")
 
-  L1RegCoef <- function(x,a){
-    keep <- (a!=0) & (!is.na(x))
+  L1RegCoef <- function(x, a){
+    keep <- (abs(a) > .Machine$double.eps) & (!is.na(x))
+    if(!any(keep)) {
+      warning("No non-missing data for l1 regression, unstable results")
+      return(0.)
+    }
     a <- a[keep]
-    return(matrixStats::weightedMedian(x[keep]/a, abs(a),
+    return(matrixStats::weightedMedian(x[keep] / a, abs(a),
                                        na.rm=TRUE, interpolate=FALSE))
   }
 
-  L1Eigen <- function(x,a,b){
+  L1Eigen <- function(x, a, b){
     x <- as.vector(x) # Convert from matrix to vector
-    ab <- as.vector(outer(a,b))
-    keep <- (ab!=0) & (!is.na(x))
+    ab <- as.vector(outer(a, b))
+    keep <- (abs(ab) > .Machine$double.eps) & (!is.na(x))
     ab <- ab[keep]
-    return(matrixStats::weightedMedian(x[keep]/ab, abs(ab),
+    return(matrixStats::weightedMedian(x[keep] / ab, abs(ab),
                                        na.rm=TRUE, interpolate=FALSE))
   }
 
   ## Initialize outputs
-  svdu <- matrix(NA,nrow=nrow(x),ncol=ncol(x))
-  svdv <- matrix(NA,nrow=ncol(x),ncol=ncol(x))
-  svdd <- rep(NA,ncol(x))
+  svdu <- matrix(NA, nrow=nrow(x), ncol=ncol(x))
+  svdv <- matrix(NA, nrow=ncol(x), ncol=ncol(x))
+  svdd <- rep(NA, ncol(x))
 
   for(k in 1:ncol(x)) {
-    ak <- apply(abs(x),1,median,na.rm=TRUE)
+    ak <- apply(abs(x), 1, median, na.rm=TRUE)
     converged <- FALSE
-    
     while(!converged) {
       akprev <- ak
-      c <- apply(x,2,L1RegCoef,ak)
-      bk <- c/sqrt(sum(c^2))
-      d <- apply(x,1,L1RegCoef,bk)
-      ak <- d/sqrt(sum(d^2))
-      if(sum((ak-akprev)^2)< 1e-10) converged <- TRUE
+      c <- apply(x, 2, L1RegCoef, ak)
+      bk <- c / sqrt(sum(c^2))
+      d <- apply(x, 1, L1RegCoef, bk)
+      ak <- d / sqrt(sum(d^2))
+      if(sum((ak - akprev)^2) < 1e-10) {
+        converged <- TRUE
+      }
     }
     eigenk <- L1Eigen(x,ak,bk)
     ## Deflate the x matrix
