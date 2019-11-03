@@ -9,12 +9,12 @@
 ##' describes noise and that the model is unrelated to the true data
 ##' structure. The definition of \eqn{Q^2} is: \deqn{Q^2=1 -
 ##' \frac{\sum_{i}^{k}\sum_{j}^{n}(x -
-##' \hat{x})^2}{\sum_{i}^{k}\sum_{j}^{n}x^2}}{Q^2=1 - sum_i^k
-##' sum_j^n (x - \hat{x})^2 / \sum_i^k \sum_j^n(x^2)} for the matrix
-##' \eqn{x} which has \eqn{n} rows and \eqn{k} columns. For a given
-##' number of PC's x is estimated as \eqn{\hat{x}=TP'} (T are scores
-##' and P are loadings). Although this defines the leave-one-out
-##' cross-validation this is  not what is performed if fold is less
+##' \hat{x})^2}{\sum_{i}^{k}\sum_{j}^{n}x^2}}{Q^2=1 - sum_i^k sum_j^n
+##' (x - \hat{x})^2 / \sum_i^k \sum_j^n(x^2)} for the matrix \eqn{x}
+##' which has \eqn{n} rows and \eqn{k} columns. For a given number of
+##' PC's x is estimated as \eqn{\hat{x}=TP'} (T are scores and P are
+##' loadings). Although this defines the leave-one-out
+##' cross-validation this is not what is performed if fold is less
 ##' than the number of rows and/or columns.  In 'impute' type CV,
 ##' diagonal rows of elements in the matrix are deleted and the
 ##' re-estimated.  In 'krzanowski' type CV, rows are sequentially left
@@ -31,24 +31,28 @@
 ##' \code{nPcs(object)}.
 ##' @title Cross-validation for PCA
 ##' @param object A \code{pcaRes} object (result from previous PCA
-##' analysis.)
+##'   analysis.)
 ##' @param originalData The matrix (or ExpressionSet) that used to
-##' obtain the pcaRes object. 
+##'   obtain the pcaRes object.
 ##' @param fold The number of groups to divide the data in.
 ##' @param nruncv The number of times to repeat the whole
-##' cross-validation
+##'   cross-validation. The deletion of diagnols in 'impute' is
+##'   deterministic so result will alsways be the same but in
+##'   krzanowski where cv-split is obtained by sampling it can be
+##'   informative to examine the spread of the Q2 values over several
+##'   CV runs.
 ##' @param type krzanowski or imputation type cross-validation
 ##' @param verbose \code{boolean} If TRUE Q2 outputs a primitive
-##' progress bar.
+##'   progress bar.
 ##' @param variables indices of the variables to use during
-##' cross-validation calculation. Other variables are kept as they are
-##' and do not contribute to the total sum-of-squares.
-##' @param ... Further arguments passed to the \code{\link{pca}} function called
-##' within Q2.
+##'   cross-validation calculation. Other variables are kept as they
+##'   are and do not contribute to the total sum-of-squares.
+##' @param ... Further arguments passed to the \code{\link{pca}}
+##'   function called within Q2.
 ##' @return A matrix or vector with \eqn{Q^2} estimates.
 ##' @export
 ##' @references Krzanowski, WJ. Cross-validation in principal
-##' component analysis. Biometrics. 1987(43):3,575-584
+##'   component analysis. Biometrics. 1987(43):3,575-584
 ##' @examples
 ##' data(iris)
 ##' x <- iris[,1:4]
@@ -89,26 +93,33 @@ Q2 <- function (object, originalData=completeObs(object), fold=5,
     variables <- which(variables)
 
   ssx <- sum(originalData[, variables]^2, na.rm=TRUE)
+  if(type == "impute")
+    nP <- nPcs(object)
+  if(type == "krzanowski") {
+    rseg <- split(sample(1:nR), rep(1:fold, ceiling(nR/fold))[1:nR])
+    cseg <- split(sample(1:nC), rep(1:fold, ceiling(nC/fold))[1:nC])
+    foldC <- length(cseg)
+    foldR <- length(rseg)
+    nP <- min(nR - max(sapply(rseg, length)),
+              nC - max(sapply(cseg, length)), nPcs(object))
+  }
+  q2 <- matrix(NA, nP, ncol=nruncv)
   for (nr in 1:nruncv) {
+    press <- rep(0, nP)
     if (type == "impute") {
-      nP <- nPcs(object)
-      press <- rep(0, nP)
-      q2 <- matrix(NA, nP, ncol=nruncv)
       seg <- list()
       nDiag <- max(nR, nC)
-      diagPerFold <- floor(nDiag/fold)
+      diagPerFold <- floor(nDiag / fold)
       suppressWarnings(diags <- matrix(1:nDiag, nrow=diagPerFold, ncol=fold, byrow=TRUE))
       if (diagPerFold == 0 || diagPerFold > (nDiag/2)) 
         stop("Matrix could not be safely divided into ", 
              fold, " segments. Choose a different fold or provide the desired segments")
       if (nDiag%%fold > 0) 
-        warning("Validation incomplete: ", (nDiag%%fold) * 
-                  min(dim(originalData)),
+        warning("Validation incomplete: ", (nDiag %% fold) * min(dim(originalData)),
                 " values were left out of from cross validation, Q2 estimate will be biased.")
       for (i in 1:ncol(diags))
         seg[[i]] <- which(is.na(deletediagonals(originalData, diags[, i])))
       if (verbose) {
-        message("Doing ", length(seg), " fold ", "cross validation")
         pb <- txtProgressBar(0, length(seg), style=3, width=20)
       }
       j <- 0
@@ -141,11 +152,6 @@ Q2 <- function (object, originalData=completeObs(object), fold=5,
     if (type == "krzanowski") {
       rseg <- split(sample(1:nR), rep(1:fold, ceiling(nR/fold))[1:nR])
       cseg <- split(sample(1:nC), rep(1:fold, ceiling(nC/fold))[1:nC])
-      nP <- min(nR - max(sapply(rseg, length)), nC - max(sapply(cseg, length)), nPcs(object))
-      q2 <- matrix(NA, nP, ncol=nruncv)
-      press <- rep(0, nP)
-      foldC <- length(cseg)
-      foldR <- length(rseg)
       tcv <- array(0, dim=c(foldC, nR, nP))
       pcv <- array(0, dim=c(foldR, nC, nP))
       for (f in 1:foldC) {
