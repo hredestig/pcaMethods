@@ -5,6 +5,18 @@ Title: A collection of PCA methods
 LinkingTo: Rcpp
 LazyLoad: Yes
 Author: Wolfram Stacklies, Henning Redestig, Kevin Wright
+Authors@R: 
+  c(person(given = "Wolfram",
+           family = "Stacklies",
+           role = c("aut")),
+    person(given = "Henning",
+           family = "Redestig",
+           email = "henning.red@gmail.com",
+           role = c("aut","cre")),
+    person(given = "Kevin",
+           family = "Wright",
+           comment=c(ORCID = "0000-0002-0617-8673"),
+           role = "aut"))
 SystemRequirements: Rcpp
 Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA,
     Inverse Non-Linear PCA and the conventional SVD PCA. A cluster
