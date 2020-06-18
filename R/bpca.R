@@ -90,7 +90,8 @@
 ##' @references Shigeyuki Oba, Masa-aki Sato, Ichiro Takemasa, Morito
 ##'   Monden, Ken-ichi Matsubara and Shin Ishii.  A Bayesian missing
 ##'   value estimation method for gene expression profile
-##'   data. \emph{Bioinformatics, 19(16):2088-2096, Nov 2003}.
+##'   data. \emph{Bioinformatics, 19(16):2088-2096, Nov 2003},
+##'   \url{https://doi.org/10.1093/bioinformatics/btg287}.
 ##' @seealso \code{\link{ppca}}, \code{\link{svdImpute}},
 ##'   \code{\link{prcomp}}, \code{\link{nipalsPca}},
 ##'   \code{\link{pca}},
