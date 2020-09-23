@@ -40,7 +40,8 @@ pc <- pca(t(metaboliteDataComplete), method="svd", nPcs=2)
 \dontshow{stopifnot(sum((fitted(pc) - t(metaboliteDataComplete))^2, na.rm=TRUE) < 200)}
 }
 \seealso{
-\code{prcomp}, \code{princomp}, \code{pca}
+\code{\link[stats]{prcomp}}, \code{\link[stats]{princomp}},
+\code{\link{pca}}
 }
 \author{
 Henning Redestig

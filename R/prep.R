@@ -44,8 +44,13 @@ prep <- function(object, scale=c("none", "pareto", "vector", "uv"),
                  center=TRUE, eps=1e-12, simple=TRUE, reverse=FALSE, ...) {
   if(inherits(object, "ExpressionSet"))
     obj <- t(exprs(object))
-  else
+  else if(!inherits(object, 'sparseMatrix'))
     obj <- as.matrix(object)
+  else if (!is.null(scale) && !(scale %in% c("none", "uv"))) {
+    warning("Sparse matrices only support the 'uv' scaling. Converting to a dense matrix")
+    obj <- as.matrix(object)
+  } else  # let irlba handle sparse matrices for now
+    return(list(data = object, center = center, scale = scale))
 
   if(is.null(center))
     center <- FALSE

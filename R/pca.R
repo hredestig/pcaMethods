@@ -9,12 +9,12 @@
 listPcaMethods <- function(which=c("all", "linear", "nonlinear")) {
   switch(match.arg(which),
          all={
-           return(c("svd", "nipals", "rnipals", "bpca", "ppca",
+           return(c("svd", "irlba", "nipals", "rnipals", "bpca", "ppca",
                     "svdImpute", "robustPca", "nlpca", "llsImpute",
                     "llsImputeAll"))
          },
          linear={
-           return(c("svd", "nipals", "rnipals", "bpca", "ppca",
+           return(c("svd", "irlba", "nipals", "rnipals", "bpca", "ppca",
                     "svdImpute", "robustPca"))
          },
          nonlinear={
@@ -123,11 +123,13 @@ pca <- function(object, method, nPcs=2,
   }
   else if(inherits(object, "ExpressionSet")) {
     Matrix <- t(exprs(object))
-  } else
-  Matrix <- as.matrix(object, rownames.force=TRUE)
+  } else if (inherits(object, "sparseMatrix"))
+    Matrix <- object
+  else
+    Matrix <- as.matrix(object, rownames.force=TRUE)
 
   if(!is.null(subset)) 
-    Matrix <- Matrix[,subset]
+    Matrix <- Matrix[, subset, drop = FALSE]
   
   cv <- match.arg(cv)
   scale <- match.arg(scale)
@@ -150,6 +152,8 @@ pca <- function(object, method, nPcs=2,
   if(missing(method)) {
     if(any(missing))
       method <- 'nipals'
+    else if(inherits(Matrix, 'sparseMatrix'))
+      method <- 'irlba'
     else
       method <- 'svd'
   }
@@ -164,6 +168,15 @@ pca <- function(object, method, nPcs=2,
   switch(method,
          svd={
            res <- svdPca(prepres$data, nPcs=nPcs,...)   
+         },
+         irlba=if(inherits(prepres$data, "sparseMatrix")) {
+           # The matrix was not actually preprocessed, we just pass the arguments on
+           res <- irlbaPca(prepres$data, nPcs=nPcs,
+                           scale=prepres$scale == "uv",
+                           center=prepres$center,
+                           ...) 
+         } else {
+           res <- irlbaPca(prepres$data, nPcs=nPcs, ...)
          },
          nipals={
            res <- nipalsPca(prepres$data, nPcs=nPcs, ...) 
@@ -350,7 +363,8 @@ plotPcs <- function(object,
 ##' @param verbose Verbose complaints to matrix structure
 ##' @param ... Only used for passing through arguments.
 ##' @return A \code{pcaRes} object.
-##' @seealso \code{prcomp}, \code{princomp}, \code{pca}
+##' @seealso \code{\link[stats]{prcomp}}, \code{\link[stats]{princomp}},
+##' \code{\link{pca}}
 ##' @examples
 ##' data(metaboliteDataComplete)
 ##' mat <- prep(t(metaboliteDataComplete))
@@ -377,6 +391,32 @@ svdPca <- function(Matrix, nPcs=2,
   res@method <- "svd"
   return(res)
 }
+
+
+##' @importFrom irlba prcomp_irlba
+irlbaPca <- function(
+  Matrix,
+  nPcs = 2,
+  varLimit = 1,
+  verbose = interactive(),
+  center = TRUE,
+  scale. = FALSE,
+  ...
+) {
+  pcs <- prcomp_irlba(Matrix, center = center, scale. = scale)
+  imp <- summary(pcs)$importance
+  if (varLimit < 1)
+    nPcs <- sum(imp[3, ] < varLimit) + 1
+  
+  res <- new("pcaRes")
+  res@scores <- cbind(pcs$x[, seq_len(nPcs)])
+  res@loadings <- cbind(pcs$rotation[, seq_len(nPcs)])
+  res@R2cum <- imp[3, seq_len(nPcs)]
+  res@varLimit <- varLimit
+  res@method <- "irlba"
+  res
+}
+
 
 ##' Get a confidence ellipse for uncorrelated bivariate data
 ##'
