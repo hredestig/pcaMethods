@@ -29,7 +29,7 @@ Description: Provides Bayesian PCA, Probabilistic PCA, Nipals PCA,
     data structure (pcaRes) to provide a common interface to the
     PCA results. Initiated at the Max-Planck Institute for
     Molecular Plant Physiology, Golm, Germany.
-Version: 1.79.1
+Version: 1.79.2
 URL: https://github.com/hredestig/pcamethods
 BugReports: https://github.com/hredestig/pcamethods/issues
 Encoding: UTF-8
@@ -43,7 +43,8 @@ Imports:
 Suggests:
     matrixStats,
     lattice,
-    ggplot2
+    ggplot2,
+    testthat (>= 3.0.0)
 Collate:
     'derrorHierarchic.R'
     'errorHierarchic.R'
@@ -78,3 +79,4 @@ Collate:
 Packaged: 2013-03-12 21:41:03 UTC; henning
 biocViews: Bayesian
 RoxygenNote: 6.1.1
+Config/testthat/edition: 3
