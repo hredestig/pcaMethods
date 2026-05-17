@@ -18,3 +18,5 @@ doc
 *.tex
 vignettes/*.R
 .build.timestamp
+.Rproj.user
+.positai

@@ -1,0 +1,12 @@
+---
+title: "The pcaMethods Package"
+author: "Wolfram Stacklies and Henning Redestig CAS-MPG Partner Institute for Computational Biology (PICB) Shanghai, P.R. China and Max Planck Institute for Molecular Plant Physiology Potsdam, Germany"
+date: "17 May 2026"
+package: pcaMethods
+output: BiocStyle::html_document
+vignette: |
+    %\VignetteIndexEntry{pcaMethods}
+    %\VignetteEncoding{UTF-8}
+    %\VignetteEngine{knitr::rmarkdown}
+---
+
