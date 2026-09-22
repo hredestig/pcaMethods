@@ -43,7 +43,11 @@ Imports:
 Suggests:
     matrixStats,
     lattice,
-    ggplot2
+    ggplot2,
+    BiocStyle,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
 Collate:
     'derrorHierarchic.R'
     'errorHierarchic.R'
